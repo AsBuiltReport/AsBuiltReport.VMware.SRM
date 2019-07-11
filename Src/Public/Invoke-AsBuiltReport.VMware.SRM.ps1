@@ -30,13 +30,12 @@ function Invoke-AsBuiltReport.VMware.SRM {
         & "$PSScriptRoot\..\..\AsBuiltReport.VMware.SRM.Style.ps1"
     }
 
-    foreach ($Server in $Target) {
+    foreach ($VIServer in $Target) {
         #Connect to the SRM Server
         try {
-            $vCenter = Connect-VIServer $Server -Credential $Credential -ErrorAction Stop
+            $vCenter = Connect-VIServer $VIServer -Credential $Credential -ErrorAction Stop
             $SRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop
-        }
-        catch {
+        } catch {
             Write-Error $_
         }
 
@@ -93,11 +92,11 @@ function Invoke-AsBuiltReport.VMware.SRM {
                         if ($ProtectionGroup.GetProtectionState() -ne "Shadowing") {
                             Section -Style Heading3 $ProtectionGroup.GetInfo().Name {
                                 if ($ProtectionGroup.ListProtectedDatastores()) {
-                                $ProtectedDatastores = (Get-View $ProtectionGroup.ListProtectedDatastores().moref | Select-Object Name)
+                                    $ProtectedDatastores = (Get-View $ProtectionGroup.ListProtectedDatastores().moref | Select-Object Name)
                                 }
 
                                 if ($ProtectionGroup.ListProtectedVMs()) {
-                                $ProtectedVMs = (Get-View $ProtectionGroup.ListProtectedVMs().vm.moref | Select-Object Name)
+                                    $ProtectedVMs = (Get-View $ProtectionGroup.ListProtectedVMs().vm.moref | Select-Object Name)
                                 }
 
                                 $ProtectionGroupInfo = $ProtectionGroup.GetInfo()
@@ -107,8 +106,8 @@ function Invoke-AsBuiltReport.VMware.SRM {
                                     'Description' = $ProtectionGroupInfo.Description
                                     'Type' = $ProtectionGroupInfo.Type
                                     'Protection State' = $ProtectionGroup.GetProtectionState()
-                                    'Protected Datastores' = ($ProtectedDatastores.Name | Out-String).Trim()
-                                    'Protected VMs' = ($ProtectedVMs.Name | Out-String).Trim()
+                                    'Protected Datastores' = ($ProtectedDatastores.Name | Sort-Object) -join ', '
+                                    'Protected VMs' = ($ProtectedVMs.Name | Sort-Object) -join ', '
                                 }
                                 $ProtectionGroupConfig | Table -Name "Protection Group Config" -List -ColumnWidths 50, 50
                             }
@@ -130,7 +129,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
                                 'Plan Name' = $RecoveryPlanInfo.name
                                 'Description' = $RecoveryPlanInfo.Description
                                 'State' = $RecoveryPlanInfo.State
-                                'Protection Groups' = ($PlanProtectionGroups | Out-String).Trim()
+                                'Protection Groups' = ($PlanProtectionGroups | Sort-Object) -join ', '
                             }
                             $RecoveryPlanConfig | Table -Name "Recovery Plan Config" -List -ColumnWidths 25, 75
                         }#End Section Heading3
@@ -138,6 +137,8 @@ function Invoke-AsBuiltReport.VMware.SRM {
                 }#End Section Heading2 Recovery Plans
             } #End Section Heading1 $SRM.Name
         } #End if SRM
+        Disconnect-VIServer -Server $VIServer -Confirm:$false
+        Disconnect-SrmServer -Server $SRM.Name -Confirm:$false
     } #End foreach SRMServer in Target
 
 } #End function Invoke-AsBuiltReport.VMware.SRM
