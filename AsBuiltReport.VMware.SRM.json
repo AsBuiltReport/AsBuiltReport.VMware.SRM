@@ -1,0 +1,16 @@
+{
+    "Report": {
+        "Name": "VMware SRM As Built Report",
+        "Version": "0.0.1",
+        "Status": "Draft"
+    },
+    "Options": {
+    },
+    "Section": {
+    },
+    "InfoLevel": {
+        "_comment_": "0 = Disabled, 1 = Summary, 2 = Informative, 3 = Detailed, 4 = Adv Detailed, 5 = Comprehensive"
+    },
+    "HealthCheck": {
+    }
+}
