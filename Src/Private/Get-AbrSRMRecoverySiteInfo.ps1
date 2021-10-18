@@ -19,6 +19,7 @@ function Get-AbrSRMRecoverySiteInfo {
     )
 
     begin {
+        Write-PScriboMessage "Recovery Site InfoLevel set at $($InfoLevel.Recovery)."
         Write-PscriboMessage "Collecting SRM Recovery Site information."
     }
 
@@ -32,20 +33,20 @@ function Get-AbrSRMRecoverySiteInfo {
                 BlankLine
                 $OutObj = @()
                 if ($RecoverySiteInfo) {
-                    Write-PscriboMessage "Discovered Protected Site $($RecoverySiteInfo.Name)."
+                    Write-PscriboMessage "Discovered Recovery Site $($RecoverySiteInfo.Name)."
                     $inObj = [ordered] @{
-                        'Paired Site Name' = $RecoverySiteInfo.Name
-                        'Paired Site ID' = $RecoverySiteInfo.Uuid
-                        'Paired Site Solution User' = $SRMServer.ExtensionData.GetPairedSiteSolutionUserInfo().Username
-                        'Paired Site vCenter Host' = $RecoverySiteInfo.VcHost
-                        'Paired Site vCenter URL' = $RecoverySiteInfo.VcUrl
-                        'Paired Site Lookup URL' = $RecoverySiteInfo.LkpUrl
-                        'Paired Site Connected' = $RecoverySiteInfo.Connected
+                        'Recovery Site Name' = $RecoverySiteInfo.Name
+                        'Recovery Site ID' = $RecoverySiteInfo.Uuid
+                        'Recovery Site Solution User' = $SRMServer.ExtensionData.GetPairedSiteSolutionUserInfo().Username
+                        'Recovery Site vCenter Host' = $RecoverySiteInfo.VcHost
+                        'Recovery Site vCenter URL' = $RecoverySiteInfo.VcUrl
+                        'Recovery Site Lookup URL' = $RecoverySiteInfo.LkpUrl
+                        'Recovery Site Connected' = ConvertTo-TextYN $RecoverySiteInfo.Connected
                     }
                     $OutObj += [pscustomobject]$inobj
                 }
                 $TableParams = @{
-                    Name = "Protected Site Information - $($RecoverySiteInfo.Name)"
+                    Name = "Recovery Site Information - $($RecoverySiteInfo.Name)"
                     List = $true
                     ColumnWidths = 30, 70
                 }
