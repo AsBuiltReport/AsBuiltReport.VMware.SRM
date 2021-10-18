@@ -48,7 +48,7 @@ This report is compatible with the following PowerShell versions;
 <!-- ********** Update supported PowerShell versions ********** -->
 | Windows PowerShell 5.1 |     PowerShell 7    |
 |:----------------------:|:--------------------:|
-|   :white_check_mark:   | :white_check_marke: |
+|   :white_check_mark:   | :white_check_mark: |
 
 ## :wrench: System Requirements
 
@@ -140,14 +140,26 @@ There are 6 levels (0-5) of detail granularity for each section as follows;
 |:-------:|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 |    0    | Disabled          | Does not collect or display any information                                                                                                |
 |    1    | Enabled / Summary | Provides summarised information for a collection of objects                                                                                |
-|    2    | Adv Summary       | Provides condensed, detailed information for a collection of objects                                                                       |
-|    3    | Detailed          | Provides detailed information for individual objects                                                                                       |
-|    4    | Adv Detailed      | Provides detailed information for individual objects, as well as information for associated objects                                        |
-|    5    | Comprehensive     | Provides comprehensive information for individual objects, such as advanced configuration settings                                         |
 
 ### Healthcheck
 
 The **Healthcheck** schema is used to toggle health checks on or off.
 
 ## :computer: Examples
-<!-- ********** Add some examples. Use other AsBuiltReport modules as a guide. ********** -->
+
+There are a few examples listed below on running the AsBuiltReport script against a VMware SRM Array target. Refer to the `README.md` file in the main AsBuiltReport project repository for more examples.
+
+```powershell
+# Generate a VMware SRM As Built Report for SRM Server '192.168.5.16' using specified credentials. Export report to HTML & DOCX formats. Use default report style. Append timestamp to report filename. Save reports to 'C:\Users\Jon\Documents'
+PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Username 'administrator@vsphere.local' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -Timestamp
+
+# Generate a VMware SRM As Built Report for SRM Server 192.168.5.16 using specified credentials and report configuration file. Export report to Text, HTML & DOCX formats. Use default report style. Save reports to 'C:\Users\Jon\Documents'. Display verbose messages to the console.
+PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Username 'administrator@vsphere.local' -Password 'P@ssw0rd' -Format Text,Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -ReportConfigFilePath 'C:\Users\Jon\AsBuiltReport\AsBuiltReport.VMware.SRM.json' -Verbose
+
+# Generate a VMware SRM As Built Report for SRM Server 192.168.5.16 using stored credentials. Export report to HTML & Text formats. Use default report style. Highlight environment issues within the report. Save reports to 'C:\Users\Jon\Documents'.
+PS C:\> $Creds = Get-Credential
+PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Credential $Creds -Format Html,Text -OutputFolderPath 'C:\Users\Jon\Documents' -EnableHealthCheck
+
+# Generate a VMware SRM As Built Report for SRM Server 192.168.5.16 using specified credentials. Export report to HTML & DOCX formats. Use default report style. Reports are saved to the user profile folder by default. Attach and send reports via e-mail.
+PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Username 'administrator@vsphere.local' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -SendEmail
+```
