@@ -134,7 +134,7 @@ The **Options** schema allows certain options within the report to be toggled on
 
 The **InfoLevel** schema allows configuration of each section of the report at a granular level. The following sections can be set.
 
-There are 6 levels (0-5) of detail granularity for each section as follows;
+There are 2 levels (0-1) of detail granularity for each section as follows;
 
 | Setting | InfoLevel         | Description                                                                                                                                |
 |:-------:|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
@@ -147,7 +147,7 @@ The **Healthcheck** schema is used to toggle health checks on or off.
 
 ## :computer: Examples
 
-There are a few examples listed below on running the AsBuiltReport script against a VMware SRM Array target. Refer to the `README.md` file in the main AsBuiltReport project repository for more examples.
+There are a few examples listed below on running the AsBuiltReport script against a VMware SRM Server target. Refer to the `README.md` file in the main AsBuiltReport project repository for more examples.
 
 ```powershell
 # Generate a VMware SRM As Built Report for SRM Server '192.168.5.16' using specified credentials. Export report to HTML & DOCX formats. Use default report style. Append timestamp to report filename. Save reports to 'C:\Users\Jon\Documents'
