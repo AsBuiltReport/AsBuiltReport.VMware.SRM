@@ -19,35 +19,36 @@ function Get-AbrSRMProtectedSiteInfo {
     )
 
     begin {
+        Write-PScriboMessage "Protected Site InfoLevel set at $($InfoLevel.Protected)."
         Write-PscriboMessage "Collecting SRM Protected Site information."
     }
 
     process {
         try {
-            $LocalSiteInfo = $SRMServer.ExtensionData.GetLocalSiteInfo()
+            $ProtectedSiteInfo = $SRMServer.ExtensionData.GetLocalSiteInfo()
             Section -Style Heading2 'Protected Site Summary' {
-                Paragraph "In a typical Site Recovery Manager installation, the protected site provides business-critical datacenter services. The protected site can be any site where vCenter Server supports a critical business need. "
+                Paragraph "In a typical Site Recovery Manager installation, the protected site provides business-critical datacenter services. The protected site can be any site where vCenter Server supports a critical business need."
                 BlankLine
-                Paragraph "The following section provides a summary of the Protected Site $($LocalSiteInfo.SiteName)."
+                Paragraph "The following section provides a summary of the Protected Site $($ProtectedSiteInfo.SiteName)."
                 BlankLine
                 $OutObj = @()
-                if ($LocalSiteInfo) {
-                    Write-PscriboMessage "Discovered Protected Site $($LocalSiteInfo.SiteName)."
+                if ($ProtectedSiteInfo) {
+                    Write-PscriboMessage "Discovered Protected Site $($ProtectedSiteInfo.SiteName)."
                     $inObj = [ordered] @{
                         'Server Name' = $SRMServer.Name
-                        'Site Name' = $LocalSiteInfo.SiteName
-                        'Site ID' = $LocalSiteInfo.SiteUuid
+                        'Protected Site Name' = $ProtectedSiteInfo.SiteName
+                        'Protected Site ID' = $ProtectedSiteInfo.SiteUuid
                         'Solution User' = $SRMServer.ExtensionData.GetSolutionUserInfo().Username
                         'SRM Version' = $SRMServer.Version
                         'SRM Build' = $SRMServer.Build
-                        'vCenter URL' = $LocalSiteInfo.VcUrl
-                        'Lookup URL' = $LocalSiteInfo.LkpUrl
+                        'vCenter URL' = $ProtectedSiteInfo.VcUrl
+                        'Lookup URL' = $ProtectedSiteInfo.LkpUrl
                         'Protection Group Count' = ($SRMServer.ExtensionData.Protection.ListProtectionGroups()).count
                     }
                     $OutObj += [pscustomobject]$inobj
                 }
                 $TableParams = @{
-                    Name = "Protected Site Information - $($LocalSiteInfo.SiteName)"
+                    Name = "Protected Site Information - $($ProtectedSiteInfo.SiteName)"
                     List = $true
                     ColumnWidths = 30, 70
                 }
