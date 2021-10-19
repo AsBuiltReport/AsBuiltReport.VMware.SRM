@@ -55,6 +55,9 @@ function Invoke-AsBuiltReport.VMware.SRM {
                 if ($InfoLevel.Recovery -ge 1) {
                     Get-AbrSRMRecoverySiteInfo
                 }
+                if ($InfoLevel.ProtectionGroup -ge 1) {
+                    Get-AbrSRMProtectionGroupInfo
+                }
             }
 
         }
