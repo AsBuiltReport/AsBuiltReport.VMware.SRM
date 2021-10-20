@@ -20,6 +20,12 @@
         "RecoveryPlan": 1
     },
     "HealthCheck": {
+        "Protected": {
+            "Status": true
+        },
+        "Recovery": {
+            "Status": true
+        }
 
     }
 }

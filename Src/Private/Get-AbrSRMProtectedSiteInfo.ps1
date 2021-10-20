@@ -44,9 +44,15 @@ function Get-AbrSRMProtectedSiteInfo {
                         'vCenter URL' = $ProtectedSiteInfo.VcUrl
                         'Lookup URL' = $ProtectedSiteInfo.LkpUrl
                         'Protection Group Count' = ($SRMServer.ExtensionData.Protection.ListProtectionGroups()).count
+                        'Connected' = ConvertTo-TextYN $SRMServer.IsConnected
                     }
                     $OutObj += [pscustomobject]$inobj
                 }
+
+                if ($Healthcheck.Protected.Status) {
+                    $ReplicaObj | Where-Object { $_.'Connected' -eq 'No'} | Set-Style -Style Warning -Property 'Connected'
+                }
+
                 $TableParams = @{
                     Name = "Protected Site Information - $($ProtectedSiteInfo.SiteName)"
                     List = $true
