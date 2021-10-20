@@ -37,14 +37,19 @@ function Get-AbrSRMRecoverySiteInfo {
                     $inObj = [ordered] @{
                         'Recovery Site Name' = $RecoverySiteInfo.Name
                         'Recovery Site ID' = $RecoverySiteInfo.Uuid
-                        'Recovery Site Solution User' = $SRMServer.ExtensionData.GetPairedSiteSolutionUserInfo().Username
-                        'Recovery Site vCenter Host' = $RecoverySiteInfo.VcHost
-                        'Recovery Site vCenter URL' = $RecoverySiteInfo.VcUrl
-                        'Recovery Site Lookup URL' = $RecoverySiteInfo.LkpUrl
-                        'Recovery Site Connected' = ConvertTo-TextYN $RecoverySiteInfo.Connected
+                        'Solution User' = $SRMServer.ExtensionData.GetPairedSiteSolutionUserInfo().Username
+                        'vCenter Host' = $RecoverySiteInfo.VcHost
+                        'vCenter URL' = $RecoverySiteInfo.VcUrl
+                        'Lookup URL' = $RecoverySiteInfo.LkpUrl
+                        'Connected' = ConvertTo-TextYN $RecoverySiteInfo.Connected
                     }
                     $OutObj += [pscustomobject]$inobj
                 }
+
+                if ($Healthcheck.Recovery.Status) {
+                    $ReplicaObj | Where-Object { $_.'Connected' -eq 'No'} | Set-Style -Style Warning -Property 'Connected'
+                }
+
                 $TableParams = @{
                     Name = "Recovery Site Information - $($RecoverySiteInfo.Name)"
                     List = $true
