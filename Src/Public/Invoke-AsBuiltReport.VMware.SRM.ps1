@@ -49,6 +49,9 @@ function Invoke-AsBuiltReport.VMware.SRM {
             Section -Style Heading1 "VMware Site Recovery Manager - $($SRMServer.Name.split(".", 2).toUpper()[0])." {
                 Paragraph "VMware Site Recovery Manager is a business continuity and disaster recovery solution that helps you plan, test, and run the recovery of virtual machines between a protected vCenter Server site and a recovery vCenter Server site. You can use Site Recovery Manager to implement different types of recovery from the protected site to the recovery site."
                 BlankLine
+                if ($InfoLevel.Summary -ge 1) {
+                    Get-AbrSRMSummaryInfo
+                }
                 if ($InfoLevel.Protected -ge 1) {
                     Get-AbrSRMProtectedSiteInfo
                 }
