@@ -34,29 +34,19 @@ function Get-AbrSRMProtectionGroupInfo {
                 $OutObj = @()
                 if ($ProtectionGroups) {
                     foreach ($ProtectionGroup in $ProtectionGroups) {
-                        if ($ProtectionGroup.GetProtectionState() -ne "Shadowing") {
-                            if ($ProtectionGroup.ListProtectedDatastores()) {
-                                $ProtectedDatastores = (Get-View $ProtectionGroup.ListProtectedDatastores().moref | Select-Object Name)
-                            }
-
-                            if ($ProtectionGroup.ListProtectedVMs()) {
-                                $ProtectedVMs = (Get-View $ProtectionGroup.ListProtectedVMs().vm.moref | Select-Object Name)
-                            }
-
-                            if ($ProtectionGroup.ListRecoveryPlans()) {
-                                $RecoveryPlan = $ProtectionGroup.ListRecoveryPlans().getinfo().Name
-                            }
-
-                            $ProtectionGroupInfo = $ProtectionGroup.GetInfo()
-                            Write-PscriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
-                            $inObj = [ordered] @{
-                                'Name' = $ProtectionGroupInfo.Name
-                                'Type' = $ProtectionGroupInfo.Type.ToUpper()
-                                'Protection State' = $ProtectionGroup.GetProtectionState()
-                                'Recovery Plan' = ConvertTo-EmptyToFiller $RecoveryPlan
-                            }
-                            $OutObj += [pscustomobject]$inobj
+                        if ($ProtectionGroup.ListRecoveryPlans()) {
+                            $RecoveryPlan = $ProtectionGroup.ListRecoveryPlans().getinfo().Name
                         }
+
+                        $ProtectionGroupInfo = $ProtectionGroup.GetInfo()
+                        Write-PscriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
+                        $inObj = [ordered] @{
+                            'Name' = $ProtectionGroupInfo.Name
+                            'Type' = $ProtectionGroupInfo.Type.ToUpper()
+                            'Protection State' = $ProtectionGroup.GetProtectionState()
+                            'Recovery Plan' = ConvertTo-EmptyToFiller $RecoveryPlan
+                        }
+                        $OutObj += [pscustomobject]$inobj
                     }
                 }
                 $TableParams = @{
@@ -77,6 +67,8 @@ function Get-AbrSRMProtectionGroupInfo {
                         if ($ProtectionGroups) {
                             foreach ($ProtectionGroup in $ProtectionGroups) {
                                 if ($ProtectionGroup.GetProtectionState() -ne "Shadowing") {
+                                    $ProtectedVMs = $null
+                                    $ProtectedDatastores = $null
                                     if ($ProtectionGroup.ListProtectedDatastores()) {
                                         $ProtectedDatastores = (Get-View $ProtectionGroup.ListProtectedDatastores().moref | Select-Object Name)
                                     }
@@ -93,7 +85,7 @@ function Get-AbrSRMProtectionGroupInfo {
                                         'Type' = $ProtectionGroupInfo.Type.ToUpper()
                                         'Protection State' = $ProtectionGroup.GetProtectionState()
                                         'Protected Datastores' = ($ProtectedDatastores.Name | Sort-Object) -join ', '
-                                        'Protected VMs' = ($ProtectedVMs.Name | Sort-Object) -join ', '
+                                        'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs.Name | Sort-Object) -join ', ')
                                     }
                                     $OutObj += [pscustomobject]$inobj
                                 }
