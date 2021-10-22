@@ -147,19 +147,19 @@ The **Healthcheck** schema is used to toggle health checks on or off.
 
 ## :computer: Examples
 
-There are a few examples listed below on running the AsBuiltReport script against a VMware SRM Server target. Refer to the `README.md` file in the main AsBuiltReport project repository for more examples.
+There are a few examples listed below on running the AsBuiltReport script against a VMware vCenter Server target. Refer to the `README.md` file in the main AsBuiltReport project repository for more examples.
 
 ```powershell
-# Generate a VMware SRM As Built Report for SRM Server '192.168.5.16' using specified credentials. Export report to HTML & DOCX formats. Use default report style. Append timestamp to report filename. Save reports to 'C:\Users\Jon\Documents'
+# Generate a VMware SRM As Built Report for vCenter Server '192.168.5.16' using specified credentials. Export report to HTML & DOCX formats. Use default report style. Append timestamp to report filename. Save reports to 'C:\Users\Jon\Documents'
 PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Username 'administrator@vsphere.local' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -Timestamp
 
-# Generate a VMware SRM As Built Report for SRM Server 192.168.5.16 using specified credentials and report configuration file. Export report to Text, HTML & DOCX formats. Use default report style. Save reports to 'C:\Users\Jon\Documents'. Display verbose messages to the console.
+# Generate a VMware SRM As Built Report for vCenter Server 192.168.5.16 using specified credentials and report configuration file. Export report to Text, HTML & DOCX formats. Use default report style. Save reports to 'C:\Users\Jon\Documents'. Display verbose messages to the console.
 PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Username 'administrator@vsphere.local' -Password 'P@ssw0rd' -Format Text,Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -ReportConfigFilePath 'C:\Users\Jon\AsBuiltReport\AsBuiltReport.VMware.SRM.json' -Verbose
 
-# Generate a VMware SRM As Built Report for SRM Server 192.168.5.16 using stored credentials. Export report to HTML & Text formats. Use default report style. Highlight environment issues within the report. Save reports to 'C:\Users\Jon\Documents'.
+# Generate a VMware SRM As Built Report for vCenter Server 192.168.5.16 using stored credentials. Export report to HTML & Text formats. Use default report style. Highlight environment issues within the report. Save reports to 'C:\Users\Jon\Documents'.
 PS C:\> $Creds = Get-Credential
 PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Credential $Creds -Format Html,Text -OutputFolderPath 'C:\Users\Jon\Documents' -EnableHealthCheck
 
-# Generate a VMware SRM As Built Report for SRM Server 192.168.5.16 using specified credentials. Export report to HTML & DOCX formats. Use default report style. Reports are saved to the user profile folder by default. Attach and send reports via e-mail.
+# Generate a VMware SRM As Built Report for vCenter Server 192.168.5.16 using specified credentials. Export report to HTML & DOCX formats. Use default report style. Reports are saved to the user profile folder by default. Attach and send reports via e-mail.
 PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Username 'administrator@vsphere.local' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -SendEmail
 ```
