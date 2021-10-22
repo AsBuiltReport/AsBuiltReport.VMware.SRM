@@ -39,8 +39,24 @@ function Invoke-AsBuiltReport.VMware.SRM {
     #---------------------------------------------------------------------------------------------#
     foreach ($VIServer in $Target) {
         try {
-            $vCenter = Connect-VIServer $VIServer -Credential $Credential -ErrorAction Stop
-            $SRMServer = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -RemoteCredential $Credential
+            $LocalvCenter = Connect-VIServer $VIServer -Credential $Credential -ErrorAction Stop
+            $SRMServer = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -RemoteCredential $Credential -Server $LocalvCenter
+            $RemotevCenter = Connect-VIServer $SRMServer.ExtensionData.GetPairedSite().vcHost  -Credential $Credential -ErrorAction Stop
+        } catch {
+            Write-Error $_
+        }
+
+        try {
+            $RemotevCenter = Connect-VIServer $SRMServer.ExtensionData.GetPairedSite().vcHost  -Credential $Credential -ErrorAction Stop
+            if ($Null -eq $RemotevCenter) {
+                try {
+                    $RemotevCenter = Connect-VIServer $SRMServer.ExtensionData.GetPairedSite().vcHost  -Credential (Get-Credential) -ErrorAction Stop
+                }
+                catch {
+                    Write-PScriboMessage -IsWarning "Unable to connect to Remote vCenter Server" -ErrorAction Continue
+                    Write-Error $_
+                }
+            }
         } catch {
             Write-Error $_
         }
