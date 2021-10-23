@@ -17,7 +17,8 @@
         "Protected": 1,
         "Recovery": 1,
         "ProtectionGroup": 1,
-        "RecoveryPlan": 1
+        "RecoveryPlan": 1,
+        "InventoryMapping": 1
     },
     "HealthCheck": {
         "Protected": {

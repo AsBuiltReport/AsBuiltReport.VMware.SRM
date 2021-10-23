@@ -1,7 +1,7 @@
-function Get-AbrSRMSummaryInfo {
+function Get-AbrSRMInventoryMapping {
     <#
     .SYNOPSIS
-    Used by As Built Report to retrieve VMware SRM Summary information.
+    Used by As Built Report to retrieve VMware SRM Inventory Mapping Summary information.
     .DESCRIPTION
 
     .NOTES
@@ -19,52 +19,11 @@ function Get-AbrSRMSummaryInfo {
     )
 
     begin {
-        Write-PScriboMessage "Summary InfoLevel set at $($InfoLevel.Summary)."
-        Write-PscriboMessage "Collecting SRM Summary information."
+        Write-PScriboMessage "Inventory Mapping InfoLevel set at $($InfoLevel.InventoryMapping)."
+        Write-PscriboMessage "Collecting SRM Inventory Mapping information."
     }
 
     process {
-        try {
-            $LicenseInfo = $SRMServer.ExtensionData.GetLicenseInfo()
-            Section -Style Heading2 'License Summary' {
-                Paragraph "The following section provides a summary of the License Feature on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
-                BlankLine
-                $OutObj = @()
-                if ($LicenseInfo) {
-                    Write-PscriboMessage "Discovered License information for $($LicenseInfo.ProductName)."
-                    $inObj = [ordered] @{
-                        'Product Name' = $LicenseInfo.ProductName
-                        'Product Edition' = Switch ($LicenseInfo.EditionKey) {
-                            "srm.enterprise.vm" {"Enterprise Edition"}
-                            "srm.standard.vm" {"Standard Edition"}
-                            default {$LicenseInfo.EditionKey}
-                        }
-                        'Product Version' = $LicenseInfo.ProductVersion
-                        'Cost Unit' = Switch ($LicenseInfo.CostUnit) {
-                            "vm" {"Per VM"}
-                            default {$LicenseInfo.CostUnit}
-                        }
-                        'Total Licenses' = $LicenseInfo.Total
-                        'Used Licenses' = $LicenseInfo.Used
-                        'Expiration Date' = $LicenseInfo.ExpiryDate.ToShortDateString()
-                        'Days to expiration' = $LicenseInfo.ExpiryDays
-                    }
-                    $OutObj += [pscustomobject]$inobj
-                }
-                $TableParams = @{
-                    Name = "License Information - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
-                    List = $true
-                    ColumnWidths = 30, 70
-                }
-                if ($Report.ShowTableCaptions) {
-                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                }
-                $OutObj | Table @TableParams
-            }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
-        }
         try {
             $FolderMapping = $SRMServer.ExtensionData.InventoryMapping.GetFolderMappings()
             Section -Style Heading2 'Folder Mapping Summary' {
@@ -103,6 +62,7 @@ function Get-AbrSRMSummaryInfo {
         catch {
             Write-PscriboMessage -IsWarning $_.Exception.Message
         }
+        <#
         try {
             $NetworkMapping = $SRMServer.ExtensionData.InventoryMapping.GetFolderMappings()
             Section -Style Heading2 'Network Mapping Summary' {
@@ -140,7 +100,7 @@ function Get-AbrSRMSummaryInfo {
         }
         catch {
             Write-PscriboMessage -IsWarning $_.Exception.Message
-        }
+        }#>
     }
     end {}
 }
