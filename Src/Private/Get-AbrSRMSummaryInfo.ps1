@@ -26,6 +26,88 @@ function Get-AbrSRMSummaryInfo {
     process {
         try {
             $LicenseInfo = $SRMServer.ExtensionData.GetLicenseInfo()
+            Section -Style Heading2 'vCenter Summary' {
+                Paragraph "VMware vCenter Server is advanced server management software that provides a centralized platform for controlling your VMware vSphere environments, allowing you to automate and deliver a virtual infrastructure across the hybrid cloud with confidence."
+                BlankLine
+                Paragraph "The following section provides a summary of the Connected vCenter on Sites $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)/$($SRMServer.ExtensionData.GetPairedSite().Name)."
+                BlankLine
+                try {
+                    Section -Style Heading3 "$($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName) vCenter Information (Protected Site)" {
+                        Paragraph "The following section provides a summary of the Connected vCenter on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                        BlankLine
+                        $OutObj = @()
+                        if ($LocalvCenter -and $RemotevCenter) {
+                            $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
+                            $LocalPSC = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
+                            $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
+                            $RemotePSC = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
+                            Write-PscriboMessage "Discovered vCenter information for $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                            $LocalObj = [ordered] @{
+                                'Server URL' = "https://$($LocalSitevCenter)/"
+                                'Version' = "$($LocalvCenter.Version).$($LocalvCenter.Build)"
+                                'Host Name' = "$($LocalSitevCenter):443"
+                                'PSC Name' = "$($LocalPSC):443"
+
+                            }
+                            $OutObj += [pscustomobject]$LocalObj
+                        }
+                        $TableParams = @{
+                            Name = "vCenter Information - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
+                            List = $true
+                            ColumnWidths = 40, 60
+                        }
+                        if ($Report.ShowTableCaptions) {
+                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                        }
+                        $OutObj | Table @TableParams
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
+                try {
+                    $RecoverySiteInfo = $SRMServer.ExtensionData.GetPairedSite()
+                    Section -Style Heading3 "$($RecoverySiteInfo.Name) vCenter Information (Recovery Site)" {
+                        Paragraph "The following section provides a summary of the Connected vCenter on Site $($RecoverySiteInfo.Name)."
+                        BlankLine
+                        $OutObj = @()
+                        if ($LocalvCenter -and $RemotevCenter) {
+                            $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
+                            $LocalPSC = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
+                            $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
+                            $RemotePSC = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
+                            Write-PscriboMessage "Discovered vCenter information for $($($RecoverySiteInfo.Name))."
+
+                            $RemoteObj = [ordered] @{
+                                'Server URL' = "https://$($RemoteSitevCenter)/"
+                                'Version' = "$($RemotevCenter.Version).$($RemotevCenter.Build)"
+                                'Host Name' = "$($RemoteSitevCenter):443"
+                                'PSC Name' = "$($RemotePSC):443"
+
+                            }
+                            $OutObj += [pscustomobject]$RemoteObj
+                        }
+                        $TableParams = @{
+                            Name = "vCenter Information - $($($RecoverySiteInfo.Name))"
+                            List = $true
+                            ColumnWidths = 40, 60
+                        }
+                        if ($Report.ShowTableCaptions) {
+                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                        }
+                        $OutObj | Table @TableParams
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
+            }
+        }
+        catch {
+            Write-PscriboMessage -IsWarning $_.Exception.Message
+        }
+        try {
+            $LicenseInfo = $SRMServer.ExtensionData.GetLicenseInfo()
             Section -Style Heading2 'License Summary' {
                 Paragraph "The following section provides a summary of the License Feature on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
@@ -55,82 +137,6 @@ function Get-AbrSRMSummaryInfo {
                     Name = "License Information - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
                     List = $true
                     ColumnWidths = 30, 70
-                }
-                if ($Report.ShowTableCaptions) {
-                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                }
-                $OutObj | Table @TableParams
-            }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
-        }
-        try {
-            $FolderMapping = $SRMServer.ExtensionData.InventoryMapping.GetFolderMappings()
-            Section -Style Heading2 'Folder Mapping Summary' {
-                Paragraph "The following section provides a summary of the Folder Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
-                BlankLine
-                $OutObj = @()
-                $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                if ($FolderMapping) {
-                    $FolderHash = $Null
-                    foreach ($FolderMap in $FolderMapping) {
-                        Write-PscriboMessage "Discovered Folder Mapping information for $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
-                        $LocalFolder = get-view $FolderMap.PrimaryObject | Select-Object -ExpandProperty Name
-                        $RemoteFolder = get-view $FolderMap.SecondaryObject | Select-Object -ExpandProperty Name
-                        $FolderHash = @{
-                            $LocalFolder = $RemoteFolder
-                        }
-                        $inObj = [ordered] @{
-                            "Local Folder" = $FolderHash.Keys
-                            "Remote Folder" = $FolderHash.Values
-                        }
-                        $OutObj += [pscustomobject]$inobj
-                    }
-                }
-                $TableParams = @{
-                    Name = "Folder Mapping - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
-                    List = $false
-                    ColumnWidths = 50, 50
-                }
-                if ($Report.ShowTableCaptions) {
-                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                }
-                $OutObj | Table @TableParams
-            }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
-        }
-        try {
-            $NetworkMapping = $SRMServer.ExtensionData.InventoryMapping.GetFolderMappings()
-            Section -Style Heading2 'Network Mapping Summary' {
-                Paragraph "The following section provides a summary of the Folder Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
-                BlankLine
-                $OutObj = @()
-                $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                if ($FolderMapping) {
-                    $FolderHash = $Null
-                    foreach ($FolderMap in $FolderMapping) {
-                        Write-PscriboMessage "Discovered Folder Mapping information for $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
-                        $LocalFolder = get-view $FolderMap.PrimaryObject | Select-Object -ExpandProperty Name
-                        $RemoteFolder = get-view $FolderMap.SecondaryObject | Select-Object -ExpandProperty Name
-                        $FolderHash = @{
-                            $LocalFolder = $RemoteFolder
-                        }
-                        $inObj = [ordered] @{
-                            "Local Folder" = $FolderHash.Keys
-                            "Remote Folder" = $FolderHash.Values
-                        }
-                        $OutObj += [pscustomobject]$inobj
-                    }
-                }
-                $TableParams = @{
-                    Name = "Folder Mapping - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
-                    List = $false
-                    ColumnWidths = 50, 50
                 }
                 if ($Report.ShowTableCaptions) {
                     $TableParams['Caption'] = "- $($TableParams.Name)"
