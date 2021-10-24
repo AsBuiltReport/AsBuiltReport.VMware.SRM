@@ -63,15 +63,19 @@ function Invoke-AsBuiltReport.VMware.SRM {
 
         if ($SRMServer) {
             Section -Style Heading1 "VMware Site Recovery Manager - $($SRMServer.Name.split(".", 2).toUpper()[0])." {
-                Paragraph "VMware Site Recovery Manager is a business continuity and disaster recovery solution that helps you plan, test, and run the recovery of virtual machines between a protected vCenter Server site and a recovery vCenter Server site. You can use Site Recovery Manager to implement different types of recovery from the protected site to the recovery site."
-                BlankLine
+                if ($Options.ShowDefinitionInfo) {
+                    Paragraph "VMware Site Recovery Manager is a business continuity and disaster recovery solution that helps you plan, test, and run the recovery of virtual machines between a protected vCenter Server site and a recovery vCenter Server site. You can use Site Recovery Manager to implement different types of recovery from the protected site to the recovery site."
+                    BlankLine
+                }
                 if ($InfoLevel.Summary -ge 1) {
                     Get-AbrSRMSummaryInfo
                 }
                 if ($InfoLevel.InventoryMapping -ge 1) {
                     Section -Style Heading2 'Inventory Mapping Summary' {
-                        Paragraph "When you install Site Recovery Manager you have to fo Inventory Mapping from Protected Site to Recovery Site. Inventory mappings provide default objects in the inventory of the recovery site for the recovered virtual machines to use when you run Test/Recovery. Inventory Mappings includes Network Mappings, Folder Mappings, Resource Mappings and Storage Policy Mappings. All of the Mappings are required for proper management and configuration of virtual machine at DR Site."
-                        BlankLine
+                        if ($Options.ShowDefinitionInfo) {
+                            Paragraph "When you install Site Recovery Manager you have to fo Inventory Mapping from Protected Site to Recovery Site. Inventory mappings provide default objects in the inventory of the recovery site for the recovered virtual machines to use when you run Test/Recovery. Inventory Mappings includes Network Mappings, Folder Mappings, Resource Mappings and Storage Policy Mappings. All of the Mappings are required for proper management and configuration of virtual machine at DR Site."
+                            BlankLine
+                        }
                         Paragraph "The following section provides a summary of the Inventory Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
                         BlankLine
                         Get-AbrSRMInventoryMapping

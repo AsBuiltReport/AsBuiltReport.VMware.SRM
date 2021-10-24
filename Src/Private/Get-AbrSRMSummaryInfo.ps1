@@ -26,13 +26,15 @@ function Get-AbrSRMSummaryInfo {
     process {
         try {
             $LicenseInfo = $SRMServer.ExtensionData.GetLicenseInfo()
-            Section -Style Heading2 'vCenter Summary' {
-                Paragraph "VMware vCenter Server is advanced server management software that provides a centralized platform for controlling your VMware vSphere environments, allowing you to automate and deliver a virtual infrastructure across the hybrid cloud with confidence."
-                BlankLine
+            Section -Style Heading2 'vCenter Information' {
+                if ($Options.ShowDefinitionInfo) {
+                    Paragraph "VMware vCenter Server is advanced server management software that provides a centralized platform for controlling your VMware vSphere environments, allowing you to automate and deliver a virtual infrastructure across the hybrid cloud with confidence."
+                    BlankLine
+                }
                 Paragraph "The following section provides a summary of the Connected vCenter on Sites $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)/$($SRMServer.ExtensionData.GetPairedSite().Name)."
                 BlankLine
                 try {
-                    Section -Style Heading3 "$($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName) vCenter Information (Protected Site)" {
+                    Section -Style Heading3 "$($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName) vCenter Information" {
                         Paragraph "The following section provides a summary of the Connected vCenter on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
                         BlankLine
                         $OutObj = @()
@@ -67,7 +69,7 @@ function Get-AbrSRMSummaryInfo {
                 }
                 try {
                     $RecoverySiteInfo = $SRMServer.ExtensionData.GetPairedSite()
-                    Section -Style Heading3 "$($RecoverySiteInfo.Name) vCenter Information (Recovery Site)" {
+                    Section -Style Heading3 "$($RecoverySiteInfo.Name) vCenter Information" {
                         Paragraph "The following section provides a summary of the Connected vCenter on Site $($RecoverySiteInfo.Name)."
                         BlankLine
                         $OutObj = @()
@@ -108,7 +110,7 @@ function Get-AbrSRMSummaryInfo {
         }
         try {
             $LicenseInfo = $SRMServer.ExtensionData.GetLicenseInfo()
-            Section -Style Heading2 'License Summary' {
+            Section -Style Heading2 'Licenses Information' {
                 Paragraph "The following section provides a summary of the License Feature on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()

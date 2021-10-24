@@ -26,9 +26,11 @@ function Get-AbrSRMProtectedSiteInfo {
     process {
         try {
             $ProtectedSiteInfo = $SRMServer.ExtensionData.GetLocalSiteInfo()
-            Section -Style Heading2 'Protected Site Summary' {
-                Paragraph "In a typical Site Recovery Manager installation, the protected site provides business-critical datacenter services. The protected site can be any site where vCenter Server supports a critical business need."
-                BlankLine
+            Section -Style Heading2 'Protected Site' {
+                if ($Options.ShowDefinitionInfo) {
+                    Paragraph "In a typical Site Recovery Manager installation, the protected site provides business-critical datacenter services. The protected site can be any site where vCenter Server supports a critical business need."
+                    BlankLine
+                }
                 Paragraph "The following section provides a summary of the Protected Site $($ProtectedSiteInfo.SiteName)."
                 BlankLine
                 $OutObj = @()

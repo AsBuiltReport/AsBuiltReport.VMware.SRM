@@ -26,7 +26,7 @@ function Get-AbrSRMInventoryMapping {
     process {
         try {
             $Mapping = $SRMServer.ExtensionData.InventoryMapping.GetFolderMappings()
-            Section -Style Heading2 'Folder Mappings Summary' {
+            Section -Style Heading2 'Folder Mappings' {
                 Paragraph "The following section provides a summary of the Folder Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
@@ -64,7 +64,7 @@ function Get-AbrSRMInventoryMapping {
         }
         try {
             $Mapping = $SRMServer.ExtensionData.InventoryMapping.GetNetworkMappings()
-            Section -Style Heading2 'Network Mappings Summary' {
+            Section -Style Heading2 'Network Mappings' {
                 Paragraph "The following section provides a summary of the Network Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
@@ -102,7 +102,7 @@ function Get-AbrSRMInventoryMapping {
         }
         try {
             $Mapping = $SRMServer.ExtensionData.InventoryMapping.GetResourcePoolMappings()
-            Section -Style Heading2 'Resources Mappings Summary' {
+            Section -Style Heading2 'Resources Mappings' {
                 Paragraph "The following section provides a summary of the Resources Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
@@ -140,8 +140,11 @@ function Get-AbrSRMInventoryMapping {
         }
         try {
             $Mapping = $SRMServer.ExtensionData.PlaceholderDatastoreManager.GetPlaceholderDatastores()
-            Section -Style Heading2 'Placeholder Datastore Mappings Summary' {
-                Paragraph 'For each protected virtual machine Site Recovery Manager creates a placeholder virtual machine at the recovery site. Placeholder virtual machines are contained in a datastore and registered with the vCenter Server at the recovery site. This datastore is called the “placeholder datastore”. Since placeholder virtual machines do not have virtual disks they consume a minimal amount of storage'
+            Section -Style Heading2 'Placeholder Datastore Mappings' {
+                if ($Options.ShowDefinitionInfo) {
+                    Paragraph 'For each protected virtual machine Site Recovery Manager creates a placeholder virtual machine at the recovery site. Placeholder virtual machines are contained in a datastore and registered with the vCenter Server at the recovery site. This datastore is called the “placeholder datastore”. Since placeholder virtual machines do not have virtual disks they consume a minimal amount of storage'
+                    BlankLine
+                }
                 Paragraph "The following section provides a summary of the Placeholder Datastore Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
