@@ -21,6 +21,9 @@
         "InventoryMapping": 1
     },
     "HealthCheck": {
+        "InventoryMapping": {
+            "Status": true
+        },
         "Protected": {
             "Status": true
         },
