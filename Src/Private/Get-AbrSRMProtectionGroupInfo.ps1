@@ -70,22 +70,27 @@ function Get-AbrSRMProtectionGroupInfo {
                                     $ProtectedVMs = $null
                                     $ProtectedDatastores = $null
                                     if ($ProtectionGroup.ListProtectedDatastores()) {
-                                        $ProtectedDatastores = (Get-View $ProtectionGroup.ListProtectedDatastores().moref | Select-Object Name)
+                                        $ProtectedDatastores = $ProtectionGroup.ListProtectedDatastores() | Foreach-Object {
+                                            $_.UpdateViewData("name")
+                                            $_.Name
+                                        }
                                     }
 
                                     if ($ProtectionGroup.ListProtectedVMs()) {
-                                        $ProtectedVMs = (Get-View $ProtectionGroup.ListProtectedVMs().vm.moref | Select-Object Name)
+                                        $ProtectedVMs = $ProtectionGroup.ListProtectedVMs() | Foreach-Object {
+                                            $_.Vm.UpdateViewData("name")
+                                            $_.Vm.Name
+                                        }
                                     }
 
                                     $ProtectionGroupInfo = $ProtectionGroup.GetInfo()
-                                    Write-PscriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
                                     $inObj = [ordered] @{
                                         'Name' = $ProtectionGroupInfo.Name
                                         'Description' = ConvertTo-EmptyToFiller $ProtectionGroupInfo.Description
                                         'Type' = $ProtectionGroupInfo.Type.ToUpper()
                                         'Protection State' = $ProtectionGroup.GetProtectionState()
-                                        'Protected Datastores' = ($ProtectedDatastores.Name | Sort-Object) -join ', '
-                                        'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs.Name | Sort-Object) -join ', ')
+                                        'Protected Datastores' = ($ProtectedDatastores | Sort-Object) -join ', '
+                                        'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object) -join ', ')
                                     }
                                     $OutObj += [pscustomobject]$inobj
                                 }
