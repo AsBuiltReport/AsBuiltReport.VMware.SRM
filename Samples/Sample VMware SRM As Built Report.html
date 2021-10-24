@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>VMware SRM As Built Report</title>
+<style type="text/css">
+html { height: 100%; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; background: #e6e6e6; }
+page { background: white; display: block; margin-top: 1rem; margin-left: auto; margin-right: auto; margin-bottom: 1rem; border-style: solid; border-width: 1px; border-color: #c6c6c6; }
+@media print { body, page { margin: 0; box-shadow: 0; } }
+hr { margin-top: 1.0rem; }
+ .portrait { background: white; width: 210mm; display: block; margin-top: 1rem; margin-left: auto; margin-right: auto; margin-bottom: 1rem; position: relative; border-style: solid; border-width: 1px; border-color: #c6c6c6; }
+ .landscape { background: white; width: 297mm; display: block; margin-top: 1rem; margin-left: auto; margin-right: auto; margin-bottom: 1rem; position: relative; border-style: solid; border-width: 1px; border-color: #c6c6c6; }
+ .Normal { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; }
+ .OK { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; background-color: #dff0d0; }
+ .Heading4 { font-family: 'Arial'; font-size: 0.92rem; text-align: left; font-weight: normal; color: #00648f; }
+ .TOC { font-family: 'Arial'; font-size: 1.33rem; text-align: left; font-weight: normal; color: #00364d; }
+ .TableDefaultAltRow { font-family: 'Calibri','Candara','Segoe','Segoe UI','Optima','Arial','Sans-Serif'; font-size: 0.92rem; text-align: left; font-weight: normal; color: #000000; background-color: #d0ddee; }
+ .Heading2 { font-family: 'Arial'; font-size: 1.17rem; text-align: left; font-weight: normal; color: #004b6b; }
+ .Header { font-family: 'Arial'; font-size: 0.83rem; text-align: center; font-weight: normal; color: #565656; }
+ .Title3 { font-family: 'Arial'; font-size: 1.00rem; text-align: center; font-weight: normal; color: #006a91; }
+ .Footer { font-family: 'Arial'; font-size: 0.83rem; text-align: center; font-weight: normal; color: #565656; }
+ .Heading3 { font-family: 'Arial'; font-size: 1.00rem; text-align: left; font-weight: normal; color: #00567a; }
+ .Info { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; background-color: #e3f5fc; }
+ .Warning { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; background-color: #fff4c7; }
+ .Heading6 { font-family: 'Calibri','Candara','Segoe','Segoe UI','Optima','Arial','Sans-Serif'; font-size: 0.92rem; text-align: left; font-weight: normal; color: #1f3763; }
+ .Title { font-family: 'Arial'; font-size: 2.00rem; text-align: center; font-weight: normal; color: #717074; }
+ .TableDefaultRow { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; }
+ .Caption { font-family: 'Arial'; font-size: 0.83rem; text-align: center; font-weight: normal; font-style: italic; color: #565656; }
+ .Heading1 { font-family: 'Arial'; font-size: 1.33rem; text-align: left; font-weight: normal; color: #00364d; }
+ .Critical { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; background-color: #feddd7; }
+ .Title2 { font-family: 'Arial'; font-size: 1.50rem; text-align: center; font-weight: normal; color: #a1a0a4; }
+ .TableDefaultHeading { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #fafafa; background-color: #00364d; }
+ .Heading5 { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #0072a3; }
+ table.borderless { padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+ table.borderless th { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+ table.borderless td { padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+ table.borderless tr:nth-child(odd) { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+ table.borderless tr:nth-child(even) { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+ table.tabledefault { padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #00364d; border-collapse: collapse; }
+ table.tabledefault th { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #fafafa; background-color: #00364d; padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #00364d; border-collapse: collapse; }
+ table.tabledefault td { padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #00364d; border-collapse: collapse; }
+ table.tabledefault tr:nth-child(odd) { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #00364d; border-collapse: collapse; }
+ table.tabledefault tr:nth-child(even) { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #00364d; border-collapse: collapse; }
+</style></head><body>
+<div class="portrait"><div class="Normal" style="padding-top: 5.92rem; padding-left: 5.92rem; padding-bottom: 5.92rem; padding-right: 5.92rem;">
+
+<div style="min-height: 246.89999999999998mm" ><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><div class="Title">VMware SRM As Built Report</div><br /><br /><div class="Title2">Zen PR Solutions</div><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="borderless"><tbody>
+<tr><th>Author:</th><td>Super Duper Consultant</td></tr>
+<tr><th>Date:</th><td>Sunday, October 24, 2021</td></tr>
+<tr><th>Version:</th><td>1.0</td></tr>
+</tbody></table>
+<br /></div>
+</div></div></div><div class="portrait"><div class="Normal" style="padding-top: 5.92rem; padding-left: 5.92rem; padding-bottom: 5.92rem; padding-right: 5.92rem;">
+<div style="min-height: 246.89999999999998mm" ><div><div class="Header">VMware SRM As Built Report - v1.0</div><br /></div><h1 class="TOC">Table of Contents</h1><table>
+<tr><td>1</td><td><a href="#ec45c9b7-66b1-4ccb-9d2a-cd88f00c9183" style="text-decoration: none;">VMware Site Recovery Manager - SRMHQ-01V.</a></td></tr>
+<tr><td>1.1</td><td>&nbsp;&nbsp;&nbsp;<a href="#4b6c8a7c-9c31-4fb7-8037-1cb4efbb0a78" style="text-decoration: none;">vCenter Summary</a></td></tr>
+<tr><td>1.1.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#00532b8c-6f72-40cc-a176-bc0554e90074" style="text-decoration: none;">SRM-HQ vCenter Information (Protected Site)</a></td></tr>
+<tr><td>1.1.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#f7adfb9d-cc83-46cb-9441-d30295171027" style="text-decoration: none;">SRM-DR vCenter Information (Recovery Site)</a></td></tr>
+<tr><td>1.2</td><td>&nbsp;&nbsp;&nbsp;<a href="#817043bb-198b-4e1c-a7e4-938d2864e16e" style="text-decoration: none;">License Summary</a></td></tr>
+<tr><td>1.3</td><td>&nbsp;&nbsp;&nbsp;<a href="#b2216367-8c3d-48e9-b129-e956b253902f" style="text-decoration: none;">Inventory Mapping Summary</a></td></tr>
+<tr><td>1.3.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#9efa576f-c37d-4400-9793-b0ae1dff4518" style="text-decoration: none;">Folder Mappings Summary</a></td></tr>
+<tr><td>1.3.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#47f3c9ef-9243-4771-a632-56594a4522d0" style="text-decoration: none;">Network Mappings Summary</a></td></tr>
+<tr><td>1.3.3</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#79cd7989-91be-478b-b39a-de8c13fd3b2b" style="text-decoration: none;">Resources Mappings Summary</a></td></tr>
+<tr><td>1.3.4</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#bc2b1639-453f-4141-a01d-f16a65c83286" style="text-decoration: none;">Placeholder Datastore Mappings Summary</a></td></tr>
+<tr><td>1.4</td><td>&nbsp;&nbsp;&nbsp;<a href="#611ae536-1aa3-4226-8d54-09dc1026f120" style="text-decoration: none;">Protected Site Summary</a></td></tr>
+<tr><td>1.5</td><td>&nbsp;&nbsp;&nbsp;<a href="#a7024941-9f3b-4c1b-9da9-65a2b630f415" style="text-decoration: none;">Recovery Site Summary</a></td></tr>
+<tr><td>1.6</td><td>&nbsp;&nbsp;&nbsp;<a href="#5ce01973-c5e5-4e97-8a7a-144a944638d2" style="text-decoration: none;">Protection Groups Summary</a></td></tr>
+<tr><td>1.6.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#7919dc02-5706-4574-bf46-ffede7c8aa63" style="text-decoration: none;">Protection Groups Detailed Information</a></td></tr>
+</table>
+</div><div><br /><div class="Footer">Page 2</div></div></div></div><div class="portrait"><div class="Normal" style="padding-top: 5.92rem; padding-left: 5.92rem; padding-bottom: 5.92rem; padding-right: 5.92rem;">
+<div style="min-height: 246.89999999999998mm" ><div><div class="Header">VMware SRM As Built Report - v1.0</div><br /></div><a name="ec45c9b7-66b1-4ccb-9d2a-cd88f00c9183"><h1 class="Heading1">1 VMware Site Recovery Manager - SRMHQ-01V.</h1></a><div>VMware Site Recovery Manager is a business continuity and disaster recovery solution that helps you plan, test, and run the recovery of virtual machines between a protected vCenter Server site and a recovery vCenter Server site. You can use Site Recovery Manager to implement different types of recovery from the protected site to the recovery site.</div><br /><a name="4b6c8a7c-9c31-4fb7-8037-1cb4efbb0a78"><h2 class="Heading2">1.1 vCenter Summary</h2></a><div>VMware vCenter Server is advanced server management software that provides a centralized platform for controlling your VMware vSphere environments, allowing you to automate and deliver a virtual infrastructure across the hybrid cloud with confidence.</div><br /><div>The following section provides a summary of the Connected vCenter on Sites SRM-HQ/SRM-DR.</div><br /><a name="00532b8c-6f72-40cc-a176-bc0554e90074"><h3 class="Heading3">1.1.1 SRM-HQ vCenter Information (Protected Site)</h3></a><div>The following section provides a summary of the Connected vCenter on Site SRM-HQ.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Server URL</th><td>https://vcenter-01v.zenpr.local/</td></tr>
+<tr><th>Version</th><td>7.0.2.18356314</td></tr>
+<tr><th>Host Name</th><td>vcenter-01v.zenpr.local:443</td></tr>
+<tr><th>PSC Name</th><td>vcenter-01v.zenpr.local:443</td></tr>
+</tbody></table>
+<div class="Caption">Table 1 - vCenter Information - SRM-HQ</div><br /></div>
+<a name="f7adfb9d-cc83-46cb-9441-d30295171027"><h3 class="Heading3">1.1.2 SRM-DR vCenter Information (Recovery Site)</h3></a><div>The following section provides a summary of the Connected vCenter on Site SRM-DR.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Server URL</th><td>https://vcenter-02v.zenpr.local/</td></tr>
+<tr><th>Version</th><td>7.0.2.18356314</td></tr>
+<tr><th>Host Name</th><td>vcenter-02v.zenpr.local:443</td></tr>
+<tr><th>PSC Name</th><td>vcenter-02v.zenpr.local:443</td></tr>
+</tbody></table>
+<div class="Caption">Table 2 - vCenter Information - SRM-DR</div><br /></div>
+<a name="817043bb-198b-4e1c-a7e4-938d2864e16e"><h2 class="Heading2">1.2 License Summary</h2></a><div>The following section provides a summary of the License Feature on Site SRM-HQ.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:70%; min-width:70%; width:70%" /></colgroup>
+<tbody>
+<tr><th>Product Name</th><td>VMware vCenter Site Recovery Manager</td></tr>
+<tr><th>Product Edition</th><td>Enterprise Edition</td></tr>
+<tr><th>Product Version</th><td>8.1</td></tr>
+<tr><th>Cost Unit</th><td>Per VM</td></tr>
+<tr><th>Total Licenses</th><td>25</td></tr>
+<tr><th>Used Licenses</th><td>4</td></tr>
+<tr><th>Expiration Date</th><td>3/31/2022</td></tr>
+<tr><th>Days to expiration</th><td>158</td></tr>
+</tbody></table>
+<div class="Caption">Table 3 - License Information - SRM-HQ</div><br /></div>
+<a name="b2216367-8c3d-48e9-b129-e956b253902f"><h2 class="Heading2">1.3 Inventory Mapping Summary</h2></a><div>When you install Site Recovery Manager you have to fo Inventory Mapping from Protected Site to Recovery Site. Inventory mappings provide default objects in the inventory of the recovery site for the recovered virtual machines to use when you run Test/Recovery. Inventory Mappings includes Network Mappings, Folder Mappings, Resource Mappings and Storage Policy Mappings. All of the Mappings are required for proper management and configuration of virtual machine at DR Site.</div><br /><div>The following section provides a summary of the Inventory Mapping on Site SRM-HQ.</div><br /><a name="9efa576f-c37d-4400-9793-b0ae1dff4518"><h3 class="Heading2">1.3.1 Folder Mappings Summary</h3></a><div>The following section provides a summary of the Folder Mapping on Site SRM-HQ.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:50%; min-width:50%; width:50%" /><col style="max-width:50%; min-width:50%; width:50%" /></colgroup>
+<thead><tr><th>Local Folder</th><th>Remote Folder</th></tr></thead><tbody>
+<tr><td>CCNP Lab</td><td>CCNP Lab - DR</td></tr>
+<tr><td>ZENPR-HQ-SVR</td><td>Zenpr-DR</td></tr>
+</tbody></table>
+<div class="Caption">Table 4 - Folder Mappings - SRM-HQ</div><br /></div>
+<a name="47f3c9ef-9243-4771-a632-56594a4522d0"><h3 class="Heading2">1.3.2 Network Mappings Summary</h3></a><div>The following section provides a summary of the Network Mapping on Site SRM-HQ.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:50%; min-width:50%; width:50%" /><col style="max-width:50%; min-width:50%; width:50%" /></colgroup>
+<thead><tr><th>Local Network</th><th>Remote Network</th></tr></thead><tbody>
+<tr><td>DVS-VM-NETWORK</td><td>DVS-VM-NETWORK-DR</td></tr>
+<tr><td>DVS-ISCSIB-LAB</td><td>ESXi-ISCSI-BLOCK-B-DR</td></tr>
+<tr><td>DVS-ISCSIA-LAB</td><td>ESXi-ISCSI-BLOCK-A-DR</td></tr>
+</tbody></table>
+<div class="Caption">Table 5 - Network Mappings - SRM-HQ</div><br /></div>
+<a name="79cd7989-91be-478b-b39a-de8c13fd3b2b"><h3 class="Heading2">1.3.3 Resources Mappings Summary</h3></a><div>The following section provides a summary of the Resources Mapping on Site SRM-HQ.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:50%; min-width:50%; width:50%" /><col style="max-width:50%; min-width:50%; width:50%" /></colgroup>
+<thead><tr><th>Local Resource</th><th>Remote Resource</th></tr></thead><tbody>
+<tr><td>Resources</td><td>Resources</td></tr>
+<tr><td>ZENPR-HQ-SVR</td><td>ZENPR-DR-SVR</td></tr>
+<tr><td>ZENPR-HQ-DB</td><td>ZENPR-DR-DB</td></tr>
+</tbody></table>
+<div class="Caption">Table 6 - Resources Mappings - SRM-HQ</div><br /></div>
+<a name="bc2b1639-453f-4141-a01d-f16a65c83286"><h3 class="Heading2">1.3.4 Placeholder Datastore Mappings Summary</h3></a><div>For each protected virtual machine Site Recovery Manager creates a placeholder virtual machine at the recovery site. Placeholder virtual machines are contained in a datastore and registered with the vCenter Server at the recovery site. This datastore is called the “placeholder datastore”. Since placeholder virtual machines do not have virtual disks they consume a minimal amount of storage</div><div>The following section provides a summary of the Placeholder Datastore Mapping on Site SRM-HQ.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:50%; min-width:50%; width:50%" /><col style="max-width:50%; min-width:50%; width:50%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>SRM_PLACEHOLDER_01</td></tr>
+<tr><th>Datastore Type</th><td>VMFS</td></tr>
+<tr><th>Capacity</th><td>14.75 GB</td></tr>
+<tr><th>Free Space</th><td>13.34 GB</td></tr>
+<tr><th>Reserved Space</th><td>0 GB</td></tr>
+<tr><th>Location</th><td>RegionA01-COMP</td></tr>
+<tr><th>Fault</th><td>-</td></tr>
+<tr><th>Status</th><td>Ok</td></tr>
+</tbody></table>
+<div class="Caption">Table 7 - Placeholder Datastore Mappings - SRM-HQ</div><br /></div>
+<a name="611ae536-1aa3-4226-8d54-09dc1026f120"><h2 class="Heading2">1.4 Protected Site Summary</h2></a><div>In a typical Site Recovery Manager installation, the protected site provides business-critical datacenter services. The protected site can be any site where vCenter Server supports a critical business need.</div><br /><div>The following section provides a summary of the Protected Site SRM-HQ.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:70%; min-width:70%; width:70%" /></colgroup>
+<tbody>
+<tr><th>Server Name</th><td>srmhq-01v.zenpr.local</td></tr>
+<tr><th>Protected Site Name</th><td>SRM-HQ</td></tr>
+<tr><th>Protected Site ID</th><td>1f0ace6c-8d17-448d-bf86-dc15cb3f069d</td></tr>
+<tr><th>Solution User</th><td>SRM-1f0ace6c-8d17-448d-bf86-dc15cb3f069d</td></tr>
+<tr><th>SRM Version</th><td>8.4.0</td></tr>
+<tr><th>SRM Build</th><td>18048862</td></tr>
+<tr><th>vCenter URL</th><td>https://vcenter-01v.zenpr.local:443/sdk</td></tr>
+<tr><th>Lookup URL</th><td>https://vcenter-01v.zenpr.local:443/lookupservice/sdk</td></tr>
+<tr><th>Protection Group Count</th><td>2</td></tr>
+<tr><th>Connected</th><td>Yes</td></tr>
+</tbody></table>
+<div class="Caption">Table 8 - Protected Site Information - SRM-HQ</div><br /></div>
+<a name="a7024941-9f3b-4c1b-9da9-65a2b630f415"><h2 class="Heading2">1.5 Recovery Site Summary</h2></a><div>In a typical Site Recovery Manager installation, the recovery site is an alternative infrastructure to which Site Recovery Manager can migrate services. The recovery site can be located thousands of miles away from the protected site. Conversely, the recovery site can be in the same room as a way of establishing redundancy. The recovery site is usually located in a facility that is unlikely to be affected by environmental, infrastructure, or other disturbances that affect the protected site.</div><br /><div>The following section provides a summary of the Recovery Site SRM-DR.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:70%; min-width:70%; width:70%" /></colgroup>
+<tbody>
+<tr><th>Recovery Site Name</th><td>SRM-DR</td></tr>
+<tr><th>Recovery Site ID</th><td>3f6da5c3-de6e-44d8-bff5-bc21c734eccc</td></tr>
+<tr><th>Solution User</th><td>SRM-1f0ace6c-8d17-448d-bf86-dc15cb3f069d</td></tr>
+<tr><th>vCenter Host</th><td>vcenter-02v.zenpr.local</td></tr>
+<tr><th>vCenter URL</th><td>https://vcenter-02v.zenpr.local:443/sdk</td></tr>
+<tr><th>Lookup URL</th><td>https://vcenter-02v.zenpr.local:443/lookupservice/sdk</td></tr>
+<tr><th>Connected</th><td>Yes</td></tr>
+</tbody></table>
+<div class="Caption">Table 9 - Recovery Site Information - SRM-DR</div><br /></div>
+<a name="5ce01973-c5e5-4e97-8a7a-144a944638d2"><h2 class="Heading3">1.6 Protection Groups Summary</h2></a><div>In Site Recovery Manager, protection groups are a way of grouping VMs that will be recovered together. A protection group contains VMs whose data has been replicated by either array-based replication (ABR) or vSphere replication (VR). A protection group cannot contain VMs replicated by more than one replication solution and, a VM can only belong to a single protection group.</div><br /><div>The following section provides a summary of the Protection Group configured under SRMHQ-01V.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:35%; min-width:35%; width:35%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:35%; min-width:35%; width:35%" /></colgroup>
+<thead><tr><th>Name</th><th>Type</th><th>Protection State</th><th>Recovery Plan</th></tr></thead><tbody>
+<tr><td>ZENPR-HQ-HR-PG</td><td>SAN</td><td>Ready</td><td>ZENPR-HQ-HR-RP</td></tr>
+<tr><td>ZENPR-HQ-SVR-PG</td><td>SAN</td><td>Ready</td><td>ZENPR-HQ-SVR-RP</td></tr>
+</tbody></table>
+<div class="Caption">Table 10 - Protection Group Information - ZENPR-HQ-SVR-PG</div><br /></div>
+<a name="7919dc02-5706-4574-bf46-ffede7c8aa63"><h3 class="Heading4">1.6.1 Protection Groups Detailed Information</h3></a><div>The following section provides detailed Protection Group informattion on SRM-HQ .</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:70%; min-width:70%; width:70%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>ZENPR-HQ-HR-PG</td></tr>
+<tr><th>Description</th><td>-</td></tr>
+<tr><th>Type</th><td>SAN</td></tr>
+<tr><th>Protection State</th><td>Ready</td></tr>
+<tr><th>Protected Datastores</th><td>SRM_LAB_STORAGE_02</td></tr>
+<tr><th>Protected VMs</th><td>Linux-WEB-01V</td></tr>
+</tbody></table>
+<br /></div>
+<div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:70%; min-width:70%; width:70%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>ZENPR-HQ-SVR-PG</td></tr>
+<tr><th>Description</th><td>Protection Group used to protect Zenpr Servers</td></tr>
+<tr><th>Type</th><td>SAN</td></tr>
+<tr><th>Protection State</th><td>Ready</td></tr>
+<tr><th>Protected Datastores</th><td>SRM_LAB_STORAGE_01</td></tr>
+<tr><th>Protected VMs</th><td>Linux-DB-01V, Linux-DB-02V</td></tr>
+</tbody></table>
+<br /></div>
+</div>
+<div><br /><div class="Footer">Page 3</div></div></div></div></body>
