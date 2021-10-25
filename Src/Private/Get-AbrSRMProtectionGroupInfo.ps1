@@ -25,13 +25,13 @@ function Get-AbrSRMProtectionGroupInfo {
 
     process {
         try {
-            $ProtectionGroups = $SRMServer.ExtensionData.Protection.ListProtectionGroups()
+            $ProtectionGroups = $LocalSRM.ExtensionData.Protection.ListProtectionGroups()
             Section -Style Heading3 'Protection Groups Summary' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "In Site Recovery Manager, protection groups are a way of grouping VMs that will be recovered together. A protection group contains VMs whose data has been replicated by either array-based replication (ABR) or vSphere replication (VR). A protection group cannot contain VMs replicated by more than one replication solution and, a VM can only belong to a single protection group."
                     BlankLine
                 }
-                Paragraph "The following section provides a summary of the Protection Group configured under $($SRMServer.Name.split(".", 2).toUpper()[0])."
+                Paragraph "The following section provides a summary of the Protection Group configured under $($LocalSRM.Name.split(".", 2).toUpper()[0])."
                 BlankLine
                 $OutObj = @()
                 if ($ProtectionGroups) {
@@ -62,41 +62,34 @@ function Get-AbrSRMProtectionGroupInfo {
                 $OutObj | Table @TableParams
                 try {
                     Section -Style Heading4 "Protection Groups" {
-                        Paragraph "The following section provides detailed Protection Group informattion on $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName) ."
+                        Paragraph "The following section provides detailed Protection Group informattion on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName) ."
                         BlankLine
-                        $ProtectionGroups = $SRMServer.ExtensionData.Protection.ListProtectionGroups()
+                        $ProtectionGroups = $LocalSRM.ExtensionData.Protection.ListProtectionGroups()
                         $OutObj = @()
                         if ($ProtectionGroups) {
                             foreach ($ProtectionGroup in $ProtectionGroups) {
-                                if ($ProtectionGroup.GetProtectionState() -ne "Shadowing") {
-                                    $ProtectedVMs = $null
-                                    $ProtectedDatastores = $null
-                                    if ($ProtectionGroup.ListProtectedDatastores()) {
-                                        $ProtectedDatastores = $ProtectionGroup.ListProtectedDatastores() | Foreach-Object {
-                                            $_.UpdateViewData("name")
-                                            $_.Name
-                                        }
-                                    }
-
-                                    if ($ProtectionGroup.ListProtectedVMs()) {
-                                        $ProtectedVMs = $ProtectionGroup.ListProtectedVMs() | Foreach-Object {
-                                            $_.Vm.UpdateViewData("name")
-                                            $_.Vm.Name
-                                        }
-                                    }
-
-                                    $ProtectionGroupInfo = $ProtectionGroup.GetInfo()
-                                    $inObj = [ordered] @{
-                                        'Name' = $ProtectionGroupInfo.Name
-                                        'Description' = ConvertTo-EmptyToFiller $ProtectionGroupInfo.Description
-                                        'Type' = $ProtectionGroupInfo.Type.ToUpper()
-                                        'Protection State' = $ProtectionGroup.GetProtectionState()
-                                        'Protected Datastores' = ($ProtectedDatastores | Sort-Object) -join ', '
-                                        'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object) -join ', ')
-                                    }
-                                    $OutObj += [pscustomobject]$inobj
+                                $ProtectedVMs = $null
+                                $ProtectedDatastores = $null
+                                if ($ProtectionGroup.ListProtectedDatastores()) {
+                                    $ProtectedDatastores = get-view $ProtectionGroup.ListProtectedDatastores().MoRef | Select-Object -ExpandProperty name
                                 }
+
+                                if ($ProtectionGroup.ListProtectedVMs()) {
+                                    $ProtectedVMs = get-view $ProtectionGroup.ListProtectedVMs().vm.MoRef | Select-Object -ExpandProperty name
+                                }
+
+                                $ProtectionGroupInfo = $ProtectionGroup.GetInfo()
+                                $inObj = [ordered] @{
+                                    'Name' = $ProtectionGroupInfo.Name
+                                    'Description' = ConvertTo-EmptyToFiller $ProtectionGroupInfo.Description
+                                    'Type' = $ProtectionGroupInfo.Type.ToUpper()
+                                    'Protection State' = $ProtectionGroup.GetProtectionState()
+                                    'Protected Datastores' = ConvertTo-EmptyToFiller (($ProtectedDatastores | Sort-Object) -join ', ')
+                                    'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object) -join ', ')
+                                }
+                                $OutObj += [pscustomobject]$inobj
                             }
+
                             $TableParams = @{
                                 Name = "Protection Group Information - $($ProtectionGroupInfo.Name)"
                                 List = $true

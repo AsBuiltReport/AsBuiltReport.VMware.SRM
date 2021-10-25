@@ -25,7 +25,7 @@ function Get-AbrSRMProtectedSiteInfo {
 
     process {
         try {
-            $ProtectedSiteInfo = $SRMServer.ExtensionData.GetLocalSiteInfo()
+            $ProtectedSiteInfo = $LocalSRM.ExtensionData.GetLocalSiteInfo()
             Section -Style Heading2 'Protected Site' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "In a typical Site Recovery Manager installation, the protected site provides business-critical datacenter services. The protected site can be any site where vCenter Server supports a critical business need."
@@ -37,16 +37,16 @@ function Get-AbrSRMProtectedSiteInfo {
                 if ($ProtectedSiteInfo) {
                     Write-PscriboMessage "Discovered Protected Site $($ProtectedSiteInfo.SiteName)."
                     $inObj = [ordered] @{
-                        'Server Name' = $SRMServer.Name
+                        'Server Name' = $LocalSRM.Name
                         'Protected Site Name' = $ProtectedSiteInfo.SiteName
                         'Protected Site ID' = $ProtectedSiteInfo.SiteUuid
-                        'Solution User' = $SRMServer.ExtensionData.GetSolutionUserInfo().Username
-                        'SRM Version' = $SRMServer.Version
-                        'SRM Build' = $SRMServer.Build
+                        'Solution User' = $LocalSRM.ExtensionData.GetSolutionUserInfo().Username
+                        'SRM Version' = $LocalSRM.Version
+                        'SRM Build' = $LocalSRM.Build
                         'vCenter URL' = $ProtectedSiteInfo.VcUrl
                         'Lookup URL' = $ProtectedSiteInfo.LkpUrl
-                        'Protection Group Count' = ($SRMServer.ExtensionData.Protection.ListProtectionGroups()).count
-                        'Connected' = ConvertTo-TextYN $SRMServer.IsConnected
+                        'Protection Group Count' = ($LocalSRM.ExtensionData.Protection.ListProtectionGroups()).count
+                        'Connected' = ConvertTo-TextYN $LocalSRM.IsConnected
                     }
                     $OutObj += [pscustomobject]$inobj
                 }

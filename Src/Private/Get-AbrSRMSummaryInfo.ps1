@@ -25,17 +25,17 @@ function Get-AbrSRMSummaryInfo {
 
     process {
         try {
-            $LicenseInfo = $SRMServer.ExtensionData.GetLicenseInfo()
+            $LicenseInfo = $LocalSRM.ExtensionData.GetLicenseInfo()
             Section -Style Heading2 'vCenter Information' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "VMware vCenter Server is advanced server management software that provides a centralized platform for controlling your VMware vSphere environments, allowing you to automate and deliver a virtual infrastructure across the hybrid cloud with confidence."
                     BlankLine
                 }
-                Paragraph "The following section provides a summary of the Connected vCenter on Sites $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)/$($SRMServer.ExtensionData.GetPairedSite().Name)."
+                Paragraph "The following section provides a summary of the Connected vCenter on Sites $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)/$($LocalSRM.ExtensionData.GetPairedSite().Name)."
                 BlankLine
                 try {
-                    Section -Style Heading3 "$($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName) vCenter Information" {
-                        Paragraph "The following section provides a summary of the Connected vCenter on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                    Section -Style Heading3 "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName) vCenter Information" {
+                        Paragraph "The following section provides a summary of the Connected vCenter on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                         BlankLine
                         $OutObj = @()
                         if ($LocalvCenter -and $RemotevCenter) {
@@ -43,7 +43,7 @@ function Get-AbrSRMSummaryInfo {
                             $LocalPSC = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
                             $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
                             $RemotePSC = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
-                            Write-PscriboMessage "Discovered vCenter information for $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                            Write-PscriboMessage "Discovered vCenter information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                             $LocalObj = [ordered] @{
                                 'Server URL' = "https://$($LocalSitevCenter)/"
                                 'Version' = "$($LocalvCenter.Version).$($LocalvCenter.Build)"
@@ -54,7 +54,7 @@ function Get-AbrSRMSummaryInfo {
                             $OutObj += [pscustomobject]$LocalObj
                         }
                         $TableParams = @{
-                            Name = "vCenter Information - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
+                            Name = "vCenter Information - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
                             List = $true
                             ColumnWidths = 40, 60
                         }
@@ -68,7 +68,7 @@ function Get-AbrSRMSummaryInfo {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
                 try {
-                    $RecoverySiteInfo = $SRMServer.ExtensionData.GetPairedSite()
+                    $RecoverySiteInfo = $LocalSRM.ExtensionData.GetPairedSite()
                     Section -Style Heading3 "$($RecoverySiteInfo.Name) vCenter Information" {
                         Paragraph "The following section provides a summary of the Connected vCenter on Site $($RecoverySiteInfo.Name)."
                         BlankLine
@@ -109,9 +109,9 @@ function Get-AbrSRMSummaryInfo {
             Write-PscriboMessage -IsWarning $_.Exception.Message
         }
         try {
-            $LicenseInfo = $SRMServer.ExtensionData.GetLicenseInfo()
+            $LicenseInfo = $LocalSRM.ExtensionData.GetLicenseInfo()
             Section -Style Heading2 'Licenses Information' {
-                Paragraph "The following section provides a summary of the License Feature on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                Paragraph "The following section provides a summary of the License Feature on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
                 if ($LicenseInfo) {
@@ -136,7 +136,7 @@ function Get-AbrSRMSummaryInfo {
                     $OutObj += [pscustomobject]$inobj
                 }
                 $TableParams = @{
-                    Name = "License Information - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
+                    Name = "License Information - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
                     List = $true
                     ColumnWidths = 30, 70
                 }

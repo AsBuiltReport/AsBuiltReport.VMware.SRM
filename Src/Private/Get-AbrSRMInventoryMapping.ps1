@@ -25,9 +25,9 @@ function Get-AbrSRMInventoryMapping {
 
     process {
         try {
-            $Mapping = $SRMServer.ExtensionData.InventoryMapping.GetFolderMappings()
+            $Mapping = $LocalSRM.ExtensionData.InventoryMapping.GetFolderMappings()
             Section -Style Heading2 'Folder Mappings' {
-                Paragraph "The following section provides a summary of the Folder Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                Paragraph "The following section provides a summary of the Folder Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
                 $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
@@ -35,7 +35,7 @@ function Get-AbrSRMInventoryMapping {
                 if ($Mapping) {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
-                        Write-PscriboMessage "Discovered Folder Mapping information for $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                        Write-PscriboMessage "Discovered Folder Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                         $LocalObj = get-view $ObjMap.PrimaryObject | Select-Object -ExpandProperty Name
                         $RemoteObj = get-view $ObjMap.SecondaryObject | Select-Object -ExpandProperty Name
                         $HashObj = @{
@@ -49,7 +49,7 @@ function Get-AbrSRMInventoryMapping {
                     }
                 }
                 $TableParams = @{
-                    Name = "Folder Mappings - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
+                    Name = "Folder Mappings - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
                     List = $false
                     ColumnWidths = 50, 50
                 }
@@ -63,9 +63,9 @@ function Get-AbrSRMInventoryMapping {
             Write-PscriboMessage -IsWarning $_.Exception.Message
         }
         try {
-            $Mapping = $SRMServer.ExtensionData.InventoryMapping.GetNetworkMappings()
+            $Mapping = $LocalSRM.ExtensionData.InventoryMapping.GetNetworkMappings()
             Section -Style Heading2 'Network Mappings' {
-                Paragraph "The following section provides a summary of the Network Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                Paragraph "The following section provides a summary of the Network Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
                 $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
@@ -73,7 +73,7 @@ function Get-AbrSRMInventoryMapping {
                 if ($Mapping) {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
-                        Write-PscriboMessage "Discovered Network Mapping information for $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                        Write-PscriboMessage "Discovered Network Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                         $LocalObj = get-view $ObjMap.PrimaryObject | Select-Object -ExpandProperty Name
                         $RemoteObj = get-view $ObjMap.SecondaryObject | Select-Object -ExpandProperty Name
                         $HashObj = @{
@@ -87,7 +87,7 @@ function Get-AbrSRMInventoryMapping {
                     }
                 }
                 $TableParams = @{
-                    Name = "Network Mappings - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
+                    Name = "Network Mappings - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
                     List = $false
                     ColumnWidths = 50, 50
                 }
@@ -101,9 +101,9 @@ function Get-AbrSRMInventoryMapping {
             Write-PscriboMessage -IsWarning $_.Exception.Message
         }
         try {
-            $Mapping = $SRMServer.ExtensionData.InventoryMapping.GetResourcePoolMappings()
+            $Mapping = $LocalSRM.ExtensionData.InventoryMapping.GetResourcePoolMappings()
             Section -Style Heading2 'Resources Mappings' {
-                Paragraph "The following section provides a summary of the Resources Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                Paragraph "The following section provides a summary of the Resources Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
                 $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
@@ -111,7 +111,7 @@ function Get-AbrSRMInventoryMapping {
                 if ($Mapping) {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
-                        Write-PscriboMessage "Discovered Resources Mapping information for $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                        Write-PscriboMessage "Discovered Resources Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                         $LocalObj = get-view $ObjMap.PrimaryObject | Select-Object -ExpandProperty Name
                         $RemoteObj = get-view $ObjMap.SecondaryObject | Select-Object -ExpandProperty Name
                         $HashObj = @{
@@ -125,7 +125,7 @@ function Get-AbrSRMInventoryMapping {
                     }
                 }
                 $TableParams = @{
-                    Name = "Resources Mappings - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
+                    Name = "Resources Mappings - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
                     List = $false
                     ColumnWidths = 50, 50
                 }
@@ -139,13 +139,13 @@ function Get-AbrSRMInventoryMapping {
             Write-PscriboMessage -IsWarning $_.Exception.Message
         }
         try {
-            $Mapping = $SRMServer.ExtensionData.PlaceholderDatastoreManager.GetPlaceholderDatastores()
+            $Mapping = $LocalSRM.ExtensionData.PlaceholderDatastoreManager.GetPlaceholderDatastores()
             Section -Style Heading2 'Placeholder Datastore Mappings' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph 'For each protected virtual machine Site Recovery Manager creates a placeholder virtual machine at the recovery site. Placeholder virtual machines are contained in a datastore and registered with the vCenter Server at the recovery site. This datastore is called the “placeholder datastore”. Since placeholder virtual machines do not have virtual disks they consume a minimal amount of storage'
                     BlankLine
                 }
-                Paragraph "The following section provides a summary of the Placeholder Datastore Mapping on Site $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                Paragraph "The following section provides a summary of the Placeholder Datastore Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
                 $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
@@ -153,7 +153,7 @@ function Get-AbrSRMInventoryMapping {
                 if ($Mapping) {
                     foreach ($ObjMap in $Mapping) {
                         #//Todo "How the fuck i can extract remote PlaceHolder Datastore Info"
-                        Write-PscriboMessage "Discovered Placeholder Datastore Mapping information for $($ObjMap.Name) on $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)."
+                        Write-PscriboMessage "Discovered Placeholder Datastore Mapping information for $($ObjMap.Name) on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                         $inObj = [ordered] @{
                             "Name" = $ObjMap.Name
                             "Datastore Type" = $ObjMap.Type
@@ -163,7 +163,7 @@ function Get-AbrSRMInventoryMapping {
                             "Location" = get-view $ObjMap.VisibleTo.key | Select-Object -ExpandProperty Name
                             "Fault" = ConvertTo-EmptyToFiller $ObjMap.Fault
                             "Status" = SWitch ($ObjMap.Status) {
-                                "green" {"Ok"}
+                                "green" {"OK"}
                                 "orange" {"Warning"}
                                 "red" {"Critical"}
                                 default {$ObjMap.Status}
@@ -174,11 +174,11 @@ function Get-AbrSRMInventoryMapping {
                 }
 
                 if ($Healthcheck.InventoryMapping.Status) {
-                    $ReplicaObj | Where-Object { $_.'Status' -ne 'OK'} | Set-Style -Style Warning -Property 'Status'
+                    $OutObj | Where-Object { $_.'Status' -ne 'OK'} | Set-Style -Style Warning -Property 'Status'
                 }
 
                 $TableParams = @{
-                    Name = "Placeholder Datastore Mappings - $($SRMServer.ExtensionData.GetLocalSiteInfo().SiteName)"
+                    Name = "Placeholder Datastore Mappings - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
                     List = $true
                     ColumnWidths = 50, 50
                 }

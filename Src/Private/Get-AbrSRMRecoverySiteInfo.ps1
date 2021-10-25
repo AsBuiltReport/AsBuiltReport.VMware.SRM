@@ -25,7 +25,7 @@ function Get-AbrSRMRecoverySiteInfo {
 
     process {
         try {
-            $RecoverySiteInfo = $SRMServer.ExtensionData.GetPairedSite()
+            $RecoverySiteInfo = $LocalSRM.ExtensionData.GetPairedSite()
             Section -Style Heading2 'Recovery Site' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "In a typical Site Recovery Manager installation, the recovery site is an alternative infrastructure to which Site Recovery Manager can migrate services. The recovery site can be located thousands of miles away from the protected site. Conversely, the recovery site can be in the same room as a way of establishing redundancy. The recovery site is usually located in a facility that is unlikely to be affected by environmental, infrastructure, or other disturbances that affect the protected site."
@@ -39,7 +39,7 @@ function Get-AbrSRMRecoverySiteInfo {
                     $inObj = [ordered] @{
                         'Recovery Site Name' = $RecoverySiteInfo.Name
                         'Recovery Site ID' = $RecoverySiteInfo.Uuid
-                        'Solution User' = $SRMServer.ExtensionData.GetPairedSiteSolutionUserInfo().Username
+                        'Solution User' = $LocalSRM.ExtensionData.GetPairedSiteSolutionUserInfo().Username
                         'vCenter Host' = $RecoverySiteInfo.VcHost
                         'vCenter URL' = $RecoverySiteInfo.VcUrl
                         'Lookup URL' = $RecoverySiteInfo.LkpUrl
