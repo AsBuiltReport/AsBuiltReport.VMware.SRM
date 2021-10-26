@@ -79,6 +79,15 @@ function Get-AbrSRMRecoveryPlanInfo {
                                         $inObj = [ordered] @{
                                             'Name' = $VM.VmName
                                             'Status' = $RecoverySettings.Status
+                                            'Recovery Priority' = $RecoverySettings.RecoveryPriority
+                                            'Skip Guest ShutDown' = ConvertTo-TextYN $RecoverySettings.SkipGuestShutDown
+                                            'PowerOn Timeout' = "$($RecoverySettings.PowerOnTimeoutSeconds)/s"
+                                            'PowerOn Delay' = "$($RecoverySettings.PowerOnDelaySeconds)/s"
+                                            'PowerOff Timeout' = "$($RecoverySettings.PowerOffTimeoutSeconds)/s"
+                                            'Final Power State' = $RecoverySettings.FinalPowerState
+                                            'Pre PowerOn Callouts' = ConvertTo-EmptyToFiller $RecoverySettings.PrePowerOnCallouts
+                                            'Post PowerOn Callouts' = ConvertTo-EmptyToFiller $RecoverySettings.PostPowerOnCallouts
+                                            'Dependent VMs' = ConvertTo-EmptyToFiller $RecoverySettings.DependentVmIds
                                         }
                                         $OutObj += [pscustomobject]$inobj
                                     }
