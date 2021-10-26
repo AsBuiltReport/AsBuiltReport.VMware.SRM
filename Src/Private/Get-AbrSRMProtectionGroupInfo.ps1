@@ -26,7 +26,7 @@ function Get-AbrSRMProtectionGroupInfo {
     process {
         try {
             $ProtectionGroups = $LocalSRM.ExtensionData.Protection.ListProtectionGroups()
-            Section -Style Heading3 'Protection Groups Summary' {
+            Section -Style Heading2 'Protection Groups Summary' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "In Site Recovery Manager, protection groups are a way of grouping VMs that will be recovered together. A protection group contains VMs whose data has been replicated by either array-based replication (ABR) or vSphere replication (VR). A protection group cannot contain VMs replicated by more than one replication solution and, a VM can only belong to a single protection group."
                     BlankLine
@@ -61,7 +61,7 @@ function Get-AbrSRMProtectionGroupInfo {
                 }
                 $OutObj | Table @TableParams
                 try {
-                    Section -Style Heading4 "Protection Groups" {
+                    Section -Style Heading3 "Protection Groups" {
                         Paragraph "The following section provides detailed Protection Group informattion on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName) ."
                         BlankLine
                         $ProtectionGroups = $LocalSRM.ExtensionData.Protection.ListProtectionGroups()

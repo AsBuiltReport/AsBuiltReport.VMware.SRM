@@ -26,7 +26,7 @@ function Get-AbrSRMInventoryMapping {
     process {
         try {
             $Mapping = $LocalSRM.ExtensionData.InventoryMapping.GetFolderMappings()
-            Section -Style Heading2 'Folder Mappings' {
+            Section -Style Heading3 'Folder Mappings' {
                 Paragraph "The following section provides a summary of the Folder Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
@@ -64,7 +64,7 @@ function Get-AbrSRMInventoryMapping {
         }
         try {
             $Mapping = $LocalSRM.ExtensionData.InventoryMapping.GetNetworkMappings()
-            Section -Style Heading2 'Network Mappings' {
+            Section -Style Heading3 'Network Mappings' {
                 Paragraph "The following section provides a summary of the Network Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
@@ -102,7 +102,7 @@ function Get-AbrSRMInventoryMapping {
         }
         try {
             $Mapping = $LocalSRM.ExtensionData.InventoryMapping.GetResourcePoolMappings()
-            Section -Style Heading2 'Resources Mappings' {
+            Section -Style Heading3 'Resources Mappings' {
                 Paragraph "The following section provides a summary of the Resources Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
@@ -140,7 +140,7 @@ function Get-AbrSRMInventoryMapping {
         }
         try {
             $Mapping = $LocalSRM.ExtensionData.PlaceholderDatastoreManager.GetPlaceholderDatastores()
-            Section -Style Heading2 'Placeholder Datastore Mappings' {
+            Section -Style Heading3 'Placeholder Datastore Mappings' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph 'For each protected virtual machine Site Recovery Manager creates a placeholder virtual machine at the recovery site. Placeholder virtual machines are contained in a datastore and registered with the vCenter Server at the recovery site. This datastore is called the “placeholder datastore”. Since placeholder virtual machines do not have virtual disks they consume a minimal amount of storage'
                     BlankLine

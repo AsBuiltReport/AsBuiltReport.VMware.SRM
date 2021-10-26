@@ -25,7 +25,7 @@ function Get-AbrSRMRecoveryPlanInfo {
 
     process {
         try {
-            Section -Style Heading3 'Recovery Plans Summary' {
+            Section -Style Heading2 'Recovery Plans Summary' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "Recovery Plans in Site Recovery Manager are like an automated run book, controlling all the steps in the recovery process. The recovery plan is the level at which actions like failover, planned migration, testing and re-protect are conducted. A recovery plan contains one or more protection groups and a protection group can be included in more than one recovery plan. This provides for the flexibility to test or recover an application by itself and also test or recover a group of applications or the entire site."
                     BlankLine
@@ -64,7 +64,7 @@ function Get-AbrSRMRecoveryPlanInfo {
                     $RecoveryPlans = $LocalSRM.ExtensionData.Recovery.ListPlans()
                     if ($RecoveryPlans) {
                         foreach ($RecoveryPlan in $RecoveryPlans) {
-                            Section -Style Heading4 "$($RecoveryPlan.getinfo().Name) Virtual Machine Recovery Setting" {
+                            Section -Style Heading3 "$($RecoveryPlan.getinfo().Name) Virtual Machine Recovery Setting" {
                                 Paragraph "The following section provides a summary of the Recovery Plan configured under $($LocalSRM.Name.split(".", 2).toUpper()[0])."
                                 BlankLine
                                 $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
