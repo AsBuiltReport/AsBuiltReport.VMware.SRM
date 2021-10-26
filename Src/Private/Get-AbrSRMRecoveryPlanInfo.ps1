@@ -60,6 +60,46 @@ function Get-AbrSRMRecoveryPlanInfo {
                     }
                     $OutObj | Table @TableParams
                 }
+                try {
+                    $RecoveryPlans = $LocalSRM.ExtensionData.Recovery.ListPlans()
+                    if ($RecoveryPlans) {
+                        foreach ($RecoveryPlan in $RecoveryPlans) {
+                            Section -Style Heading4 "$($RecoveryPlan.getinfo().Name) Virtual Machine Recovery Setting" {
+                                Paragraph "The following section provides a summary of the Recovery Plan configured under $($LocalSRM.Name.split(".", 2).toUpper()[0])."
+                                BlankLine
+                                $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
+                                    $RecoveryPlanPG
+                                }
+                                $OutObj = @()
+                                foreach ($PG in $RecoveryPlanPGs) {
+                                    $VMs = $PG.ListProtectedVms()
+                                    foreach ($VM in $VMs) {
+                                        $RecoverySettings = $PG.ListRecoveryPlans().GetRecoverySettings($VM.Vm.MoRef)
+                                        Write-PScriboMessage "Discovered VM Setting $($VM.VmName)."
+                                        $inObj = [ordered] @{
+                                            'Name' = $VM.VmName
+                                            'Status' = $RecoverySettings.Status
+                                        }
+                                        $OutObj += [pscustomobject]$inobj
+                                    }
+                                }
+
+                                $TableParams = @{
+                                    Name = "Virtual Machine Recovery Setting - $($RecoveryPlan.getinfo().Name)"
+                                    List = $true
+                                    ColumnWidths = 30, 70
+                                }
+                                if ($Report.ShowTableCaptions) {
+                                    $TableParams['Caption'] = "- $($TableParams.Name)"
+                                }
+                                $OutObj | Table @TableParams
+                            }
+                        }
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning "$($_.Exception.Message) Virtual Machine Recovery Setting"
+                }
             }
         }
         catch {
