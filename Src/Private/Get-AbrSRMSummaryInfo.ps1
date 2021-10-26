@@ -149,6 +149,39 @@ function Get-AbrSRMSummaryInfo {
         catch {
             Write-PscriboMessage -IsWarning $_.Exception.Message
         }
+        try {
+            $Permissions = Get-VIPermission -Server $LocalvCenter | Where-Object {$_.Role -like "SRM*"} | Select-Object @{Name = "Name"; E = {(get-virole -Name  $_.Role | Select-Object -ExpandProperty ExtensionData).Info.Label}},Principal,Propagate,IsGroup
+            Section -Style Heading2 'SRM Permissions' {
+                Paragraph "The following section provides a summary of the SRM Permissions on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                BlankLine
+                $OutObj = @()
+                if ($Permissions) {
+                    foreach ($Permission in $Permissions) {
+                        Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                        $inObj = [ordered] @{
+                            'Role' = $Permission.Name | Sort-Object -Unique
+                            'Principal' = $Permission.Principal
+                            'Propagate' = ConvertTo-TextYN $Permission.Propagate
+                            'Is Group' = ConvertTo-TextYN $Permission.IsGroup
+
+                        }
+                        $OutObj += [pscustomobject]$inobj
+                    }
+                }
+                $TableParams = @{
+                    Name = "SRM Permissions - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
+                    List = $false
+                    ColumnWidths = 38, 38, 12, 12
+                }
+                if ($Report.ShowTableCaptions) {
+                    $TableParams['Caption'] = "- $($TableParams.Name)"
+                }
+                $OutObj | Table @TableParams
+            }
+        }
+        catch {
+            Write-PscriboMessage -IsWarning $_.Exception.Message
+        }
     }
     end {}
 }
