@@ -64,7 +64,7 @@ function Get-AbrSRMRecoveryPlanInfo {
                     $RecoveryPlans = $LocalSRM.ExtensionData.Recovery.ListPlans()
                     if ($RecoveryPlans) {
                         foreach ($RecoveryPlan in $RecoveryPlans) {
-                            Section -Style Heading3 "$($RecoveryPlan.getinfo().Name) Virtual Machine Recovery Setting" {
+                            Section -Style Heading3 "$($RecoveryPlan.getinfo().Name) VM Recovery Setting" {
                                 Paragraph "The following section provides a summary of the Recovery Plan configured under $($LocalSRM.Name.split(".", 2).toUpper()[0])."
                                 BlankLine
                                 $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
