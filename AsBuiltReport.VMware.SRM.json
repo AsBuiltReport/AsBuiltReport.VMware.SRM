@@ -13,7 +13,7 @@
         "DocumentRecoverySite": false
     },
     "InfoLevel": {
-        "_comment_": "0 = Disabled, 1 = Enabled / Summary,",
+        "_comment_": "0 = Disabled, 1 = Enabled, 2 = Adv Summary, 3 = Detailed",
         "Summary": 1,
         "Protected": 1,
         "Recovery": 1,
