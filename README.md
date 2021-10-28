@@ -126,8 +126,11 @@ The **Report** schema provides configuration of the VMware SRM report informatio
 | ShowTableCaptions   | true / false | true                           | Toggle to enable/disable table captions/numbering            |
 
 ### Options
-
 The **Options** schema allows certain options within the report to be toggled on or off.
+
+| Sub-Schema      | Setting      | Default | Description                                                                                                                                                                                 |
+|-----------------|--------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ShowDefinitionInfo | true / false | false    | Toggle to enable/disable VMware SRM Section Documentation
 
 <!-- ********** Add/Remove the number of InfoLevels as required ********** -->
 ### InfoLevel
