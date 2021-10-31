@@ -30,8 +30,6 @@ function Get-AbrSRMInventoryMapping {
                 Paragraph "The following section provides a summary of the Folder Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
-                $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
                 if ($Mapping) {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
@@ -68,8 +66,6 @@ function Get-AbrSRMInventoryMapping {
                 Paragraph "The following section provides a summary of the Network Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
-                $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
                 if ($Mapping) {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
@@ -106,8 +102,6 @@ function Get-AbrSRMInventoryMapping {
                 Paragraph "The following section provides a summary of the Resources Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
-                $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
                 if ($Mapping) {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
@@ -148,8 +142,6 @@ function Get-AbrSRMInventoryMapping {
                 Paragraph "The following section provides a summary of the Placeholder Datastore Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
-                $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
                 if ($Mapping) {
                     foreach ($ObjMap in $Mapping) {
                         #//Todo "How the fuck i can extract remote PlaceHolder Datastore Info"
