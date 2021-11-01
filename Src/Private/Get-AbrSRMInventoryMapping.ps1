@@ -112,8 +112,14 @@ function Get-AbrSRMInventoryMapping {
                             $LocalObj = $RemoteObj
                         }
                         $inObj = [ordered] @{
-                            "Local Resource" = $HashObj.Keys
-                            "Remote Resource" = $HashObj.Values
+                            "Local Resource" = Switch ($HashObj.Keys) {
+                                "Resources" {"Root Resource Pool"}
+                                default {$HashObj.Keys}
+                            }
+                            "Remote Resource" = Switch ($HashObj.Values) {
+                                "Resources" {"Root Resource Pool"}
+                                default {$HashObj.Values}
+                            }
                         }
                         $OutObj += [pscustomobject]$inobj
                     }
