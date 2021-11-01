@@ -39,21 +39,26 @@ function Invoke-AsBuiltReport.VMware.SRM {
     #---------------------------------------------------------------------------------------------#
     foreach ($VIServer in $Target) {
         try {
-            $LocalvCenter = Connect-VIServer $VIServer -Credential $Credential -ErrorAction Stop
+            $LocalvCenter = Connect-VIServer $VIServer -Credential $Credential -Port 443 -Protocol https -ErrorAction Stop
             $LocalSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -RemoteCredential $Credential -Server $LocalvCenter
-            $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost  -Credential $Credential -ErrorAction Stop
+            if ($LocalSRM -and $LocalvCenter) {
+                Write-PScriboMessage "Connected to $($LocalSRM.Name)"
+            }
         } catch {
             Write-Error $_
         }
 
         try {
-            $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost  -Credential $Credential -ErrorAction Stop
+            $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost  -Credential $Credential -Port 443 -Protocol https -ErrorAction Stop
+            if ($RemotevCenter) {
+                Write-PScriboMessage "Connected to $((Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value)"
+            }
             if (!$RemotevCenter) {
                 try {
-                    $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost  -Credential (Get-Credential) -ErrorAction Stop
+                    $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost  -Credential (Get-Credential) -Port 443 -Protocol https -ErrorAction Stop
                 }
                 catch {
-                    Write-PScriboMessage -IsWarning "Unable to connect to Remote vCenter Server" -ErrorAction Continue
+                    Write-PScriboMessage -IsWarning "Unable to connect to Remote vCenter Server"
                     Write-Error $_
                 }
             }
