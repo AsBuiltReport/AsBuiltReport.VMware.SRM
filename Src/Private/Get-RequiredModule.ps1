@@ -4,6 +4,11 @@ function Get-RequiredModule {
     Function to check if the required version of VMware PowerCLI is installed
     .DESCRIPTION
     Function to check if the required version of VMware PowerCLI is installed
+    .NOTES
+        Version:        0.1.0
+        Author:         Tim Carman
+        Twitter:        @tpcarman
+        Github:         tpcarman
     .PARAMETER Name
     The name of the required PowerShell module
     .PARAMETER Version
@@ -35,4 +40,5 @@ function Get-RequiredModule {
             throw "VMware PowerCLI $Version or higher is required to run the VMware vSphere As Built Report. Run 'Update-Module -Name $Name -MinimumVersion $Version' to update the required modules."
         }
     }
+    end {}
 }
