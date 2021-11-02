@@ -154,7 +154,7 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 | Protected    |        1        |        1        |
 | Recovery     |        1        |        1        |
 | ProtectionGroup |        1        |        3        |
-| RecoveryPlan |        1        |        2        |
+| RecoveryPlan |        1        |        3        |
 | InventoryMapping     |        1        |        1        |
 
 
