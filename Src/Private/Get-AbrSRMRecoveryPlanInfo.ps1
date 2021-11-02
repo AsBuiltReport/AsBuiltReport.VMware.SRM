@@ -64,70 +64,96 @@ function Get-AbrSRMRecoveryPlanInfo {
                     try {
                         $RecoveryPlans = $LocalSRM.ExtensionData.Recovery.ListPlans()
                         if ($RecoveryPlans) {
-                            foreach ($RecoveryPlan in $RecoveryPlans) {
-                                Section -Style Heading3 "$($RecoveryPlan.getinfo().Name) VM Recovery Settings" {
-                                    Paragraph "The following section provides a summary of the Recovery Plan configured under $($LocalSRM.Name.split(".", 2).toUpper()[0])."
-                                    BlankLine
-                                    $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
-                                        $RecoveryPlanPG
-                                    }
-                                    $OutObj = @()
-                                    foreach ($PG in $RecoveryPlanPGs) {
-                                        $VMs = $PG.ListProtectedVms()
-                                        foreach ($VM in $VMs) {
-                                            $RecoverySettings = $PG.ListRecoveryPlans().GetRecoverySettings($VM.Vm.MoRef)
-                                            $DependentVMs = Switch ($RecoverySettings.DependentVmIds) {
-                                                "" {"-"; break}
-                                                $Null {"-"; break}
-                                                default {$RecoverySettings.DependentVmIds | ForEach-Object {get-vm -Id $_}}
-                                            }
-                                            $PrePowerOnCommand = @()
-                                            foreach ($PrePowerOnCommands in $RecoverySettings.PrePowerOnCallouts) {
-                                                if ($PrePowerOnCommands) {
-                                                    $PrePowerOnCommand += $PrePowerOnCommands | Select-Object @{Name="Name"; E={$_.Description}},@{Name='Run In Vm'; E={$_.RunInRecoveredVm}},Timeout
-                                                }
-                                            }
-                                            $PosPowerOnCommand = @()
-                                            foreach ($PosPowerOnCommands in $RecoverySettings.PostPowerOnCallouts) {
-                                                if ($PosPowerOnCommands) {
-                                                    $PosPowerOnCommand += $PosPowerOnCommands | Select-Object @{Name="Name"; E={$_.Description}},@{Name='Run In Vm'; E={$_.RunInRecoveredVm}},Timeout
-                                                }
-                                            }
-                                            Write-PScriboMessage "Discovered VM Setting $($VM.VmName)."
-                                            $inObj = [ordered] @{
-                                                'Name' = $VM.VmName
-                                                'Status' = $RecoverySettings.Status.ToUpper()
-                                                'Recovery Priority' = $TextInfo.ToTitleCase($RecoverySettings.RecoveryPriority)
-                                                'Skip Guest ShutDown' = ConvertTo-TextYN $RecoverySettings.SkipGuestShutDown
-                                                'PowerOn Timeout' = "$($RecoverySettings.PowerOnTimeoutSeconds)/s"
-                                                'PowerOn Delay' = "$($RecoverySettings.PowerOnDelaySeconds)/s"
-                                                'PowerOff Timeout' = "$($RecoverySettings.PowerOffTimeoutSeconds)/s"
-                                                'Final Power State' = $TextInfo.ToTitleCase($RecoverySettings.FinalPowerState)
-                                                'Pre PowerOn Callouts' = Switch ($PrePowerOnCommand) {
-                                                    "" {"-"; break}
-                                                    $Null {"-"; break}
-                                                    default {$PrePowerOnCommand | ForEach-Object {"Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s"}; break}
-                                                }
-                                                'Post PowerOn Callouts' = Switch ($PosPowerOnCommand) {
-                                                    "" {"-"; break}
-                                                    $Null {"-"; break}
-                                                    default {$PosPowerOnCommand | ForEach-Object {"Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s"}; break}
-                                                }
-                                                'Dependent VMs' = ($DependentVMs | Sort-Object -Unique) -join ", "
-                                            }
-                                            $OutObj += [pscustomobject]$inobj
+                            Section -Style Heading3 'Virtual Machine Recovery Settings Summary' {
+                                Paragraph "The following section provides detailed per VM Recovery Settings informattion on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName) ."
+                                BlankLine
+                                foreach ($RecoveryPlan in $RecoveryPlans) {
+                                    Section -Style Heading3 "$($RecoveryPlan.getinfo().Name) VM Recovery Settings" {
+                                        $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
+                                            $RecoveryPlanPG
                                         }
-                                    }
+                                        $OutObj = @()
+                                        foreach ($PG in $RecoveryPlanPGs) {
+                                            $VMs = $PG.ListProtectedVms()
+                                            foreach ($VM in $VMs) {
+                                                $RecoverySettings = $PG.ListRecoveryPlans().GetRecoverySettings($VM.Vm.MoRef)
+                                                $DependentVMs = Switch ($RecoverySettings.DependentVmIds) {
+                                                    "" {"-"; break}
+                                                    $Null {"-"; break}
+                                                    default {$RecoverySettings.DependentVmIds | ForEach-Object {get-vm -Id $_}}
+                                                }
+                                                $PrePowerOnCommand = @()
+                                                foreach ($PrePowerOnCommands in $RecoverySettings.PrePowerOnCallouts) {
+                                                    if ($PrePowerOnCommands) {
+                                                        $PrePowerOnCommand += $PrePowerOnCommands | Select-Object @{Name="Name"; E={$_.Description}},@{Name='Run In Vm'; E={$_.RunInRecoveredVm}},Timeout
+                                                    }
+                                                }
+                                                $PosPowerOnCommand = @()
+                                                foreach ($PosPowerOnCommands in $RecoverySettings.PostPowerOnCallouts) {
+                                                    if ($PosPowerOnCommands) {
+                                                        $PosPowerOnCommand += $PosPowerOnCommands | Select-Object @{Name="Name"; E={$_.Description}},@{Name='Run In Vm'; E={$_.RunInRecoveredVm}},Timeout
+                                                    }
+                                                }
+                                                Write-PScriboMessage "Discovered VM Setting $($VM.VmName)."
+                                                if ($InfoLevel.RecoveryPlan -eq 2) {
+                                                    $inObj = [ordered] @{
+                                                        'Name' = $VM.VmName
+                                                        'Status' = $RecoverySettings.Status.ToUpper()
+                                                        'Recovery Priority' = $TextInfo.ToTitleCase($RecoverySettings.RecoveryPriority)
+                                                        'Skip Guest ShutDown' = ConvertTo-TextYN $RecoverySettings.SkipGuestShutDown
+                                                        'PowerOn Timeout' = "$($RecoverySettings.PowerOnTimeoutSeconds)/s"
+                                                        'PowerOn Delay' = "$($RecoverySettings.PowerOnDelaySeconds)/s"
+                                                        'PowerOff Timeout' = "$($RecoverySettings.PowerOffTimeoutSeconds)/s"
+                                                        'Final Power State' = $TextInfo.ToTitleCase($RecoverySettings.FinalPowerState)
+                                                    }
+                                                    $OutObj += [pscustomobject]$inobj
+                                                }
+                                                if ($InfoLevel.RecoveryPlan -eq 3) {
+                                                    $inObj = [ordered] @{
+                                                        'Name' = $VM.VmName
+                                                        'Status' = $RecoverySettings.Status.ToUpper()
+                                                        'Recovery Priority' = $TextInfo.ToTitleCase($RecoverySettings.RecoveryPriority)
+                                                        'Skip Guest ShutDown' = ConvertTo-TextYN $RecoverySettings.SkipGuestShutDown
+                                                        'PowerOn Timeout' = "$($RecoverySettings.PowerOnTimeoutSeconds)/s"
+                                                        'PowerOn Delay' = "$($RecoverySettings.PowerOnDelaySeconds)/s"
+                                                        'PowerOff Timeout' = "$($RecoverySettings.PowerOffTimeoutSeconds)/s"
+                                                        'Final Power State' = $TextInfo.ToTitleCase($RecoverySettings.FinalPowerState)
+                                                        'Pre PowerOn Callouts' = Switch ($PrePowerOnCommand) {
+                                                            "" {"-"; break}
+                                                            $Null {"-"; break}
+                                                            default {$PrePowerOnCommand | ForEach-Object {"Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s"}; break}
+                                                        }
+                                                        'Post PowerOn Callouts' = Switch ($PosPowerOnCommand) {
+                                                            "" {"-"; break}
+                                                            $Null {"-"; break}
+                                                            default {$PosPowerOnCommand | ForEach-Object {"Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s"}; break}
+                                                        }
+                                                        'Dependent VMs' = ($DependentVMs | Sort-Object -Unique) -join ", "
+                                                    }
+                                                    $OutObj += [pscustomobject]$inobj
+                                                }
+                                            }
+                                        }
 
-                                    $TableParams = @{
-                                        Name = "Virtual Machine Recovery Settings - $($RecoveryPlan.getinfo().Name)"
-                                        List = $true
-                                        ColumnWidths = 50, 50
+                                        if ($InfoLevel.RecoveryPlan -eq 2) {
+                                            $TableParams = @{
+                                                Name = "Virtual Machine Recovery Settings - $($RecoveryPlan.getinfo().Name)"
+                                                List = $False
+                                                ColumnWidths = 16, 10, 12, 12, 12, 12, 12, 14
+                                            }
+                                        }
+                                        if ($InfoLevel.RecoveryPlan -eq 3) {
+                                            $TableParams = @{
+                                                Name = "Virtual Machine Recovery Settings - $($RecoveryPlan.getinfo().Name)"
+                                                List = $true
+                                                ColumnWidths = 50, 50
+                                            }
+                                        }
+                                        if ($Report.ShowTableCaptions) {
+                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                        }
+                                        $OutObj | Table @TableParams
                                     }
-                                    if ($Report.ShowTableCaptions) {
-                                        $TableParams['Caption'] = "- $($TableParams.Name)"
-                                    }
-                                    $OutObj | Table @TableParams
                                 }
                             }
                         }
