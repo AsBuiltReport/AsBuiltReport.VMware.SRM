@@ -31,8 +31,6 @@ function Invoke-AsBuiltReport.VMware.SRM {
     # Used to set values to TitleCase where required
     $TextInfo = (Get-Culture).TextInfo
 
-	# Update/rename the $System variable and build out your code within the ForEach loop. The ForEach loop enables AsBuiltReport to generate an as built configuration against multiple defined targets.
-
     #region foreach loop
     #---------------------------------------------------------------------------------------------#
     #                                 Connection Section                                          #
@@ -40,25 +38,31 @@ function Invoke-AsBuiltReport.VMware.SRM {
     foreach ($VIServer in $Target) {
         try {
             $LocalvCenter = Connect-VIServer $VIServer -Credential $Credential -Port 443 -Protocol https -ErrorAction Stop
+            if ($LocalvCenter) {
+                Write-PScriboMessage "Connected to protected site vCenter: $($LocalvCenter.Name)"
+            }
             $LocalSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -RemoteCredential $Credential -Server $LocalvCenter
-            if ($LocalSRM -and $LocalvCenter) {
-                Write-PScriboMessage "Connected to $($LocalSRM.Name)"
+            if ($LocalSRM) {
+                Write-PScriboMessage "Connected to protected site SRM: $($LocalSRM.Name)"
             }
         } catch {
             Write-Error $_
         }
 
         try {
-            $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost  -Credential $Credential -Port 443 -Protocol https -ErrorAction Stop
+            $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost -Credential $Credential -Port 443 -Protocol https -ErrorAction SilentlyContinue
             if ($RemotevCenter) {
                 Write-PScriboMessage "Connected to $((Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value)"
             }
             if (!$RemotevCenter) {
                 try {
-                    $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost  -Credential (Get-Credential) -Port 443 -Protocol https -ErrorAction Stop
+                    $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost -Credential (Get-Credential -Message "Can not connect to the recovery vCenter with the provided credentials.`r`nEnter $($LocalSRM.ExtensionData.GetPairedSite().vcHost) valid credentials") -Port 443 -Protocol https -ErrorAction SilentlyContinue
+                    if ($RemotevCenter) {
+                        Write-PScriboMessage "Connected to $((Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value)"
+                    }
                 }
                 catch {
-                    Write-PScriboMessage -IsWarning "Unable to connect to Remote vCenter Server"
+                    Write-PScriboMessage -IsWarning "Unable to connect to recovery site vCenter Server: $($LocalSRM.ExtensionData.GetPairedSite().vcHost)"
                     Write-Error $_
                 }
             }
