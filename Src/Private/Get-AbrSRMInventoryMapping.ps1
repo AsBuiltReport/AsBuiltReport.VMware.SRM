@@ -142,7 +142,7 @@ function Get-AbrSRMInventoryMapping {
             $Mapping = $LocalSRM.ExtensionData.PlaceholderDatastoreManager.GetPlaceholderDatastores()
             Section -Style Heading3 'Placeholder Datastore Mappings' {
                 if ($Options.ShowDefinitionInfo) {
-                    Paragraph 'For each protected virtual machine Site Recovery Manager creates a placeholder virtual machine at the recovery site. Placeholder virtual machines are contained in a datastore and registered with the vCenter Server at the recovery site. This datastore is called the “placeholder datastore”. Since placeholder virtual machines do not have virtual disks they consume a minimal amount of storage'
+                    Paragraph "For each protected virtual machine Site Recovery Manager creates a placeholder virtual machine at the recovery site. Placeholder virtual machines are contained in a datastore and registered with the vCenter Server at the recovery site. This datastore is called the placeholder datastore. Since placeholder virtual machines do not have virtual disks they consume a minimal amount of storage"
                     BlankLine
                 }
                 Paragraph "The following section provides a summary of the Placeholder Datastore Mapping on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
