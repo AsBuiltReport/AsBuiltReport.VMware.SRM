@@ -31,11 +31,11 @@ function Get-AbrSRMInventoryMapping {
                 BlankLine
                 $OutObj = @()
                 if ($Mapping) {
-                    $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
+                        $HashObj = $Null
                         Write-PscriboMessage "Discovered Folder Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                        $LocalObj = get-view $ObjMap.PrimaryObject | Select-Object -ExpandProperty Name
-                        $RemoteObj = get-view $ObjMap.SecondaryObject | Select-Object -ExpandProperty Name
+                        $LocalObj = get-view $ObjMap.PrimaryObject | Select-Object -ExpandProperty Name -Unique
+                        $RemoteObj = get-view $ObjMap.SecondaryObject | Select-Object -ExpandProperty Name -Unique
                         $HashObj = @{
                             $LocalObj = $RemoteObj
                         }
@@ -70,8 +70,8 @@ function Get-AbrSRMInventoryMapping {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
                         Write-PscriboMessage "Discovered Network Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                        $LocalObj = get-view $ObjMap.PrimaryObject | Select-Object -ExpandProperty Name
-                        $RemoteObj = get-view $ObjMap.SecondaryObject | Select-Object -ExpandProperty Name
+                        $LocalObj = get-view $ObjMap.PrimaryObject | Select-Object -ExpandProperty Name -Unique
+                        $RemoteObj = get-view $ObjMap.SecondaryObject | Select-Object -ExpandProperty Name -Unique
                         $HashObj = @{
                             $LocalObj = $RemoteObj
                         }
@@ -106,8 +106,8 @@ function Get-AbrSRMInventoryMapping {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
                         Write-PscriboMessage "Discovered Resources Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                        $LocalObj = get-view $ObjMap.PrimaryObject | Select-Object -ExpandProperty Name
-                        $RemoteObj = get-view $ObjMap.SecondaryObject | Select-Object -ExpandProperty Name
+                        $LocalObj = get-view $ObjMap.PrimaryObject | Select-Object -ExpandProperty Name -Unique
+                        $RemoteObj = get-view $ObjMap.SecondaryObject | Select-Object -ExpandProperty Name -Unique
                         $HashObj = @{
                             $LocalObj = $RemoteObj
                         }
@@ -158,7 +158,7 @@ function Get-AbrSRMInventoryMapping {
                             "Capacity" = "$([math]::Round(($ObjMap.Capacity)/ 1GB, 2)) GB"
                             "Free Space" = "$([math]::Round(($ObjMap.FreeSpace)/ 1GB, 2)) GB"
                             "Reserved Space" = "$([math]::Round(($ObjMap.ReservedSpace)/ 1GB, 2)) GB"
-                            "Location" = get-view $ObjMap.VisibleTo.key | Select-Object -ExpandProperty Name
+                            "Location" = get-view $ObjMap.VisibleTo.key | Select-Object -ExpandProperty Name -Unique
                             "Fault" = ConvertTo-EmptyToFiller $ObjMap.Fault
                             "Status" = SWitch ($ObjMap.Status) {
                                 "green" {"OK"}
