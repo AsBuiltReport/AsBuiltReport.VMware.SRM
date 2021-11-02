@@ -180,3 +180,8 @@ PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Credential $C
 # Generate a VMware SRM As Built Report for vCenter Server 192.168.5.16 using specified credentials. Export report to HTML & DOCX formats. Use default report style. Reports are saved to the user profile folder by default. Attach and send reports via e-mail.
 PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Username 'administrator@vsphere.local' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -SendEmail
 ```
+
+## :x: Known Issues
+
+- If the protected and recovery sites are not configured with "Enhanced Linked Mode" and the credentials used are not the same in both sites, it will be required to provide valid remote vCenter credentials.
+- In certain occasions there is a noticeable delay while connecting to the remote vCenter.
