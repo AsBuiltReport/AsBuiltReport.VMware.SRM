@@ -41,6 +41,12 @@ Below are the instructions on how to install, configure and generate a VMware SR
 <!-- ********** Update supported SRM versions ********** -->
 The VMware SRM As Built Report supports the following SRM versions;
 
+Tested On:
+
+- SRM 8.3
+- SRM 8.4
+- SRM 8.5
+
 ### PowerShell
 
 This report is compatible with the following PowerShell versions;
