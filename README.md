@@ -72,13 +72,13 @@ PowerShell 5.1 or PowerShell 7, and the following PowerShell modules are require
 ❗ If you are unable to install .NET Core, you must set `ShowCoverPageImage` to `False` in the report JSON configuration file.
 
 ### :closed_lock_with_key: Required Privileges
-<!-- ********** Define required privileges ********** -->
-<!-- ********** Try to follow best practices to define least privileges ********** -->
+
+Tested with vCenter Global Read-Only permissions.
 
 ## :package: Module Installation
 
 ### PowerShell
-<!-- ********** Add installation for any additional PowerShell module(s) ********** -->
+
 ```powershell
 install-module AsBuiltReport.VMware.SRM
 ```
@@ -132,6 +132,7 @@ The **Report** schema provides configuration of the VMware SRM report informatio
 | ShowTableCaptions   | true / false | true                           | Toggle to enable/disable table captions/numbering            |
 
 ### Options
+
 The **Options** schema allows certain options within the report to be toggled on or off.
 
 | Sub-Schema      | Setting      | Default | Description                                                                                                                                                                                 |
