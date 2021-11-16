@@ -9,13 +9,27 @@
         "ShowTableCaptions": true
     },
     "Options": {
-
+        "ShowDefinitionInfo": false
     },
     "InfoLevel": {
-		"_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",
-        "_comment_": "0 = Disabled, 1 = Enabled / Summary, 2 = Adv Summary, 3 = Detailed, 4 = Adv Detailed, 5 = Comprehensive"
+        "_comment_": "0 = Disabled, 1 = Enabled, 2 = Adv Summary, 3 = Detailed",
+        "Summary": 1,
+        "Protected": 1,
+        "Recovery": 1,
+        "ProtectionGroup": 1,
+        "RecoveryPlan": 1,
+        "InventoryMapping": 1
     },
     "HealthCheck": {
-	
+        "InventoryMapping": {
+            "Status": true
+        },
+        "Protected": {
+            "Status": true
+        },
+        "Recovery": {
+            "Status": true
+        }
+
     }
 }
