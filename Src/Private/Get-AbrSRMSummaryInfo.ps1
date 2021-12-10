@@ -62,6 +62,46 @@ function Get-AbrSRMSummaryInfo {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
                         $OutObj | Table @TableParams
+                        try {
+                            $Localvcenteradv = Get-AdvancedSetting -Entity $LocalvCenter
+                            $LocalvcenterIP = ($Localvcenteradv | Where-Object { $_.name -like 'VirtualCenter.AutoManagedIPV4' }).Value
+                            if ($LocalvcenterIP) {
+                                $vCenterVM = Get-VM * -server $LocalvCenter | where-object {$_.Guest.IPAddress -match $LocalvcenterIP}
+                                if ($vCenterVM) {
+                                    Section -Style Heading4 'vCenter VM Properties' {
+                                        Paragraph "The following section provides a summary of the SRM Permissions on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                                        BlankLine
+                                        $OutObj = @()
+                                        Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                                        $inObj = [ordered] @{
+                                            'VM Name' = $vCenterVM.Name
+                                            'Number of CPUs' = $vCenterVM.NumCpu
+                                            'Cores Per Socket' = $vCenterVM.CoresPerSocket
+                                            'Memory in GB' = $vCenterVM.MemoryGB
+                                            'Host' = $vCenterVM.VMHost
+                                            'Guest Id' = $vCenterVM.GuestId
+                                            'Provisioned Space GB' = "$([math]::Round(($vCenterVM.ProvisionedSpaceGB)))"
+                                            'Used Space GB' = "$([math]::Round(($vCenterVM.UsedSpaceGB)))"
+                                            'Datastores' = $vCenterVM.DatastoreIdList | ForEach-Object {get-view $_ | Select-Object -ExpandProperty Name}
+                                        }
+                                        $OutObj += [pscustomobject]$inobj
+
+                                        $TableParams = @{
+                                            Name = "vCenter VM Properties - $($vCenterVM.Name)"
+                                            List = $true
+                                            ColumnWidths = 40, 60
+                                        }
+                                        if ($Report.ShowTableCaptions) {
+                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                        }
+                                        $OutObj | Table @TableParams
+                                    }
+                                }
+                            }
+                        }
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        }
                     }
                 }
                 catch {
@@ -98,6 +138,46 @@ function Get-AbrSRMSummaryInfo {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
                         $OutObj | Table @TableParams
+                        try {
+                            $Remotevcenteradv = Get-AdvancedSetting -Entity $RemotevCenter
+                            $RemotevcenterIP = ($Remotevcenteradv | Where-Object { $_.name -like 'VirtualCenter.AutoManagedIPV4' }).Value
+                            if ($RemotevcenterIP) {
+                                $vCenterVM = Get-VM * -server $LocalvCenter | where-object {$_.Guest.IPAddress -match $RemotevcenterIP}
+                                if ($vCenterVM) {
+                                    Section -Style Heading4 'vCenter VM Properties' {
+                                        Paragraph "The following section provides a summary of the SRM Permissions on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                                        BlankLine
+                                        $OutObj = @()
+                                        Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                                        $inObj = [ordered] @{
+                                            'VM Name' = $vCenterVM.Name
+                                            'Number of CPUs' = $vCenterVM.NumCpu
+                                            'Cores Per Socket' = $vCenterVM.CoresPerSocket
+                                            'Memory in GB' = $vCenterVM.MemoryGB
+                                            'Host' = $vCenterVM.VMHost
+                                            'Guest Id' = $vCenterVM.GuestId
+                                            'Provisioned Space GB' = "$([math]::Round(($vCenterVM.ProvisionedSpaceGB)))"
+                                            'Used Space GB' = "$([math]::Round(($vCenterVM.UsedSpaceGB)))"
+                                            'Datastores' = $vCenterVM.DatastoreIdList | ForEach-Object {get-view $_ | Select-Object -ExpandProperty Name}
+                                        }
+                                        $OutObj += [pscustomobject]$inobj
+
+                                        $TableParams = @{
+                                            Name = "vCenter VM Properties - $($vCenterVM.Name)"
+                                            List = $true
+                                            ColumnWidths = 40, 60
+                                        }
+                                        if ($Report.ShowTableCaptions) {
+                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                        }
+                                        $OutObj | Table @TableParams
+                                    }
+                                }
+                            }
+                        }
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        }
                     }
                 }
                 catch {
