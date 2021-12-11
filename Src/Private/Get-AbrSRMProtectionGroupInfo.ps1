@@ -205,7 +205,7 @@ function Get-AbrSRMProtectionGroupInfo {
                                         BlankLine
                                         $ProtectionGroups = $LocalSRM.ExtensionData.Protection.ListProtectionGroups()
                                         foreach ($ProtectionGroup in $ProtectionGroups) {
-                                            Section -Style Heading4 "$($ProtectionGroup.GetInfo().Name) Protection Properties (PlaceHolder)" {
+                                            Section -Style Heading4 "$($ProtectionGroup.GetInfo().Name) Protection Properties" {
                                                 $OutObj = @()
                                                 if ($ProtectionGroups) {
                                                     if ($ProtectionGroup.ListProtectedVMs()) {
