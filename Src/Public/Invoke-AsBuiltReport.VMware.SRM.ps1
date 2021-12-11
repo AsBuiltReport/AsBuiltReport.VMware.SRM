@@ -38,7 +38,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
     foreach ($VIServer in $Target) {
         $RemoteCredential = $Credential
         try {
-            Write-PScriboMessage "Connecting to protected site vCenter: $($LocalvCenter.Name) with provided credentials"
+            Write-PScriboMessage "Connecting to protected site vCenter: $($VIServer) with provided credentials"
             $LocalvCenter = Connect-VIServer $VIServer -Credential $Credential -Port 443 -Protocol https -ErrorAction Stop
             if ($LocalvCenter) {
                 Write-PScriboMessage "Succefully connected to protected site vCenter: $($LocalvCenter.Name)"
@@ -51,7 +51,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
         }
 
         try {
-            Write-PScriboMessage "Testing credentials on protected site SRM: $($TempSRM.Name)"
+            Write-PScriboMessage "Testing credentials on protected site SRM"
             $TempSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -Server $LocalvCenter
             if ($TempSRM) {
                 Write-PScriboMessage "Succefully Connected to protected site SRM: $($TempSRM.Name) with provided credentials"
@@ -86,7 +86,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
             Write-Error $_
         }
         try {
-            Write-PScriboMessage "Connectin gto protected site SRM: $($LocalSRM.Name) with updated credentials"
+            Write-PScriboMessage "Connecting to protected site SRM with updated credentials"
             $LocalSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -Server $LocalvCenter -RemoteCredential $RemoteCredential
             if ($LocalSRM) {
                 Write-PScriboMessage "Reconnected to protected site SRM: $($LocalSRM.Name)"
@@ -103,6 +103,12 @@ function Invoke-AsBuiltReport.VMware.SRM {
                     Paragraph "VMware Site Recovery Manager is a business continuity and disaster recovery solution that helps you plan, test, and run the recovery of virtual machines between a protected vCenter Server site and a recovery vCenter Server site. You can use Site Recovery Manager to implement different types of recovery from the protected site to the recovery site."
                     BlankLine
                 }
+                if ($InfoLevel.Protected -ge 1) {
+                    Get-AbrSRMProtectedSiteInfo
+                }
+                if ($InfoLevel.Recovery -ge 1) {
+                    Get-AbrSRMRecoverySiteInfo
+                }
                 if ($InfoLevel.Summary -ge 1) {
                     Get-AbrSRMSummaryInfo
                 }
@@ -117,12 +123,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
                         Get-AbrSRMInventoryMapping
                     }
                 }
-                if ($InfoLevel.Protected -ge 1) {
-                    Get-AbrSRMProtectedSiteInfo
-                }
-                if ($InfoLevel.Recovery -ge 1) {
-                    Get-AbrSRMRecoverySiteInfo
-                }
+
                 if ($InfoLevel.ProtectionGroup -ge 1) {
                     Get-AbrSRMProtectionGroupInfo
                 }
@@ -133,8 +134,5 @@ function Invoke-AsBuiltReport.VMware.SRM {
 
         }
 	}
-    Disconnect-SrmServer -Server $LocalSRM.Name -Confirm:$false
-    Disconnect-SrmServer -Server $TempSRM.Name -Confirm:$false
-    Disconnect-VIServer -Server $LocalvCenter -Confirm:$false
-    Disconnect-VIServer -Server $RemotevCenter -Confirm:$false
 }
+#end
