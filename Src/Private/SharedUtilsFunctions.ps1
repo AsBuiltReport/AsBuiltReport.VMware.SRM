@@ -86,3 +86,37 @@ function ConvertTo-EmptyToFiller {
             default {$TEXT}
         }
     } # end
+
+function ConvertTo-VIobject {
+    <#
+    .SYNOPSIS
+    Used by As Built Report to convert objetc to VIObject.
+    .DESCRIPTION
+
+    .NOTES
+        Version:        0.1.0
+        Author:         Jon Colon
+
+    .EXAMPLE
+
+    .LINK
+
+    #>
+    [CmdletBinding()]
+    [OutputType([String])]
+    Param
+        (
+        [Parameter (
+            Position = 0,
+            Mandatory)]
+            [AllowEmptyString()]
+            $OBJECT
+        )
+
+    if (get-view $OBJECT -ErrorAction SilentlyContinue| Select-Object -ExpandProperty Name -Unique) {
+        return get-view $OBJECT | Select-Object -ExpandProperty Name -Unique
+    }
+    else {
+        return $OBJECT
+    }
+} # end
