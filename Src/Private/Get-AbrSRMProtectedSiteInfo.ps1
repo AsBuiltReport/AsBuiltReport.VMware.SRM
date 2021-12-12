@@ -5,7 +5,7 @@ function Get-AbrSRMProtectedSiteInfo {
     .DESCRIPTION
 
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -64,6 +64,49 @@ function Get-AbrSRMProtectedSiteInfo {
                     $TableParams['Caption'] = "- $($TableParams.Name)"
                 }
                 $OutObj | Table @TableParams
+                try {
+                    $LocalSRMFQDM = $LocalSRM.Name
+                    $LocalSRMHostName = $LocalSRMFQDM.Split(".")[0]
+                    if ($LocalSRMFQDM) {
+                        $LocalSRMVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.HostName -match $LocalSRMFQDM}
+                    }
+                    elseif (!$LocalSRMVM) {
+                        $LocalSRMVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.VmName -match $LocalSRMHostName}
+                    }
+                    if ($LocalSRMVM) {
+                        Section -Style Heading4 "SRM Server VM Properties" {
+                            Paragraph "The following section provides the hardware properties of the Protected Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                            BlankLine
+                            $OutObj = @()
+                            Write-PscriboMessage "Discovered SRM VM Properties $($LocalSRMVM.Name)."
+                            $inObj = [ordered] @{
+                                'VM Name' = $LocalSRMVM.Name
+                                'Number of CPUs' = $LocalSRMVM.NumCpu
+                                'Cores Per Socket' = $LocalSRMVM.CoresPerSocket
+                                'Memory in GB' = $LocalSRMVM.MemoryGB
+                                'Host' = $LocalSRMVM.VMHost
+                                'Guest Id' = $LocalSRMVM.GuestId
+                                'Provisioned Space GB' = "$([math]::Round(($LocalSRMVM.ProvisionedSpaceGB)))"
+                                'Used Space GB' = "$([math]::Round(($LocalSRMVM.UsedSpaceGB)))"
+                                'Datastores' = $LocalSRMVM.DatastoreIdList | ForEach-Object {get-view $_ -Server $LocalvCenter | Select-Object -ExpandProperty Name}
+                            }
+                            $OutObj += [pscustomobject]$inobj
+
+                            $TableParams = @{
+                                Name = "SRM VM Properties - $($LocalSRMVM.Name)"
+                                List = $true
+                                ColumnWidths = 40, 60
+                            }
+                            if ($Report.ShowTableCaptions) {
+                                $TableParams['Caption'] = "- $($TableParams.Name)"
+                            }
+                            $OutObj | Table @TableParams
+                        }
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
             }
         }
         catch {

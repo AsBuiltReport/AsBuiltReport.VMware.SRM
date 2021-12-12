@@ -1,5 +1,24 @@
 # :arrows_counterclockwise: VMware SRM As Built Report Changelog
 
+## [0.3.0] - 2021-12-11
+
+### Added
+
+- Added VM hardware information:
+  - vCenter Server Inventory
+  - SRM Server Inventory
+  - Replication Server Inventory
+- Added Function to convert from VIObject to Inventory Mapping
+
+### Changed
+
+- Improved Recovery Site vCenter status validation.
+- Improved title structure
+
+### Fixed
+
+- Fixed credential issues. Closes [#4](https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/issues/4)
+
 ## [0.2.0] - 2021-11-01
 
 ### Added
