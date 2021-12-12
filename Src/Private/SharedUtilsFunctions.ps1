@@ -90,7 +90,7 @@ function ConvertTo-EmptyToFiller {
 function ConvertTo-VIobject {
     <#
     .SYNOPSIS
-    Used by As Built Report to convert objetc to VIObject.
+    Used by As Built Report to convert object to VIObject.
     .DESCRIPTION
 
     .NOTES
