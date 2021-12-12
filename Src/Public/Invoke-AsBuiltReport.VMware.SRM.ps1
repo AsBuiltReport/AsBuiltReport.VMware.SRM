@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Original Author: Matt Allford (@mattallford)
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
@@ -38,45 +38,61 @@ function Invoke-AsBuiltReport.VMware.SRM {
     foreach ($VIServer in $Target) {
         $RemoteCredential = $Credential
         try {
+            Write-PScriboMessage "Connecting to protected site vCenter: $($VIServer) with provided credentials"
             $LocalvCenter = Connect-VIServer $VIServer -Credential $Credential -Port 443 -Protocol https -ErrorAction Stop
             if ($LocalvCenter) {
-                Write-PScriboMessage "Connected to protected site vCenter: $($LocalvCenter.Name)"
+                Write-PScriboMessage "Succefully connected to protected site vCenter: $($LocalvCenter.Name)"
             }
-        } catch {
-            Write-PScriboMessage -IsWarning "Unable to connect to protected site vCenter Server $($VIServer))"
+        }
+        catch {
+            Write-PScriboMessage -IsWarning  "Unable to connect to protected site vCenter Server $($VIServer))"
             Write-Error "$($_) (Protected vCenter Connection)"
             throw
         }
 
         try {
-            $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost -Credential $RemoteCredential -Port 443 -Protocol https -ErrorAction SilentlyContinue
+            Write-PScriboMessage "Testing credentials on protected site SRM"
+            $TempSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -Server $LocalvCenter
+            if ($TempSRM) {
+                Write-PScriboMessage "Succefully Connected to protected site SRM: $($TempSRM.Name) with provided credentials"
+            }
+        } catch {
+            Write-PScriboMessage -IsWarning  "Unable to connect to protected site SRM server"
+            Write-Error "$($_) (Local SRM Connection)"
+            throw
+        }
+
+        try {
+            $RemotevCenter = Connect-VIServer $TempSRM.ExtensionData.GetPairedSite().vcHost -Credential $RemoteCredential -Port 443 -Protocol https -ErrorAction SilentlyContinue
             if ($RemotevCenter) {
                 Write-PScriboMessage "Connected to $((Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value)"
             }
             if (!$RemotevCenter) {
                 try {
-                    $RemoteCredential = (Get-Credential -Message "Can not connect to the recovery vCenter with the provided credentials.`r`nEnter $($LocalSRM.ExtensionData.GetPairedSite().vcHost) valid credentials")
-                    $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost -Credential $RemoteCredential -Port 443 -Protocol https -ErrorAction Stop
+                    $RemoteCredential = (Get-Credential -Message "Can not connect to the recovery vCenter with the provided credentials.`r`nEnter $($TempSRM.ExtensionData.GetPairedSite().vcHost) valid credentials")
+                    $RemotevCenter = Connect-VIServer $TempSRM.ExtensionData.GetPairedSite().vcHost -Credential $RemoteCredential -Port 443 -Protocol https -ErrorAction Stop
                     if ($RemotevCenter) {
                         Write-PScriboMessage "Connected to $((Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value)"
                     }
                 }
                 catch {
-                    Write-PScriboMessage -IsWarning "Unable to connect to recovery site vCenter Server: $($LocalSRM.ExtensionData.GetPairedSite().vcHost)"
+                    Write-PScriboMessage -IsWarning  "Unable to connect to recovery site vCenter Server: $($TempSRM.ExtensionData.GetPairedSite().vcHost)"
                     Write-Error $_
                     throw
                 }
             }
-        } catch {
+        }
+        catch {
             Write-Error $_
         }
         try {
+            Write-PScriboMessage "Connecting to protected site SRM with updated credentials"
             $LocalSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -Server $LocalvCenter -RemoteCredential $RemoteCredential
             if ($LocalSRM) {
-                Write-PScriboMessage "Connected to protected site SRM: $($LocalSRM.Name)"
+                Write-PScriboMessage "Reconnected to protected site SRM: $($LocalSRM.Name)"
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Unable to connect to protected site SRM server"
+            Write-PScriboMessage -IsWarning  "Unable to connect to protected site SRM server"
             Write-Error "$($_) (Local SRM Connection)"
             throw
         }
@@ -86,6 +102,12 @@ function Invoke-AsBuiltReport.VMware.SRM {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "VMware Site Recovery Manager is a business continuity and disaster recovery solution that helps you plan, test, and run the recovery of virtual machines between a protected vCenter Server site and a recovery vCenter Server site. You can use Site Recovery Manager to implement different types of recovery from the protected site to the recovery site."
                     BlankLine
+                }
+                if ($InfoLevel.Protected -ge 1) {
+                    Get-AbrSRMProtectedSiteInfo
+                }
+                if ($InfoLevel.Recovery -ge 1) {
+                    Get-AbrSRMRecoverySiteInfo
                 }
                 if ($InfoLevel.Summary -ge 1) {
                     Get-AbrSRMSummaryInfo
@@ -101,12 +123,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
                         Get-AbrSRMInventoryMapping
                     }
                 }
-                if ($InfoLevel.Protected -ge 1) {
-                    Get-AbrSRMProtectedSiteInfo
-                }
-                if ($InfoLevel.Recovery -ge 1) {
-                    Get-AbrSRMRecoverySiteInfo
-                }
+
                 if ($InfoLevel.ProtectionGroup -ge 1) {
                     Get-AbrSRMProtectionGroupInfo
                 }
@@ -117,7 +134,5 @@ function Invoke-AsBuiltReport.VMware.SRM {
 
         }
 	}
-    Disconnect-VIServer -Server $LocalvCenter -Confirm:$false
-    Disconnect-VIServer -Server $RemotevCenter -Confirm:$false
-    Disconnect-SrmServer -Server $LocalSRM.Name -Confirm:$false
 }
+#end

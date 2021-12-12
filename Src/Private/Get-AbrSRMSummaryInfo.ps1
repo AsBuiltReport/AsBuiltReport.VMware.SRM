@@ -5,7 +5,7 @@ function Get-AbrSRMSummaryInfo {
     .DESCRIPTION
 
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -25,7 +25,6 @@ function Get-AbrSRMSummaryInfo {
 
     process {
         try {
-            $LicenseInfo = $LocalSRM.ExtensionData.GetLicenseInfo()
             Section -Style Heading2 'vCenter Information' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "VMware vCenter Server is advanced server management software that provides a centralized platform for controlling your VMware vSphere environments, allowing you to automate and deliver a virtual infrastructure across the hybrid cloud with confidence."
@@ -35,14 +34,12 @@ function Get-AbrSRMSummaryInfo {
                 BlankLine
                 try {
                     Section -Style Heading3 "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName) vCenter Information" {
-                        Paragraph "The following section provides a summary of the Connected vCenter on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                        Paragraph "The following section provides a summary of the paired vCenter on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                         BlankLine
                         $OutObj = @()
-                        if ($LocalvCenter -and $RemotevCenter) {
+                        if ($LocalvCenter) {
                             $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
                             $LocalPSC = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
-                            $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                            $RemotePSC = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
                             Write-PscriboMessage "Discovered vCenter information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                             $LocalObj = [ordered] @{
                                 'Server URL' = "https://$($LocalSitevCenter)/"
@@ -62,20 +59,106 @@ function Get-AbrSRMSummaryInfo {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
                         $OutObj | Table @TableParams
+                        try {
+                            $Localvcenteradv = Get-AdvancedSetting -Entity $LocalvCenter
+                            $LocalvcenterIP = ($Localvcenteradv | Where-Object { $_.name -like 'VirtualCenter.AutoManagedIPV4' }).Value
+                            if ($LocalvcenterIP) {
+                                $vCenterVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.IPAddress -match $LocalvcenterIP}
+                                if ($vCenterVM) {
+                                    Section -Style Heading4 "vCenter Server VM Properties" {
+                                        Paragraph "The following section provides the hardware properties of the Protected Site vCenter $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                                        BlankLine
+                                        $OutObj = @()
+                                        Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                                        $inObj = [ordered] @{
+                                            'VM Name' = $vCenterVM.Name
+                                            'Number of CPUs' = $vCenterVM.NumCpu
+                                            'Cores Per Socket' = $vCenterVM.CoresPerSocket
+                                            'Memory in GB' = $vCenterVM.MemoryGB
+                                            'Host' = $vCenterVM.VMHost
+                                            'Guest Id' = $vCenterVM.GuestId
+                                            'Provisioned Space GB' = "$([math]::Round(($vCenterVM.ProvisionedSpaceGB)))"
+                                            'Used Space GB' = "$([math]::Round(($vCenterVM.UsedSpaceGB)))"
+                                            'Datastores' = $vCenterVM.DatastoreIdList | ForEach-Object {get-view $_ -Server $LocalvCenter | Select-Object -ExpandProperty Name}
+                                        }
+                                        $OutObj += [pscustomobject]$inobj
+
+                                        $TableParams = @{
+                                            Name = "vCenter VM Properties - $($vCenterVM.Name)"
+                                            List = $true
+                                            ColumnWidths = 40, 60
+                                        }
+                                        if ($Report.ShowTableCaptions) {
+                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                        }
+                                        $OutObj | Table @TableParams
+                                    }
+                                }
+                            }
+                        }
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        }
+                        try {
+                            $extensionmanager = get-view extensionmanager -Server $LocalvCenter
+                            $extension = $extensionmanager.extensionlist | where-object { $_.key -eq "com.vmware.vcHms" }
+                            if($extension.count -eq 1){
+                                $LocalVR = $extension.server.url.split("/")[2].split(":")[0]
+                            }
+                            $LocalVRFQDM = $LocalVR
+                            $LocalVRHostName = $LocalVRFQDM.Split(".")[0]
+                            if ($LocalVRFQDM) {
+                                $LocalVRVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.HostName -match $LocalVRFQDM}
+                            }
+                            elseif (!$LocalVRVM) {
+                                $LocalVRVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.VmName -match $LocalVRHostName}
+                            }
+                            if ($LocalVRVM) {
+                                Section -Style Heading4 "Replication Server VM Properties" {
+                                    Paragraph "The following section provides the hardware properties of the VMware Replication server on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                                    BlankLine
+                                    $OutObj = @()
+                                    Write-PscriboMessage "Discovered VR VM Properties $($LocalVRVM.Name)."
+                                    $inObj = [ordered] @{
+                                        'VM Name' = $LocalVRVM.Name
+                                        'Number of CPUs' = $LocalVRVM.NumCpu
+                                        'Cores Per Socket' = $LocalVRVM.CoresPerSocket
+                                        'Memory in GB' = $LocalVRVM.MemoryGB
+                                        'Host' = $LocalVRVM.VMHost
+                                        'Guest Id' = $LocalVRVM.GuestId
+                                        'Provisioned Space GB' = "$([math]::Round(($LocalVRVM.ProvisionedSpaceGB)))"
+                                        'Used Space GB' = "$([math]::Round(($LocalVRVM.UsedSpaceGB)))"
+                                        'Datastores' = $LocalVRVM.DatastoreIdList | ForEach-Object {get-view $_ -Server $LocalvCenter | Select-Object -ExpandProperty Name}
+                                    }
+                                    $OutObj += [pscustomobject]$inobj
+
+                                    $TableParams = @{
+                                        Name = "VMware Replication VM Properties - $($LocalVRVM.Name)"
+                                        List = $true
+                                        ColumnWidths = 40, 60
+                                    }
+                                    if ($Report.ShowTableCaptions) {
+                                        $TableParams['Caption'] = "- $($TableParams.Name)"
+                                    }
+                                    $OutObj | Table @TableParams
+                                }
+                            }
+                        }
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        }
                     }
                 }
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
                 try {
-                    $RecoverySiteInfo = $LocalSRM.ExtensionData.GetPairedSite()
-                    Section -Style Heading3 "$($RecoverySiteInfo.Name) vCenter Information" {
-                        Paragraph "The following section provides a summary of the Connected vCenter on Site $($RecoverySiteInfo.Name)."
-                        BlankLine
-                        $OutObj = @()
-                        if ($LocalvCenter -and $RemotevCenter) {
-                            $LocalSitevCenter = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
-                            $LocalPSC = (Get-AdvancedSetting -Entity $LocalvCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
+                    if ($RemotevCenter) {
+                        $RecoverySiteInfo = $LocalSRM.ExtensionData.GetPairedSite()
+                        Section -Style Heading3 "$($RecoverySiteInfo.Name) vCenter Information" {
+                            Paragraph "The following section provides a summary of the paired vCenter on Site $($RecoverySiteInfo.Name)."
+                            BlankLine
+                            $OutObj = @()
                             $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
                             $RemotePSC = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'config.vpxd.sso.admin.uri'}).Value -replace "^https://|/sso-adminserver/sdk/vsphere.local"
                             Write-PscriboMessage "Discovered vCenter information for $($($RecoverySiteInfo.Name))."
@@ -88,17 +171,109 @@ function Get-AbrSRMSummaryInfo {
 
                             }
                             $OutObj += [pscustomobject]$RemoteObj
+
+                            $TableParams = @{
+                                Name = "vCenter Information - $($($RecoverySiteInfo.Name))"
+                                List = $true
+                                ColumnWidths = 40, 60
+                            }
+                            if ($Report.ShowTableCaptions) {
+                                $TableParams['Caption'] = "- $($TableParams.Name)"
+                            }
+                            $OutObj | Table @TableParams
+                            try {
+                                if ($RemotevCenter) {
+                                    $Remotevcenteradv = Get-AdvancedSetting -Entity $RemotevCenter
+                                    $RemotevcenterIP = ($Remotevcenteradv | Where-Object { $_.name -like 'VirtualCenter.AutoManagedIPV4' }).Value
+                                    if ($RemotevcenterIP) {
+                                        $vCenterVM = Get-VM * -Server $RemotevCenter | where-object {$_.Guest.IPAddress -match $RemotevcenterIP}
+                                        if ($vCenterVM) {
+                                            Section -Style Heading4 "vCenter Server VM Properties" {
+                                                Paragraph "The following section provides the hardware properties of the Recovery Site vCenter $($RecoverySiteInfo.Name)."
+                                                BlankLine
+                                                $OutObj = @()
+                                                Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                                                $inObj = [ordered] @{
+                                                    'VM Name' = $vCenterVM.Name
+                                                    'Number of CPUs' = $vCenterVM.NumCpu
+                                                    'Cores Per Socket' = $vCenterVM.CoresPerSocket
+                                                    'Memory in GB' = $vCenterVM.MemoryGB
+                                                    'Host' = $vCenterVM.VMHost
+                                                    'Guest Id' = $vCenterVM.GuestId
+                                                    'Provisioned Space GB' = "$([math]::Round(($vCenterVM.ProvisionedSpaceGB)))"
+                                                    'Used Space GB' = "$([math]::Round(($vCenterVM.UsedSpaceGB)))"
+                                                    'Datastores' = $vCenterVM.DatastoreIdList | ForEach-Object {get-view $_ | Select-Object -ExpandProperty Name}
+                                                }
+                                                $OutObj += [pscustomobject]$inobj
+
+                                                $TableParams = @{
+                                                    Name = "vCenter VM Properties - $($vCenterVM.Name)"
+                                                    List = $true
+                                                    ColumnWidths = 40, 60
+                                                }
+                                                if ($Report.ShowTableCaptions) {
+                                                    $TableParams['Caption'] = "- $($TableParams.Name)"
+                                                }
+                                                $OutObj | Table @TableParams
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            catch {
+                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            }
+                            try {
+                                $extensionmanager = get-view extensionmanager -Server $RemotevCenter
+                                $extension = $extensionmanager.extensionlist | where-object { $_.key -eq "com.vmware.vcHms" }
+                                if($extension.count -eq 1){
+                                    $RemoteVR = $extension.server.url.split("/")[2].split(":")[0]
+                                }
+                                $RemoteVRFQDM = $RemoteVR
+                                $RemoteVRHostName = $RemoteVRFQDM.Split(".")[0]
+                                if ($RemoteVRFQDM) {
+                                    $RemoteVRVM = Get-VM * | where-object {$_.Guest.HostName -match $RemoteVRFQDM}
+                                }
+                                elseif (!$RemoteVRVM) {
+                                    $RemoteVRVM = Get-VM * | where-object {$_.Guest.VmName -match $RemoteVRHostName}
+                                }
+                                if ($RemoteVRVM) {
+                                    Section -Style Heading4 "Replication Server VM Properties" {
+                                        Paragraph "The following section provides the hardware properties of the VMware Replication server on $($RecoverySiteInfo.Name)."
+                                        BlankLine
+                                        $OutObj = @()
+                                        Write-PscriboMessage "Discovered VR VM Properties $($RemoteVRVM.Name)."
+                                        $inObj = [ordered] @{
+                                            'VM Name' = $RemoteVRVM.Name
+                                            'Number of CPUs' = $RemoteVRVM.NumCpu
+                                            'Cores Per Socket' = $RemoteVRVM.CoresPerSocket
+                                            'Memory in GB' = $RemoteVRVM.MemoryGB
+                                            'Host' = $RemoteVRVM.VMHost
+                                            'Guest Id' = $RemoteVRVM.GuestId
+                                            'Provisioned Space GB' = "$([math]::Round(($RemoteVRVM.ProvisionedSpaceGB)))"
+                                            'Used Space GB' = "$([math]::Round(($RemoteVRVM.UsedSpaceGB)))"
+                                            'Datastores' = $RemoteVRVM.DatastoreIdList | ForEach-Object {get-view $_ | Select-Object -ExpandProperty Name}
+                                        }
+                                        $OutObj += [pscustomobject]$inobj
+
+                                        $TableParams = @{
+                                            Name = "VMware Replication VM Properties - $($RemoteVRVM.Name)"
+                                            List = $true
+                                            ColumnWidths = 40, 60
+                                        }
+                                        if ($Report.ShowTableCaptions) {
+                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                        }
+                                        $OutObj | Table @TableParams
+                                    }
+                                }
+                            }
+                            catch {
+                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            }
                         }
-                        $TableParams = @{
-                            Name = "vCenter Information - $($($RecoverySiteInfo.Name))"
-                            List = $true
-                            ColumnWidths = 40, 60
-                        }
-                        if ($Report.ShowTableCaptions) {
-                            $TableParams['Caption'] = "- $($TableParams.Name)"
-                        }
-                        $OutObj | Table @TableParams
                     }
+                    else {Write-PscriboMessage -IsWarning "No Recovery Site vCenter connection has been detected. Deactivating Remote vCenter section"}
                 }
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
