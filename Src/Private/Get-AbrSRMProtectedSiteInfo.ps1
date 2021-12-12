@@ -68,10 +68,10 @@ function Get-AbrSRMProtectedSiteInfo {
                     $LocalSRMFQDM = $LocalSRM.Name
                     $LocalSRMHostName = $LocalSRMFQDM.Split(".")[0]
                     if ($LocalSRMFQDM) {
-                        $LocalSRMVM = Get-VM * | where-object {$_.Guest.HostName -match $LocalSRMFQDM}
+                        $LocalSRMVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.HostName -match $LocalSRMFQDM}
                     }
                     elseif (!$LocalSRMVM) {
-                        $LocalSRMVM = Get-VM * | where-object {$_.Guest.VmName -match $LocalSRMHostName}
+                        $LocalSRMVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.VmName -match $LocalSRMHostName}
                     }
                     if ($LocalSRMVM) {
                         Section -Style Heading4 "SRM Server VM Properties" {
@@ -88,7 +88,7 @@ function Get-AbrSRMProtectedSiteInfo {
                                 'Guest Id' = $LocalSRMVM.GuestId
                                 'Provisioned Space GB' = "$([math]::Round(($LocalSRMVM.ProvisionedSpaceGB)))"
                                 'Used Space GB' = "$([math]::Round(($LocalSRMVM.UsedSpaceGB)))"
-                                'Datastores' = $LocalSRMVM.DatastoreIdList | ForEach-Object {get-view $_ | Select-Object -ExpandProperty Name}
+                                'Datastores' = $LocalSRMVM.DatastoreIdList | ForEach-Object {get-view $_ -Server $LocalvCenter | Select-Object -ExpandProperty Name}
                             }
                             $OutObj += [pscustomobject]$inobj
 

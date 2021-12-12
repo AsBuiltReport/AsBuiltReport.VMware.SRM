@@ -63,7 +63,7 @@ function Get-AbrSRMSummaryInfo {
                             $Localvcenteradv = Get-AdvancedSetting -Entity $LocalvCenter
                             $LocalvcenterIP = ($Localvcenteradv | Where-Object { $_.name -like 'VirtualCenter.AutoManagedIPV4' }).Value
                             if ($LocalvcenterIP) {
-                                $vCenterVM = Get-VM * | where-object {$_.Guest.IPAddress -match $LocalvcenterIP}
+                                $vCenterVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.IPAddress -match $LocalvcenterIP}
                                 if ($vCenterVM) {
                                     Section -Style Heading4 "vCenter Server VM Properties" {
                                         Paragraph "The following section provides the hardware properties of the Protected Site vCenter $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
@@ -79,7 +79,7 @@ function Get-AbrSRMSummaryInfo {
                                             'Guest Id' = $vCenterVM.GuestId
                                             'Provisioned Space GB' = "$([math]::Round(($vCenterVM.ProvisionedSpaceGB)))"
                                             'Used Space GB' = "$([math]::Round(($vCenterVM.UsedSpaceGB)))"
-                                            'Datastores' = $vCenterVM.DatastoreIdList | ForEach-Object {get-view $_ | Select-Object -ExpandProperty Name}
+                                            'Datastores' = $vCenterVM.DatastoreIdList | ForEach-Object {get-view $_ -Server $LocalvCenter | Select-Object -ExpandProperty Name}
                                         }
                                         $OutObj += [pscustomobject]$inobj
 
@@ -108,10 +108,10 @@ function Get-AbrSRMSummaryInfo {
                             $LocalVRFQDM = $LocalVR
                             $LocalVRHostName = $LocalVRFQDM.Split(".")[0]
                             if ($LocalVRFQDM) {
-                                $LocalVRVM = Get-VM * | where-object {$_.Guest.HostName -match $LocalVRFQDM}
+                                $LocalVRVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.HostName -match $LocalVRFQDM}
                             }
                             elseif (!$LocalVRVM) {
-                                $LocalVRVM = Get-VM * | where-object {$_.Guest.VmName -match $LocalVRHostName}
+                                $LocalVRVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.VmName -match $LocalVRHostName}
                             }
                             if ($LocalVRVM) {
                                 Section -Style Heading4 "Replication Server VM Properties" {
@@ -128,7 +128,7 @@ function Get-AbrSRMSummaryInfo {
                                         'Guest Id' = $LocalVRVM.GuestId
                                         'Provisioned Space GB' = "$([math]::Round(($LocalVRVM.ProvisionedSpaceGB)))"
                                         'Used Space GB' = "$([math]::Round(($LocalVRVM.UsedSpaceGB)))"
-                                        'Datastores' = $LocalVRVM.DatastoreIdList | ForEach-Object {get-view $_ | Select-Object -ExpandProperty Name}
+                                        'Datastores' = $LocalVRVM.DatastoreIdList | ForEach-Object {get-view $_ -Server $LocalvCenter | Select-Object -ExpandProperty Name}
                                     }
                                     $OutObj += [pscustomobject]$inobj
 
@@ -182,38 +182,40 @@ function Get-AbrSRMSummaryInfo {
                             }
                             $OutObj | Table @TableParams
                             try {
-                                $Remotevcenteradv = Get-AdvancedSetting -Entity $RemotevCenter
-                                $RemotevcenterIP = ($Remotevcenteradv | Where-Object { $_.name -like 'VirtualCenter.AutoManagedIPV4' }).Value
-                                if ($RemotevcenterIP) {
-                                    $vCenterVM = Get-VM * | where-object {$_.Guest.IPAddress -match $RemotevcenterIP}
-                                    if ($vCenterVM) {
-                                        Section -Style Heading4 "vCenter Server VM Properties" {
-                                            Paragraph "The following section provides the hardware properties of the Recovery Site vCenter $($RecoverySiteInfo.Name)."
-                                            BlankLine
-                                            $OutObj = @()
-                                            Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
-                                            $inObj = [ordered] @{
-                                                'VM Name' = $vCenterVM.Name
-                                                'Number of CPUs' = $vCenterVM.NumCpu
-                                                'Cores Per Socket' = $vCenterVM.CoresPerSocket
-                                                'Memory in GB' = $vCenterVM.MemoryGB
-                                                'Host' = $vCenterVM.VMHost
-                                                'Guest Id' = $vCenterVM.GuestId
-                                                'Provisioned Space GB' = "$([math]::Round(($vCenterVM.ProvisionedSpaceGB)))"
-                                                'Used Space GB' = "$([math]::Round(($vCenterVM.UsedSpaceGB)))"
-                                                'Datastores' = $vCenterVM.DatastoreIdList | ForEach-Object {get-view $_ | Select-Object -ExpandProperty Name}
-                                            }
-                                            $OutObj += [pscustomobject]$inobj
+                                if ($RemotevCenter) {
+                                    $Remotevcenteradv = Get-AdvancedSetting -Entity $RemotevCenter
+                                    $RemotevcenterIP = ($Remotevcenteradv | Where-Object { $_.name -like 'VirtualCenter.AutoManagedIPV4' }).Value
+                                    if ($RemotevcenterIP) {
+                                        $vCenterVM = Get-VM * -Server $RemotevCenter | where-object {$_.Guest.IPAddress -match $RemotevcenterIP}
+                                        if ($vCenterVM) {
+                                            Section -Style Heading4 "vCenter Server VM Properties" {
+                                                Paragraph "The following section provides the hardware properties of the Recovery Site vCenter $($RecoverySiteInfo.Name)."
+                                                BlankLine
+                                                $OutObj = @()
+                                                Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                                                $inObj = [ordered] @{
+                                                    'VM Name' = $vCenterVM.Name
+                                                    'Number of CPUs' = $vCenterVM.NumCpu
+                                                    'Cores Per Socket' = $vCenterVM.CoresPerSocket
+                                                    'Memory in GB' = $vCenterVM.MemoryGB
+                                                    'Host' = $vCenterVM.VMHost
+                                                    'Guest Id' = $vCenterVM.GuestId
+                                                    'Provisioned Space GB' = "$([math]::Round(($vCenterVM.ProvisionedSpaceGB)))"
+                                                    'Used Space GB' = "$([math]::Round(($vCenterVM.UsedSpaceGB)))"
+                                                    'Datastores' = $vCenterVM.DatastoreIdList | ForEach-Object {get-view $_ | Select-Object -ExpandProperty Name}
+                                                }
+                                                $OutObj += [pscustomobject]$inobj
 
-                                            $TableParams = @{
-                                                Name = "vCenter VM Properties - $($vCenterVM.Name)"
-                                                List = $true
-                                                ColumnWidths = 40, 60
+                                                $TableParams = @{
+                                                    Name = "vCenter VM Properties - $($vCenterVM.Name)"
+                                                    List = $true
+                                                    ColumnWidths = 40, 60
+                                                }
+                                                if ($Report.ShowTableCaptions) {
+                                                    $TableParams['Caption'] = "- $($TableParams.Name)"
+                                                }
+                                                $OutObj | Table @TableParams
                                             }
-                                            if ($Report.ShowTableCaptions) {
-                                                $TableParams['Caption'] = "- $($TableParams.Name)"
-                                            }
-                                            $OutObj | Table @TableParams
                                         }
                                     }
                                 }

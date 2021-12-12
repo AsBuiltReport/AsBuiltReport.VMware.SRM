@@ -114,7 +114,7 @@ function ConvertTo-VIobject {
         )
 
     if (get-view $OBJECT -ErrorAction SilentlyContinue| Select-Object -ExpandProperty Name -Unique) {
-        return get-view $OBJECT | Select-Object -ExpandProperty Name -Unique
+        return get-view $OBJECT -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name -Unique
     }
     else {
         return $OBJECT
