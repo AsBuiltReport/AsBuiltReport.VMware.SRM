@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Original Author: Matt Allford (@mattallford)
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
