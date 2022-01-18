@@ -152,6 +152,9 @@ function Invoke-AsBuiltReport.VMware.SRM {
                 if ($InfoLevel.RecoveryPlan -ge 1) {
                     Get-AbrSRMRecoveryPlanInfo
                 }
+                if ($InfoLevel.Summary -ge 1) {
+                    Get-AbrVRMSProtectionInfo
+                }
             }
 
         }
