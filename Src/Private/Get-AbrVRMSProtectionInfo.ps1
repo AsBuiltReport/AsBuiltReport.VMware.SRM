@@ -36,11 +36,11 @@ function Get-AbrVRMSProtectionInfo {
                         Paragraph "VMware vSphere Replication is a virtual machine data protection and disaster recovery solution. It is fully integrated with VMware vCenter Server and VMware vSphere Web Client, providing host-based, asynchronous replication of virtual machines."
                         BlankLine
                     }
-                    Paragraph "The following section provides information on virtual machine replication status"
+                    Paragraph "The following section provides information on virtual machine replication status."
                     BlankLine
                     try {
                         Section -Style Heading3 'Replicated Virtual Machine' {
-                            Paragraph "The following table details virtual machine replicated by replication server $($LocalVR)."
+                            Paragraph "The following table details virtual machine configured for replication on replication server $($LocalVR)."
                             BlankLine
                             $OutObj = @()
                             $ReplicatedVMs = Get-VM @Args -Server $LocalvCenter | Where-Object {($_.ExtensionData.Config.ExtraConfig | Where-Object { $_.Key -eq 'hbr_filter.destination' -and $_.Value } )}
@@ -56,7 +56,7 @@ function Get-AbrVRMSProtectionInfo {
                                     if ($ReplicatedVM.ResourcePool -like 'Resources') {
                                         $ResourcesPool = "Root Resource Pool"
                                     }
-                                    Write-PscriboMessage "Discovered Recovery Site $($ReplicatedVM.Name)."
+                                    Write-PscriboMessage "Discovered vm configured for replication $($ReplicatedVM.Name)."
                                     $inObj = [ordered] @{
                                         'VM Name' = $ReplicatedVM.Name
                                         'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
@@ -86,7 +86,7 @@ function Get-AbrVRMSProtectionInfo {
                     }
                     try {
                         Section -Style Heading3 'Non-Replicated Virtual Machine' {
-                            Paragraph "The following table details virtual machine not replicated on vCenter Server $($LocalvCenter.Name)."
+                            Paragraph "The following table details virtual machine not configured for replicated on vCenter Server $($LocalvCenter.Name)."
                             BlankLine
                             $OutObj = @()
                             $ReplicatedVMs = Get-VM @Args -Server $LocalvCenter | Where-Object {($_.ExtensionData.Config.ExtraConfig | Where-Object { $_.Key -ne 'hbr_filter.destination' -and $_.Value } )}
@@ -102,7 +102,7 @@ function Get-AbrVRMSProtectionInfo {
                                     if ($ReplicatedVM.ResourcePool -like 'Resources') {
                                         $ResourcesPool = "Root Resource Pool"
                                     }
-                                    Write-PscriboMessage "Discovered Recovery Site $($ReplicatedVM.Name)."
+                                    Write-PscriboMessage "Discovered non-configured replication vm $($ReplicatedVM.Name)."
                                     $inObj = [ordered] @{
                                         'VM Name' = $ReplicatedVM.Name
                                         'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
@@ -117,7 +117,7 @@ function Get-AbrVRMSProtectionInfo {
                             }
 
                             $TableParams = @{
-                                Name = "VMware Replicated VMs - $($LocalVR.toUpper().split(".")[0])"
+                                Name = "VMware Non-Replicated VMs - $($LocalvCenter.Name)"
                                 List = $false
                                 ColumnWidths = 25, 15, 30, 30
                             }
