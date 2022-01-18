@@ -38,46 +38,51 @@ function Get-AbrVRMSProtectionInfo {
                     }
                     Paragraph "The following section provides information on virtual machine replication status"
                     BlankLine
-                    Section -Style Heading3 'Replicated Virtual Machine' {
-                        Paragraph "The following table details virtual machine replicated by replication server $($LocalVR)."
-                        BlankLine
-                        $OutObj = @()
-                        $ReplicatedVMs = Get-VM @Args -Server $LocalvCenter | Where-Object {($_.ExtensionData.Config.ExtraConfig | Where-Object { $_.Key -eq 'hbr_filter.destination' -and $_.Value } )}
-                        if ($ReplicatedVMs) {
-                            foreach ($ReplicatedVM in $ReplicatedVMs) {
-                                if ($ReplicatedVM.VApp) {
-                                    $ResourcesPool = $ReplicatedVM.VApp
-                                    $Folder = $ReplicatedVM.VApp
-                                }else {
-                                    $ResourcesPool = $ReplicatedVM.ResourcePool
-                                    $Folder = $ReplicatedVM.Folder
-                                }
-                                if ($ReplicatedVM.ResourcePool -like 'Resources') {
-                                    $ResourcesPool = "Root Resource Pool"
-                                }
-                                Write-PscriboMessage "Discovered Recovery Site $($ReplicatedVM.Name)."
-                                $inObj = [ordered] @{
-                                    'VM Name' = $ReplicatedVM.Name
-                                    'HW Version' = Switch (($ReplicatedVM.Version).count) {
-                                        0 {"-"}
-                                        default {($ReplicatedVM.Version).ToString().split("v")[1]}
+                    try {
+                        Section -Style Heading3 'Replicated Virtual Machine' {
+                            Paragraph "The following table details virtual machine replicated by replication server $($LocalVR)."
+                            BlankLine
+                            $OutObj = @()
+                            $ReplicatedVMs = Get-VM @Args -Server $LocalvCenter | Where-Object {($_.ExtensionData.Config.ExtraConfig | Where-Object { $_.Key -eq 'hbr_filter.destination' -and $_.Value } )}
+                            if ($ReplicatedVMs) {
+                                foreach ($ReplicatedVM in $ReplicatedVMs) {
+                                    if ($ReplicatedVM.VApp) {
+                                        $ResourcesPool = $ReplicatedVM.VApp
+                                        $Folder = $ReplicatedVM.VApp
+                                    }else {
+                                        $ResourcesPool = $ReplicatedVM.ResourcePool
+                                        $Folder = $ReplicatedVM.Folder
                                     }
-                                    'Folder' = $Folder
-                                    'Resource Pool' = $ResourcesPool
+                                    if ($ReplicatedVM.ResourcePool -like 'Resources') {
+                                        $ResourcesPool = "Root Resource Pool"
+                                    }
+                                    Write-PscriboMessage "Discovered Recovery Site $($ReplicatedVM.Name)."
+                                    $inObj = [ordered] @{
+                                        'VM Name' = $ReplicatedVM.Name
+                                        'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
+                                            0 {"-"}
+                                            default {($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1]}
+                                        }
+                                        'Folder' = $Folder
+                                        'Resource Pool' = $ResourcesPool
+                                    }
+                                    $OutObj += [pscustomobject]$inobj
                                 }
-                                $OutObj += [pscustomobject]$inobj
                             }
-                        }
 
-                        $TableParams = @{
-                            Name = "VMware Replicated VMs - $($LocalVR.toUpper().split(".")[0])"
-                            List = $false
-                            ColumnWidths = 25, 15, 30, 30
+                            $TableParams = @{
+                                Name = "VMware Replicated VMs - $($LocalVR.toUpper().split(".")[0])"
+                                List = $false
+                                ColumnWidths = 25, 15, 30, 30
+                            }
+                            if ($Report.ShowTableCaptions) {
+                                $TableParams['Caption'] = "- $($TableParams.Name)"
+                            }
+                            $OutObj | Sort-Object -Property 'VM Name' | Table @TableParams
                         }
-                        if ($Report.ShowTableCaptions) {
-                            $TableParams['Caption'] = "- $($TableParams.Name)"
-                        }
-                        $OutObj | Sort-Object -Property 'VM Name' | Table @TableParams
+                    }
+                    catch {
+                        Write-PscriboMessage -IsWarning $_.Exception.Message
                     }
                     try {
                         Section -Style Heading3 'Non-Replicated Virtual Machine' {
@@ -100,9 +105,9 @@ function Get-AbrVRMSProtectionInfo {
                                     Write-PscriboMessage "Discovered Recovery Site $($ReplicatedVM.Name)."
                                     $inObj = [ordered] @{
                                         'VM Name' = $ReplicatedVM.Name
-                                        'HW Version' = Switch (($ReplicatedVM.Version).count) {
+                                        'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
                                             0 {"-"}
-                                            default {($ReplicatedVM.Version).ToString().split("v")[1]}
+                                            default {($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1]}
                                         }
                                         'Folder' = $Folder
                                         'Resource Pool' = $ResourcesPool
