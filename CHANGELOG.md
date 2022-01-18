@@ -1,5 +1,20 @@
 # :arrows_counterclockwise: VMware SRM As Built Report Changelog
 
+## [0.3.1] - 2022-01-17
+
+### Added
+
+- Added Recovery Site PlaceHolder Datastore Information
+- Added Vmware Replication VM status (Replicated/Non-Replicated)
+
+### Changed
+
+- Improved Recovery Site SRM status validation.
+
+### Fixed
+
+- Fix per table caption warning message
+
 ## [0.3.0] - 2021-12-11
 
 ### Added

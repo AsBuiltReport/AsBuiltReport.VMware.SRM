@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.1
         Original Author: Matt Allford (@mattallford)
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
@@ -66,6 +66,17 @@ function Invoke-AsBuiltReport.VMware.SRM {
             $RemotevCenter = Connect-VIServer $TempSRM.ExtensionData.GetPairedSite().vcHost -Credential $RemoteCredential -Port 443 -Protocol https -ErrorAction SilentlyContinue
             if ($RemotevCenter) {
                 Write-PScriboMessage "Connected to $((Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value)"
+                try {
+                    $RemoteSRM = Connect-SrmServer -IgnoreCertificateErrors -Server $RemotevCenter -Credential $RemoteCredential -Port 443 -Protocol https -RemoteCredential $Credential
+                    if ($RemoteSRM) {
+                        Write-PScriboMessage "Succefully Connected to recovery site SRM with provided credentials"
+                    }
+                }
+                catch {
+                    Write-PScriboMessage -IsWarning  "Unable to connect to recovery site SRM Server"
+                    Write-Error $_
+                    throw
+                }
             }
             if (!$RemotevCenter) {
                 try {
@@ -73,6 +84,17 @@ function Invoke-AsBuiltReport.VMware.SRM {
                     $RemotevCenter = Connect-VIServer $TempSRM.ExtensionData.GetPairedSite().vcHost -Credential $RemoteCredential -Port 443 -Protocol https -ErrorAction Stop
                     if ($RemotevCenter) {
                         Write-PScriboMessage "Connected to $((Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value)"
+                        try {
+                            $RemoteSRM = Connect-SrmServer -IgnoreCertificateErrors -Server $RemotevCenter -Credential $RemoteCredential -Port 443 -Protocol https -RemoteCredential $Credential
+                            if ($RemoteSRM) {
+                                Write-PScriboMessage "Succefully Connected to recovery site SRM with provided credentials"
+                            }
+                        }
+                        catch {
+                            Write-PScriboMessage -IsWarning  "Unable to connect to recovery site SRM Server"
+                            Write-Error $_
+                            throw
+                        }
                     }
                 }
                 catch {
@@ -129,6 +151,9 @@ function Invoke-AsBuiltReport.VMware.SRM {
                 }
                 if ($InfoLevel.RecoveryPlan -ge 1) {
                     Get-AbrSRMRecoveryPlanInfo
+                }
+                if ($InfoLevel.Summary -ge 1) {
+                    Get-AbrVRMSProtectionInfo
                 }
             }
 
