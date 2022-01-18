@@ -5,7 +5,7 @@ function Get-AbrSRMProtectedSiteInfo {
     .DESCRIPTION
 
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -31,7 +31,7 @@ function Get-AbrSRMProtectedSiteInfo {
                     Paragraph "In a typical Site Recovery Manager installation, the protected site provides business-critical datacenter services. The protected site can be any site where vCenter Server supports a critical business need."
                     BlankLine
                 }
-                Paragraph "The following section provides a summary of the Protected Site $($ProtectedSiteInfo.SiteName)."
+                Paragraph "The following table details information of the Protected Site $($ProtectedSiteInfo.SiteName)."
                 BlankLine
                 $OutObj = @()
                 if ($ProtectedSiteInfo) {
@@ -75,7 +75,7 @@ function Get-AbrSRMProtectedSiteInfo {
                     }
                     if ($LocalSRMVM) {
                         Section -Style Heading4 "SRM Server VM Properties" {
-                            Paragraph "The following section provides the hardware properties of the Protected Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                            Paragraph "The following table details the hardware inventory of the Protected Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                             BlankLine
                             $OutObj = @()
                             Write-PscriboMessage "Discovered SRM VM Properties $($LocalSRMVM.Name)."
