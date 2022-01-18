@@ -5,7 +5,7 @@ function Get-AbrSRMRecoverySiteInfo {
     .DESCRIPTION
 
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -31,21 +31,21 @@ function Get-AbrSRMRecoverySiteInfo {
                     Paragraph "In a typical Site Recovery Manager installation, the recovery site is an alternative infrastructure to which Site Recovery Manager can migrate services. The recovery site can be located thousands of miles away from the protected site. Conversely, the recovery site can be in the same room as a way of establishing redundancy. The recovery site is usually located in a facility that is unlikely to be affected by environmental, infrastructure, or other disturbances that affect the protected site."
                     BlankLine
                 }
-                Paragraph "The following section provides a summary of the Recovery Site $($RecoverySiteInfo.Name)."
+                Paragraph "The following table provides a summary of the Recovery Site $($RecoverySiteInfo.Name)."
                 BlankLine
                 $OutObj = @()
                 if ($RecoverySiteInfo) {
-                    $RemoteSRM = "Unknown"
+                    $RemoteSRMServer = "Unknown"
                     if ($RemotevCenter) {
                         $extensionmanager = get-view extensionmanager -Server $RemotevCenter
                         $extension = $extensionmanager.extensionlist | where-object { $_.key -eq "com.vmware.vcDR" }
                         if($extension.count -eq 1){
-                            $RemoteSRM = $extension.server.url.split("/")[2].split(":")[0]
-                        } else {$RemoteSRM = "Unknown"}
+                            $RemoteSRMServer = $extension.server.url.split("/")[2].split(":")[0]
+                        } else {$RemoteSRMServer = "Unknown"}
                     }
                     Write-PscriboMessage "Discovered Recovery Site $($RecoverySiteInfo.Name)."
                     $inObj = [ordered] @{
-                        'Recovery Server Name' = $RemoteSRM
+                        'Recovery Server Name' = $RemoteSRMServer
                         'Recovery Site Name' = $RecoverySiteInfo.Name
                         'Recovery Site ID' = $RecoverySiteInfo.Uuid
                         'Solution User' = $LocalSRM.ExtensionData.GetPairedSiteSolutionUserInfo().Username
@@ -75,9 +75,9 @@ function Get-AbrSRMRecoverySiteInfo {
                         $extensionmanager = get-view extensionmanager -Server $RemotevCenter
                         $extension = $extensionmanager.extensionlist | where-object { $_.key -eq "com.vmware.vcDR" }
                         if($extension.count -eq 1){
-                            $RemoteSRM = $extension.server.url.split("/")[2].split(":")[0]
+                            $RemoteSRMServer = $extension.server.url.split("/")[2].split(":")[0]
                         }
-                        $RemoteSRMFQDM = $RemoteSRM
+                        $RemoteSRMFQDM = $RemoteSRMServer
                         $RemoteSRMHostName = $RemoteSRMFQDM.Split(".")[0]
                         if ($RemoteSRMFQDM) {
                             $RemoteSRMVM = Get-VM * | where-object {$_.Guest.HostName -match $RemoteSRMFQDM}
@@ -87,7 +87,7 @@ function Get-AbrSRMRecoverySiteInfo {
                         }
                         if ($RemoteSRMVM) {
                             Section -Style Heading4 "SRM Server VM Properties" {
-                                Paragraph "The following section provides the hardware properties of the Protected Site $($RecoverySiteInfo.Name)."
+                                Paragraph "The following table provides the hardware properties of the Protected Site $($RecoverySiteInfo.Name)."
                                 BlankLine
                                 $OutObj = @()
                                 Write-PscriboMessage "Discovered SRM VM Properties $($RemoteSRMVM.Name)."
