@@ -76,7 +76,7 @@ function Get-AbrSRMProtectionGroupInfo {
                         BlankLine
                         $ProtectionGroups = $LocalSRM.ExtensionData.Protection.ListProtectionGroups()
                         if ($ProtectionGroups) {
-                            Section -Style Heading4 "VMRS Type Protection Groups" {
+                            Section -Style Heading4 "VMRS Protection Groups" {
                                 if ($InfoLevel.ProtectionGroup -eq 1) {
                                     $OutObj = @()
                                     foreach ($ProtectionGroup in $ProtectionGroups) {
@@ -156,7 +156,7 @@ function Get-AbrSRMProtectionGroupInfo {
                         }
                         try {
                             if ($ProtectionGroups) {
-                                Section -Style Heading4 "SAN Type Protection Groups" {
+                                Section -Style Heading4 "SAN Protection Groups" {
                                     $OutObj = @()
                                     if ($InfoLevel.ProtectionGroup -eq 1) {
                                         foreach ($ProtectionGroup in $ProtectionGroups) {
