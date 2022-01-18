@@ -5,6 +5,7 @@
 ### Added
 
 - Added Recovery Site PlaceHolder Datastore Information
+- Added Vmware Replication VM status (Replicated/Non-Replicated)
 
 ### Changed
 
