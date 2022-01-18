@@ -5,7 +5,7 @@ function Get-AbrSRMRecoveryPlanInfo {
     .DESCRIPTION
 
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -30,25 +30,30 @@ function Get-AbrSRMRecoveryPlanInfo {
                     Paragraph "Recovery Plans in Site Recovery Manager are like an automated run book, controlling all the steps in the recovery process. The recovery plan is the level at which actions like failover, planned migration, testing and re-protect are conducted. A recovery plan contains one or more protection groups and a protection group can be included in more than one recovery plan. This provides for the flexibility to test or recover an application by itself and also test or recover a group of applications or the entire site."
                     BlankLine
                 }
-                Paragraph "The following section provides a summary of the Recovery Plan configured under $($LocalSRM.Name.split(".", 2).toUpper()[0])."
+                Paragraph "The following table provides a summary of the Recovery Plan configured under $($LocalSRM.Name.split(".", 2).toUpper()[0])."
                 BlankLine
                 $RecoveryPlans = $LocalSRM.ExtensionData.Recovery.ListPlans()
                 $OutObj = @()
                 if ($RecoveryPlans) {
                     foreach ($RecoveryPlan in $RecoveryPlans) {
-                        $RecoveryPlanInfo = $RecoveryPlan.GetInfo()
-                        $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
-                            $RecoveryPlanPG.GetInfo().Name
-                        }
+                        try {
+                            $RecoveryPlanInfo = $RecoveryPlan.GetInfo()
+                            $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
+                                $RecoveryPlanPG.GetInfo().Name
+                            }
 
-                        Write-PScriboMessage "Discovered Protection Group $($RecoveryPlanInfo.Name)."
-                        $inObj = [ordered] @{
-                            'Name' = $RecoveryPlanInfo.Name
-                            'Description' = ConvertTo-EmptyToFiller $RecoveryPlanInfo.Description
-                            'State' = $RecoveryPlanInfo.State
-                            'Protection Groups' = ConvertTo-EmptyToFiller (($RecoveryPlanPGs | Sort-Object) -join ', ')
+                            Write-PScriboMessage "Discovered Protection Group $($RecoveryPlanInfo.Name)."
+                            $inObj = [ordered] @{
+                                'Name' = $RecoveryPlanInfo.Name
+                                'Description' = ConvertTo-EmptyToFiller $RecoveryPlanInfo.Description
+                                'State' = $RecoveryPlanInfo.State
+                                'Protection Groups' = ConvertTo-EmptyToFiller (($RecoveryPlanPGs | Sort-Object) -join ', ')
+                            }
+                            $OutObj += [pscustomobject]$inobj
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        catch {
+                            Write-PscriboMessage -IsWarning "$($_.Exception.Message) Virtual Machine Recovery Setting"
+                        }
                     }
                     $TableParams = @{
                         Name = "Recovery Plan Config - $($RecoveryPlanInfo.Name)"
@@ -64,11 +69,11 @@ function Get-AbrSRMRecoveryPlanInfo {
                     try {
                         $RecoveryPlans = $LocalSRM.ExtensionData.Recovery.ListPlans()
                         if ($RecoveryPlans) {
-                            Section -Style Heading3 'Virtual Machine Recovery Settings Summary' {
+                            Section -Style Heading3 'Virtual Machine Recovery Settings' {
                                 Paragraph "The following section provides detailed per VM Recovery Settings informattion on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName) ."
                                 BlankLine
                                 foreach ($RecoveryPlan in $RecoveryPlans) {
-                                    Section -Style Heading3 "$($RecoveryPlan.getinfo().Name) VM Recovery Settings" {
+                                    Section -Style Heading3 "$($RecoveryPlan.getinfo().Name)" {
                                         $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
                                             $RecoveryPlanPG
                                         }
@@ -130,29 +135,32 @@ function Get-AbrSRMRecoveryPlanInfo {
                                                         }
                                                         'Dependent VMs' = ($DependentVMs | Sort-Object -Unique) -join ", "
                                                     }
-                                                    $OutObj += [pscustomobject]$inobj
+                                                    $OutObj = [pscustomobject]$inobj
+
+                                                    $TableParams = @{
+                                                        Name = "Virtual Machine Recovery Settings - $($RecoveryPlan.getinfo().Name)"
+                                                        List = $true
+                                                        ColumnWidths = 50, 50
+                                                    }
+                                                    if ($Report.ShowTableCaptions) {
+                                                        $TableParams['Caption'] = "- $($TableParams.Name)"
+                                                    }
+                                                    $OutObj | Table @TableParams
                                                 }
                                             }
                                         }
 
-                                        if ($InfoLevel.RecoveryPlan -eq 2) {
+                                        if ($InfoLevel.RecoveryPlan -eq 2 -and ($OutObj).count -gt 0) {
                                             $TableParams = @{
                                                 Name = "Virtual Machine Recovery Settings - $($RecoveryPlan.getinfo().Name)"
                                                 List = $False
                                                 ColumnWidths = 16, 10, 12, 12, 12, 12, 12, 14
                                             }
-                                        }
-                                        if ($InfoLevel.RecoveryPlan -eq 3) {
-                                            $TableParams = @{
-                                                Name = "Virtual Machine Recovery Settings - $($RecoveryPlan.getinfo().Name)"
-                                                List = $true
-                                                ColumnWidths = 50, 50
+                                            if ($Report.ShowTableCaptions) {
+                                                $TableParams['Caption'] = "- $($TableParams.Name)"
                                             }
+                                            $OutObj | Table @TableParams
                                         }
-                                        if ($Report.ShowTableCaptions) {
-                                            $TableParams['Caption'] = "- $($TableParams.Name)"
-                                        }
-                                        $OutObj | Table @TableParams
                                     }
                                 }
                             }

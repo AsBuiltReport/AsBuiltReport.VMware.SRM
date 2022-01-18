@@ -5,7 +5,7 @@ function Get-AbrSRMSummaryInfo {
     .DESCRIPTION
 
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -34,7 +34,7 @@ function Get-AbrSRMSummaryInfo {
                 BlankLine
                 try {
                     Section -Style Heading3 "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName) vCenter Information" {
-                        Paragraph "The following section provides a summary of the paired vCenter on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                        Paragraph "The following table provides a summary of the paired vCenter on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                         BlankLine
                         $OutObj = @()
                         if ($LocalvCenter) {
@@ -66,7 +66,7 @@ function Get-AbrSRMSummaryInfo {
                                 $vCenterVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.IPAddress -match $LocalvcenterIP}
                                 if ($vCenterVM) {
                                     Section -Style Heading4 "vCenter Server VM Properties" {
-                                        Paragraph "The following section provides the hardware properties of the Protected Site vCenter $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                                        Paragraph "The following table details hardware inventory of the Protected Site vCenter $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                                         BlankLine
                                         $OutObj = @()
                                         Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
@@ -115,7 +115,7 @@ function Get-AbrSRMSummaryInfo {
                             }
                             if ($LocalVRVM) {
                                 Section -Style Heading4 "Replication Server VM Properties" {
-                                    Paragraph "The following section provides the hardware properties of the VMware Replication server on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                                    Paragraph "The following table provides hardware inventory of the VMware Replication server on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                                     BlankLine
                                     $OutObj = @()
                                     Write-PscriboMessage "Discovered VR VM Properties $($LocalVRVM.Name)."
@@ -156,7 +156,7 @@ function Get-AbrSRMSummaryInfo {
                     if ($RemotevCenter) {
                         $RecoverySiteInfo = $LocalSRM.ExtensionData.GetPairedSite()
                         Section -Style Heading3 "$($RecoverySiteInfo.Name) vCenter Information" {
-                            Paragraph "The following section provides a summary of the paired vCenter on Site $($RecoverySiteInfo.Name)."
+                            Paragraph "The following table provides a summary of the paired vCenter on Site $($RecoverySiteInfo.Name)."
                             BlankLine
                             $OutObj = @()
                             $RemoteSitevCenter = (Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value
@@ -189,7 +189,7 @@ function Get-AbrSRMSummaryInfo {
                                         $vCenterVM = Get-VM * -Server $RemotevCenter | where-object {$_.Guest.IPAddress -match $RemotevcenterIP}
                                         if ($vCenterVM) {
                                             Section -Style Heading4 "vCenter Server VM Properties" {
-                                                Paragraph "The following section provides the hardware properties of the Recovery Site vCenter $($RecoverySiteInfo.Name)."
+                                                Paragraph "The following table details hardware properties of the Recovery Site vCenter $($RecoverySiteInfo.Name)."
                                                 BlankLine
                                                 $OutObj = @()
                                                 Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
@@ -239,7 +239,7 @@ function Get-AbrSRMSummaryInfo {
                                 }
                                 if ($RemoteVRVM) {
                                     Section -Style Heading4 "Replication Server VM Properties" {
-                                        Paragraph "The following section provides the hardware properties of the VMware Replication server on $($RecoverySiteInfo.Name)."
+                                        Paragraph "The following talbe details hardware inventory of the VMware Replication server on $($RecoverySiteInfo.Name)."
                                         BlankLine
                                         $OutObj = @()
                                         Write-PscriboMessage "Discovered VR VM Properties $($RemoteVRVM.Name)."
@@ -286,7 +286,7 @@ function Get-AbrSRMSummaryInfo {
         try {
             $LicenseInfo = $LocalSRM.ExtensionData.GetLicenseInfo()
             Section -Style Heading2 'Licenses Information' {
-                Paragraph "The following section provides a summary of the License Feature on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                Paragraph "The following table provides a summary of the License Feature on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
                 if ($LicenseInfo) {
@@ -327,7 +327,7 @@ function Get-AbrSRMSummaryInfo {
         try {
             $Permissions = Get-VIPermission -Server $LocalvCenter | Where-Object {$_.Role -like "SRM*"} | Select-Object @{Name = "Name"; E = {(get-virole -Name  $_.Role | Select-Object -ExpandProperty ExtensionData).Info.Label}},Principal,Propagate,IsGroup
             Section -Style Heading2 'SRM Permissions' {
-                Paragraph "The following section provides a summary of the SRM Permissions on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                Paragraph "The following table provides a summary of the SRM Permissions on Site $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                 BlankLine
                 $OutObj = @()
                 if ($Permissions) {
