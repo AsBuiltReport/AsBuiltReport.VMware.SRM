@@ -67,6 +67,9 @@ This report is compatible with the following PowerShell versions;
 <!-- ********** Update system requirements ********** -->
 PowerShell 5.1 or PowerShell 7, and the following PowerShell modules are required for generating a VMware SRM As Built report.
 
+Each of these modules can be easily downloaded and installed via the PowerShell Gallery
+
+- [VMware PowerCLI Module](https://www.powershellgallery.com/packages/VMware.PowerCLI/)
 - [AsBuiltReport.VMware.SRM Module](https://www.powershellgallery.com/packages/AsBuiltReport.VMware.SRM/).
 
 ### Linux & macOS
@@ -86,6 +89,7 @@ Tested with vCenter Global Read-Only permissions.
 ### PowerShell
 
 ```powershell
+install-module VMware.PowerCLI -MinimumVersion 12.3 -AllowClobber
 install-module AsBuiltReport.VMware.SRM
 ```
 
