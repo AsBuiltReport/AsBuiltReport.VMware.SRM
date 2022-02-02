@@ -3,17 +3,17 @@ function Get-AbrVRMSProtectionInfo {
     .SYNOPSIS
     Used by As Built Report to retrieve VMware Replication Protection Status information.
     .DESCRIPTION
-
+        Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
-        Github:         rebelinux
-    .EXAMPLE
-
+        Github:         @rebelinux
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
     .LINK
-
+        https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM
     #>
+
     [CmdletBinding()]
     param (
     )
@@ -46,27 +46,32 @@ function Get-AbrVRMSProtectionInfo {
                             $ReplicatedVMs = Get-VM @Args -Server $LocalvCenter | Where-Object {($_.ExtensionData.Config.ExtraConfig | Where-Object { $_.Key -eq 'hbr_filter.destination' -and $_.Value } )}
                             if ($ReplicatedVMs) {
                                 foreach ($ReplicatedVM in $ReplicatedVMs) {
-                                    if ($ReplicatedVM.VApp) {
-                                        $ResourcesPool = $ReplicatedVM.VApp
-                                        $Folder = $ReplicatedVM.VApp
-                                    }else {
-                                        $ResourcesPool = $ReplicatedVM.ResourcePool
-                                        $Folder = $ReplicatedVM.Folder
-                                    }
-                                    if ($ReplicatedVM.ResourcePool -like 'Resources') {
-                                        $ResourcesPool = "Root Resource Pool"
-                                    }
-                                    Write-PscriboMessage "Discovered vm configured for replication $($ReplicatedVM.Name)."
-                                    $inObj = [ordered] @{
-                                        'VM Name' = $ReplicatedVM.Name
-                                        'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
-                                            0 {"-"}
-                                            default {($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1]}
+                                    try {
+                                        if ($ReplicatedVM.VApp) {
+                                            $ResourcesPool = $ReplicatedVM.VApp
+                                            $Folder = $ReplicatedVM.VApp
+                                        }else {
+                                            $ResourcesPool = $ReplicatedVM.ResourcePool
+                                            $Folder = $ReplicatedVM.Folder
                                         }
-                                        'Folder' = $Folder
-                                        'Resource Pool' = $ResourcesPool
+                                        if ($ReplicatedVM.ResourcePool -like 'Resources') {
+                                            $ResourcesPool = "Root Resource Pool"
+                                        }
+                                        Write-PscriboMessage "Discovered vm configured for replication $($ReplicatedVM.Name)."
+                                        $inObj = [ordered] @{
+                                            'VM Name' = $ReplicatedVM.Name
+                                            'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
+                                                0 {"-"}
+                                                default {($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1]}
+                                            }
+                                            'Folder' = $Folder
+                                            'Resource Pool' = $ResourcesPool
+                                        }
+                                        $OutObj += [pscustomobject]$inobj
                                     }
-                                    $OutObj += [pscustomobject]$inobj
+                                    catch {
+                                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                                    }
                                 }
                             }
 
@@ -92,27 +97,32 @@ function Get-AbrVRMSProtectionInfo {
                             $ReplicatedVMs = Get-VM @Args -Server $LocalvCenter | Where-Object {($_.ExtensionData.Config.ExtraConfig | Where-Object { $_.Key -ne 'hbr_filter.destination' -and $_.Value } )}
                             if ($ReplicatedVMs) {
                                 foreach ($ReplicatedVM in $ReplicatedVMs) {
-                                    if ($ReplicatedVM.VApp) {
-                                        $ResourcesPool = $ReplicatedVM.VApp
-                                        $Folder = $ReplicatedVM.VApp
-                                    }else {
-                                        $ResourcesPool = $ReplicatedVM.ResourcePool
-                                        $Folder = $ReplicatedVM.Folder
-                                    }
-                                    if ($ReplicatedVM.ResourcePool -like 'Resources') {
-                                        $ResourcesPool = "Root Resource Pool"
-                                    }
-                                    Write-PscriboMessage "Discovered non-configured replication vm $($ReplicatedVM.Name)."
-                                    $inObj = [ordered] @{
-                                        'VM Name' = $ReplicatedVM.Name
-                                        'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
-                                            0 {"-"}
-                                            default {($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1]}
+                                    try {
+                                        if ($ReplicatedVM.VApp) {
+                                            $ResourcesPool = $ReplicatedVM.VApp
+                                            $Folder = $ReplicatedVM.VApp
+                                        }else {
+                                            $ResourcesPool = $ReplicatedVM.ResourcePool
+                                            $Folder = $ReplicatedVM.Folder
                                         }
-                                        'Folder' = $Folder
-                                        'Resource Pool' = $ResourcesPool
+                                        if ($ReplicatedVM.ResourcePool -like 'Resources') {
+                                            $ResourcesPool = "Root Resource Pool"
+                                        }
+                                        Write-PscriboMessage "Discovered non-configured replication vm $($ReplicatedVM.Name)."
+                                        $inObj = [ordered] @{
+                                            'VM Name' = $ReplicatedVM.Name
+                                            'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
+                                                0 {"-"}
+                                                default {($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1]}
+                                            }
+                                            'Folder' = $Folder
+                                            'Resource Pool' = $ResourcesPool
+                                        }
+                                        $OutObj += [pscustomobject]$inobj
                                     }
-                                    $OutObj += [pscustomobject]$inobj
+                                    catch {
+                                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                                    }
                                 }
                             }
 

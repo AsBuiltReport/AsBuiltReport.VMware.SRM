@@ -1,19 +1,19 @@
 function Get-AbrSRMRecoverySiteInfo {
     <#
     .SYNOPSIS
-    Used by As Built Report to retrieve VMware SRM Recovery Site information.
+        Used by As Built Report to retrieve VMware SRM Recovery Site information.
     .DESCRIPTION
-
+        Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
-        Github:         rebelinux
-    .EXAMPLE
-
+        Github:         @rebelinux
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
     .LINK
-
+        https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM
     #>
+
     [CmdletBinding()]
     param (
     )
