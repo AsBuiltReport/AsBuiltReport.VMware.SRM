@@ -1,19 +1,20 @@
 function Get-AbrSRMProtectedSiteInfo {
     <#
     .SYNOPSIS
-    Used by As Built Report to retrieve VMware SRM Protected Site information.
+        Used by As Built Report to retrieve VMware SRM Protected Site information.
     .DESCRIPTION
-
+        Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
-        Author:         Jonathan Colon
+        Version:        0.3.2
+        Author:         Matt Allford (@mattallford)
+        Editor:         Jonathan Colon
         Twitter:        @jcolonfzenpr
-        Github:         rebelinux
-    .EXAMPLE
-
+        Github:         @rebelinux
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
     .LINK
-
+        https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM
     #>
+
     [CmdletBinding()]
     param (
     )

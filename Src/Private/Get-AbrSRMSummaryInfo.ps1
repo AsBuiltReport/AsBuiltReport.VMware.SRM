@@ -3,17 +3,18 @@ function Get-AbrSRMSummaryInfo {
     .SYNOPSIS
     Used by As Built Report to retrieve VMware SRM Summary information.
     .DESCRIPTION
-
+        Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
-        Author:         Jonathan Colon
+        Version:        0.3.2
+        Author:         Matt Allford (@mattallford)
+        Editor:         Jonathan Colon
         Twitter:        @jcolonfzenpr
-        Github:         rebelinux
-    .EXAMPLE
-
+        Github:         @rebelinux
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
     .LINK
-
+        https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM
     #>
+
     [CmdletBinding()]
     param (
     )
@@ -69,7 +70,7 @@ function Get-AbrSRMSummaryInfo {
                                         Paragraph "The following table details hardware inventory of the Protected Site vCenter $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                                         BlankLine
                                         $OutObj = @()
-                                        Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                                        Write-PscriboMessage "Discovered vCenter Server VM Properties $($vCenterVM.Name)."
                                         $inObj = [ordered] @{
                                             'VM Name' = $vCenterVM.Name
                                             'Number of CPUs' = $vCenterVM.NumCpu
@@ -114,33 +115,38 @@ function Get-AbrSRMSummaryInfo {
                                 $LocalVRVM = Get-VM * -Server $LocalvCenter | where-object {$_.Guest.VmName -match $LocalVRHostName}
                             }
                             if ($LocalVRVM) {
-                                Section -Style Heading4 "Replication Server VM Properties" {
-                                    Paragraph "The following table provides hardware inventory of the VMware Replication server on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                                    BlankLine
-                                    $OutObj = @()
-                                    Write-PscriboMessage "Discovered VR VM Properties $($LocalVRVM.Name)."
-                                    $inObj = [ordered] @{
-                                        'VM Name' = $LocalVRVM.Name
-                                        'Number of CPUs' = $LocalVRVM.NumCpu
-                                        'Cores Per Socket' = $LocalVRVM.CoresPerSocket
-                                        'Memory in GB' = $LocalVRVM.MemoryGB
-                                        'Host' = $LocalVRVM.VMHost
-                                        'Guest Id' = $LocalVRVM.GuestId
-                                        'Provisioned Space GB' = "$([math]::Round(($LocalVRVM.ProvisionedSpaceGB)))"
-                                        'Used Space GB' = "$([math]::Round(($LocalVRVM.UsedSpaceGB)))"
-                                        'Datastores' = $LocalVRVM.DatastoreIdList | ForEach-Object {get-view $_ -Server $LocalvCenter | Select-Object -ExpandProperty Name}
-                                    }
-                                    $OutObj += [pscustomobject]$inobj
+                                try {
+                                    Section -Style Heading4 "Replication Server VM Properties" {
+                                        Paragraph "The following table provides hardware inventory of the VMware Replication server on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                                        BlankLine
+                                        $OutObj = @()
+                                        Write-PscriboMessage "Discovered VR VM Properties $($LocalVRVM.Name)."
+                                        $inObj = [ordered] @{
+                                            'VM Name' = $LocalVRVM.Name
+                                            'Number of CPUs' = $LocalVRVM.NumCpu
+                                            'Cores Per Socket' = $LocalVRVM.CoresPerSocket
+                                            'Memory in GB' = $LocalVRVM.MemoryGB
+                                            'Host' = $LocalVRVM.VMHost
+                                            'Guest Id' = $LocalVRVM.GuestId
+                                            'Provisioned Space GB' = "$([math]::Round(($LocalVRVM.ProvisionedSpaceGB)))"
+                                            'Used Space GB' = "$([math]::Round(($LocalVRVM.UsedSpaceGB)))"
+                                            'Datastores' = $LocalVRVM.DatastoreIdList | ForEach-Object {get-view $_ -Server $LocalvCenter | Select-Object -ExpandProperty Name}
+                                        }
+                                        $OutObj += [pscustomobject]$inobj
 
-                                    $TableParams = @{
-                                        Name = "VMware Replication VM Properties - $($LocalVRVM.Name)"
-                                        List = $true
-                                        ColumnWidths = 40, 60
+                                        $TableParams = @{
+                                            Name = "VMware Replication VM Properties - $($LocalVRVM.Name)"
+                                            List = $true
+                                            ColumnWidths = 40, 60
+                                        }
+                                        if ($Report.ShowTableCaptions) {
+                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                        }
+                                        $OutObj | Table @TableParams
                                     }
-                                    if ($Report.ShowTableCaptions) {
-                                        $TableParams['Caption'] = "- $($TableParams.Name)"
-                                    }
-                                    $OutObj | Table @TableParams
+                                }
+                                catch {
+                                    Write-PscriboMessage -IsWarning $_.Exception.Message
                                 }
                             }
                         }
@@ -192,7 +198,7 @@ function Get-AbrSRMSummaryInfo {
                                                 Paragraph "The following table details hardware properties of the Recovery Site vCenter $($RecoverySiteInfo.Name)."
                                                 BlankLine
                                                 $OutObj = @()
-                                                Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                                                Write-PscriboMessage "Discovered vCenter Server VM Properties $($vCenterVM.Name)."
                                                 $inObj = [ordered] @{
                                                     'VM Name' = $vCenterVM.Name
                                                     'Number of CPUs' = $vCenterVM.NumCpu
@@ -332,15 +338,20 @@ function Get-AbrSRMSummaryInfo {
                 $OutObj = @()
                 if ($Permissions) {
                     foreach ($Permission in $Permissions) {
-                        Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
-                        $inObj = [ordered] @{
-                            'Role' = $Permission.Name | Sort-Object -Unique
-                            'Principal' = $Permission.Principal
-                            'Propagate' = ConvertTo-TextYN $Permission.Propagate
-                            'Is Group' = ConvertTo-TextYN $Permission.IsGroup
+                        try {
+                            Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                            $inObj = [ordered] @{
+                                'Role' = $Permission.Name | Sort-Object -Unique
+                                'Principal' = $Permission.Principal
+                                'Propagate' = ConvertTo-TextYN $Permission.Propagate
+                                'Is Group' = ConvertTo-TextYN $Permission.IsGroup
 
+                            }
+                            $OutObj += [pscustomobject]$inobj
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        }
                     }
                 }
                 $TableParams = @{
@@ -351,11 +362,11 @@ function Get-AbrSRMSummaryInfo {
                 if ($Report.ShowTableCaptions) {
                     $TableParams['Caption'] = "- $($TableParams.Name)"
                 }
-                $OutObj | Table @TableParams
+                $OutObj | Sort-Object -Property 'Role' | Table @TableParams
             }
         }
         catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+            Write-PscriboMes sage -IsWarning $_.Exception.Message
         }
     }
     end {}

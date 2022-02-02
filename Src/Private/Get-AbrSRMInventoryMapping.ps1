@@ -1,19 +1,19 @@
 function Get-AbrSRMInventoryMapping {
     <#
     .SYNOPSIS
-    Used by As Built Report to retrieve VMware SRM Inventory Mapping Summary information.
+        Used by As Built Report to retrieve VMware SRM Inventory Mapping Summary information.
     .DESCRIPTION
-
+        Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
-        Github:         rebelinux
-    .EXAMPLE
-
+        Github:         @rebelinux
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
     .LINK
-
+        https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM
     #>
+
     [CmdletBinding()]
     param (
     )
@@ -30,18 +30,23 @@ function Get-AbrSRMInventoryMapping {
                 $OutObj = @()
                 if ($Mapping) {
                     foreach ($ObjMap in $Mapping) {
-                        $HashObj = $Null
-                        Write-PscriboMessage "Discovered Folder Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                        $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
-                        $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
-                        $HashObj = @{
-                            $LocalObj = $RemoteObj
+                        try {
+                            $HashObj = $Null
+                            Write-PscriboMessage "Discovered Folder Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                            $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
+                            $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
+                            $HashObj = @{
+                                $LocalObj = $RemoteObj
+                            }
+                            $inObj = [ordered] @{
+                                "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)" = $HashObj.Keys
+                                "$($LocalSRM.ExtensionData.GetPairedSite().Name)" = $HashObj.Values
+                            }
+                            $OutObj += [pscustomobject]$inobj
                         }
-                        $inObj = [ordered] @{
-                            "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)" = $HashObj.Keys
-                            "$($LocalSRM.ExtensionData.GetPairedSite().Name)" = $HashObj.Values
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
                         }
-                        $OutObj += [pscustomobject]$inobj
                     }
                 }
                 $TableParams = @{
@@ -65,17 +70,22 @@ function Get-AbrSRMInventoryMapping {
                 if ($Mapping) {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
-                        Write-PscriboMessage "Discovered Network Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                        $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
-                        $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
-                        $HashObj = @{
-                            $LocalObj = $RemoteObj
+                        try {
+                            Write-PscriboMessage "Discovered Network Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                            $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
+                            $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
+                            $HashObj = @{
+                                $LocalObj = $RemoteObj
+                            }
+                            $inObj = [ordered] @{
+                                "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)" = $HashObj.Keys
+                                "$($LocalSRM.ExtensionData.GetPairedSite().Name)" = $HashObj.Values
+                            }
+                            $OutObj += [pscustomobject]$inobj
                         }
-                        $inObj = [ordered] @{
-                            "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)" = $HashObj.Keys
-                            "$($LocalSRM.ExtensionData.GetPairedSite().Name)" = $HashObj.Values
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
                         }
-                        $OutObj += [pscustomobject]$inobj
                     }
                 }
                 $TableParams = @{
@@ -99,23 +109,28 @@ function Get-AbrSRMInventoryMapping {
                 if ($Mapping) {
                     $HashObj = $Null
                     foreach ($ObjMap in $Mapping) {
-                        Write-PscriboMessage "Discovered Resources Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                        $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
-                        $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
-                        $HashObj = @{
-                            $LocalObj = $RemoteObj
-                        }
-                        $inObj = [ordered] @{
-                            "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)" = Switch ($HashObj.Keys) {
-                                "Resources" {"Root Resource Pool"}
-                                default {$HashObj.Keys}
+                        try {
+                            Write-PscriboMessage "Discovered Resources Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
+                            $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
+                            $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
+                            $HashObj = @{
+                                $LocalObj = $RemoteObj
                             }
-                            "$($LocalSRM.ExtensionData.GetPairedSite().Name)" = Switch ($HashObj.Values) {
-                                "Resources" {"Root Resource Pool"}
-                                default {$HashObj.Values}
+                            $inObj = [ordered] @{
+                                "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)" = Switch ($HashObj.Keys) {
+                                    "Resources" {"Root Resource Pool"}
+                                    default {$HashObj.Keys}
+                                }
+                                "$($LocalSRM.ExtensionData.GetPairedSite().Name)" = Switch ($HashObj.Values) {
+                                    "Resources" {"Root Resource Pool"}
+                                    default {$HashObj.Values}
+                                }
                             }
+                            $OutObj += [pscustomobject]$inobj
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        }
                     }
                 }
                 $TableParams = @{
@@ -146,7 +161,6 @@ function Get-AbrSRMInventoryMapping {
                         foreach ($ObjMap in $LocalMapping) {
                             try {
                                 if ($ObjMap) {
-                                    #//Todo "How the fuck i can extract remote PlaceHolder Datastore Info"
                                     Write-PscriboMessage "Discovered Placeholder Datastore Mapping information for $($ObjMap.Name)."
                                     $inObj = [ordered] @{
                                         "Name" = $ObjMap.Name
