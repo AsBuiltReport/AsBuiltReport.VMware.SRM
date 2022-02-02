@@ -37,7 +37,7 @@ Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for m
 
 ## Sample Report - Custom Style 1
 
-Sample VMware SRM As Built report HTML file: [Sample VMware SRM As-Built Report.html](https://technomyth.zenprsolutions.net/wp-content/uploads/2022/01/Sample-VMware-SRM-As-Built-Report.html)
+Sample VMware SRM As Built report HTML file: [Sample VMware SRM As-Built Report.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.VMware.SRM/dev/Samples/Sample%20VMware%20SRM%20As%20Built%20Report.html)
 
 # :beginner: Getting Started
 
