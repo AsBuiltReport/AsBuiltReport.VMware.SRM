@@ -70,7 +70,7 @@ function Get-AbrSRMSummaryInfo {
                                         Paragraph "The following table details hardware inventory of the Protected Site vCenter $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
                                         BlankLine
                                         $OutObj = @()
-                                        Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                                        Write-PscriboMessage "Discovered vCenter Server VM Properties $($vCenterVM.Name)."
                                         $inObj = [ordered] @{
                                             'VM Name' = $vCenterVM.Name
                                             'Number of CPUs' = $vCenterVM.NumCpu
@@ -198,7 +198,7 @@ function Get-AbrSRMSummaryInfo {
                                                 Paragraph "The following table details hardware properties of the Recovery Site vCenter $($RecoverySiteInfo.Name)."
                                                 BlankLine
                                                 $OutObj = @()
-                                                Write-PscriboMessage "Discovered SRM Permissions $($Permission.Name)."
+                                                Write-PscriboMessage "Discovered vCenter Server VM Properties $($vCenterVM.Name)."
                                                 $inObj = [ordered] @{
                                                     'VM Name' = $vCenterVM.Name
                                                     'Number of CPUs' = $vCenterVM.NumCpu
@@ -362,11 +362,11 @@ function Get-AbrSRMSummaryInfo {
                 if ($Report.ShowTableCaptions) {
                     $TableParams['Caption'] = "- $($TableParams.Name)"
                 }
-                $OutObj | Table @TableParams
+                $OutObj | Sort-Object -Property 'Role' | Table @TableParams
             }
         }
         catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+            Write-PscriboMes sage -IsWarning $_.Exception.Message
         }
     }
     end {}
