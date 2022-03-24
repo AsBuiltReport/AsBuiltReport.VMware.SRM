@@ -1,4 +1,4 @@
-# :arrows_counterclockwise: VMware SRM As Built Report Changelog
+# :arrows_clockwise: VMware SRM As Built Report Changelog
 
 ## [0.3.1] - 2022-01-17
 
