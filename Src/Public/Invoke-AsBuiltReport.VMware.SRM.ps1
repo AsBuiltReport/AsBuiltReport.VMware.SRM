@@ -41,7 +41,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
             Write-PScriboMessage "Connecting to protected site vCenter: $($VIServer) with provided credentials"
             $LocalvCenter = Connect-VIServer $VIServer -Credential $Credential -Port 443 -Protocol https -ErrorAction Stop
             if ($LocalvCenter) {
-                Write-PScriboMessage "Succefully connected to protected site vCenter: $($LocalvCenter.Name)"
+                Write-PScriboMessage "Successfully connected to protected site vCenter: $($LocalvCenter.Name)"
             }
         }
         catch {
@@ -54,7 +54,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
             Write-PScriboMessage "Testing credentials on protected site SRM"
             $TempSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -Server $LocalvCenter
             if ($TempSRM) {
-                Write-PScriboMessage "Succefully Connected to protected site SRM: $($TempSRM.Name) with provided credentials"
+                Write-PScriboMessage "Successfully connected to protected site SRM: $($TempSRM.Name) with provided credentials"
             }
         } catch {
             Write-PScriboMessage -IsWarning  "Unable to connect to protected site SRM server"
@@ -69,7 +69,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
                 try {
                     $RemoteSRM = Connect-SrmServer -IgnoreCertificateErrors -Server $RemotevCenter -Credential $RemoteCredential -Port 443 -Protocol https -RemoteCredential $Credential
                     if ($RemoteSRM) {
-                        Write-PScriboMessage "Succefully Connected to recovery site SRM with provided credentials"
+                        Write-PScriboMessage "Successfully connected to recovery site SRM with provided credentials"
                     }
                 }
                 catch {
@@ -87,7 +87,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
                         try {
                             $RemoteSRM = Connect-SrmServer -IgnoreCertificateErrors -Server $RemotevCenter -Credential $RemoteCredential -Port 443 -Protocol https -RemoteCredential $Credential
                             if ($RemoteSRM) {
-                                Write-PScriboMessage "Succefully Connected to recovery site SRM with provided credentials"
+                                Write-PScriboMessage "Successfully connected to recovery site SRM with provided credentials"
                             }
                         }
                         catch {
