@@ -147,7 +147,7 @@ function Get-AbrSRMRecoveryPlan {
                                                                 $OutObj = [pscustomobject]$inobj
 
                                                                 $TableParams = @{
-                                                                    Name = "Virtual Machine Recovery Settings - $($RecoveryPlan.getinfo().Name)"
+                                                                    Name = "VM Recovery Settings - $($VM.VmName)"
                                                                     List = $true
                                                                     ColumnWidths = 50, 50
                                                                 }
@@ -167,7 +167,7 @@ function Get-AbrSRMRecoveryPlan {
 
                                             if ($InfoLevel.RecoveryPlan -eq 2 -and ($OutObj).count -gt 0) {
                                                 $TableParams = @{
-                                                    Name = "Virtual Machine Recovery Settings - $($RecoveryPlan.getinfo().Name)"
+                                                    Name = "VM Recovery Settings - $($VM.VmName)"
                                                     List = $False
                                                     ColumnWidths = 16, 10, 12, 12, 12, 12, 12, 14
                                                 }
