@@ -1,15 +1,14 @@
-function Get-AbrSRMRecoveryPlanInfo {
+function Get-AbrSRMRecoveryPlan {
     <#
     .SYNOPSIS
         Used by As Built Report to retrieve VMware SRM Recovery Plan information.
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
-        Author:         Matt Allford (@mattallford)
-        Editor:         Jonathan Colon
-        Twitter:        @jcolonfzenpr
-        Github:         @rebelinux
+        Version:        0.4.0
+        Author:         Jonathan Colon & Tim Carman
+        Twitter:        @jcolonfzenpr / @tpcarman
+        Github:         @rebelinux / @tpcarman
         Credits:        Iain Brighton (@iainbrighton) - PScribo module
     .LINK
         https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM
@@ -20,58 +19,56 @@ function Get-AbrSRMRecoveryPlanInfo {
     )
 
     begin {
-        Write-PScriboMessage "Recovery Plan InfoLevel set at $($InfoLevel.RecoveryPlan)."
-        Write-PscriboMessage "Collecting SRM Protection Group information."
+        Write-PScriboMessage "Collecting SRM Protection Group information."
     }
 
     process {
-        try {
-            Section -Style Heading2 'Recovery Plans Summary' {
+        $RecoveryPlans = $LocalSRM.ExtensionData.Recovery.ListPlans()
+        if ($RecoveryPlans) {
+            Section -Style Heading2 'Recovery Plans' {
                 if ($Options.ShowDefinitionInfo) {
-                    Paragraph "Recovery Plans in Site Recovery Manager are like an automated run book, controlling all the steps in the recovery process. The recovery plan is the level at which actions like failover, planned migration, testing and re-protect are conducted. A recovery plan contains one or more protection groups and a protection group can be included in more than one recovery plan. This provides for the flexibility to test or recover an application by itself and also test or recover a group of applications or the entire site."
+                    Paragraph "A recovery plan is similar to an automated runbook that controls every step of the recovery process."
                     BlankLine
                 }
                 Paragraph "The following table provides a summary of the Recovery Plan configured under $($LocalSRM.Name.split(".", 2).toUpper()[0])."
                 BlankLine
-                $RecoveryPlans = $LocalSRM.ExtensionData.Recovery.ListPlans()
-                $OutObj = @()
-                if ($RecoveryPlans) {
-                    foreach ($RecoveryPlan in $RecoveryPlans) {
-                        try {
-                            $RecoveryPlanInfo = $RecoveryPlan.GetInfo()
-                            $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
-                                $RecoveryPlanPG.GetInfo().Name
-                            }
 
-                            Write-PScriboMessage "Discovered Protection Group $($RecoveryPlanInfo.Name)."
-                            $inObj = [ordered] @{
-                                'Name' = $RecoveryPlanInfo.Name
-                                'Description' = ConvertTo-EmptyToFiller $RecoveryPlanInfo.Description
-                                'State' = $RecoveryPlanInfo.State
-                                'Protection Groups' = ConvertTo-EmptyToFiller (($RecoveryPlanPGs | Sort-Object) -join ', ')
-                            }
-                            $OutObj += [pscustomobject]$inobj
+                $OutObj = @()
+                foreach ($RecoveryPlan in $RecoveryPlans) {
+                    try {
+                        $RecoveryPlanInfo = $RecoveryPlan.GetInfo()
+                        $RecoveryPlanPGs = foreach ($RecoveryPlanPG in $RecoveryPlan.getinfo().ProtectionGroups) {
+                            $RecoveryPlanPG.GetInfo().Name
                         }
-                        catch {
-                            Write-PscriboMessage -IsWarning "$($_.Exception.Message) Virtual Machine Recovery Setting"
+
+                        Write-PScriboMessage "Discovered Protection Group $($RecoveryPlanInfo.Name)."
+                        $inObj = [ordered] @{
+                            'Name' = $RecoveryPlanInfo.Name
+                            'Description' = ConvertTo-EmptyToFiller $RecoveryPlanInfo.Description
+                            'State' = $RecoveryPlanInfo.State
+                            'Protection Groups' = ConvertTo-EmptyToFiller (($RecoveryPlanPGs | Sort-Object) -join ', ')
                         }
+                        $OutObj += [pscustomobject]$inobj
+                    } catch {
+                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) Virtual Machine Recovery Setting"
                     }
-                    $TableParams = @{
-                        Name = "Recovery Plan Config - $($RecoveryPlanInfo.Name)"
-                        List = $False
-                        ColumnWidths = 30, 25, 15, 30
-                    }
-                    if ($Report.ShowTableCaptions) {
-                        $TableParams['Caption'] = "- $($TableParams.Name)"
-                    }
-                    $OutObj | Table @TableParams
                 }
+                $TableParams = @{
+                    Name = "Recovery Plan - $($RecoveryPlanInfo.Name)"
+                    List = $False
+                    ColumnWidths = 30, 25, 15, 30
+                }
+                if ($Report.ShowTableCaptions) {
+                    $TableParams['Caption'] = "- $($TableParams.Name)"
+                }
+                $OutObj | Table @TableParams
+
                 if ($InfoLevel.RecoveryPlan -ge 2) {
                     try {
                         $RecoveryPlans = $LocalSRM.ExtensionData.Recovery.ListPlans()
                         if ($RecoveryPlans) {
                             Section -Style Heading3 'Virtual Machine Recovery Settings' {
-                                Paragraph "The following section provides detailed per VM Recovery Settings informattion on $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName) ."
+                                Paragraph "The following section provides detailed per VM Recovery Settings informattion on $($ProtectedSiteName) ."
                                 BlankLine
                                 foreach ($RecoveryPlan in $RecoveryPlans) {
                                     try {
@@ -87,30 +84,28 @@ function Get-AbrSRMRecoveryPlanInfo {
                                                         try {
                                                             $RecoverySettings = $PG.ListRecoveryPlans().GetRecoverySettings($VM.Vm.MoRef)
                                                             $DependentVMs = Switch ($RecoverySettings.DependentVmIds) {
-                                                                "" {"-"; break}
-                                                                $Null {"-"; break}
-                                                                default {$RecoverySettings.DependentVmIds | ForEach-Object {get-vm -Id $_}}
+                                                                "" { "-"; break }
+                                                                $Null { "-"; break }
+                                                                default { $RecoverySettings.DependentVmIds | ForEach-Object { Get-VM -Id $_ } }
                                                             }
                                                             $PrePowerOnCommand = @()
                                                             foreach ($PrePowerOnCommands in $RecoverySettings.PrePowerOnCallouts) {
                                                                 try {
                                                                     if ($PrePowerOnCommands) {
-                                                                        $PrePowerOnCommand += $PrePowerOnCommands | Select-Object @{Name="Name"; E={$_.Description}},@{Name='Run In Vm'; E={$_.RunInRecoveredVm}},Timeout
+                                                                        $PrePowerOnCommand += $PrePowerOnCommands | Select-Object @{Name = "Name"; E = { $_.Description } }, @{Name = 'Run In Vm'; E = { $_.RunInRecoveredVm } }, Timeout
                                                                     }
-                                                                }
-                                                                catch {
-                                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                                } catch {
+                                                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                                                 }
                                                             }
                                                             $PosPowerOnCommand = @()
                                                             foreach ($PosPowerOnCommands in $RecoverySettings.PostPowerOnCallouts) {
                                                                 try {
                                                                     if ($PosPowerOnCommands) {
-                                                                        $PosPowerOnCommand += $PosPowerOnCommands | Select-Object @{Name="Name"; E={$_.Description}},@{Name='Run In Vm'; E={$_.RunInRecoveredVm}},Timeout
+                                                                        $PosPowerOnCommand += $PosPowerOnCommands | Select-Object @{Name = "Name"; E = { $_.Description } }, @{Name = 'Run In Vm'; E = { $_.RunInRecoveredVm } }, Timeout
                                                                     }
-                                                                }
-                                                                catch {
-                                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                                } catch {
+                                                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                                                 }
                                                             }
                                                             Write-PScriboMessage "Discovered VM Setting $($VM.VmName)."
@@ -138,14 +133,14 @@ function Get-AbrSRMRecoveryPlanInfo {
                                                                     'PowerOff Timeout' = "$($RecoverySettings.PowerOffTimeoutSeconds)/s"
                                                                     'Final Power State' = $TextInfo.ToTitleCase($RecoverySettings.FinalPowerState)
                                                                     'Pre PowerOn Callouts' = Switch ($PrePowerOnCommand) {
-                                                                        "" {"-"; break}
-                                                                        $Null {"-"; break}
-                                                                        default {$PrePowerOnCommand | ForEach-Object {"Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s"}; break}
+                                                                        "" { "-"; break }
+                                                                        $Null { "-"; break }
+                                                                        default { $PrePowerOnCommand | ForEach-Object { "Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s" }; break }
                                                                     }
                                                                     'Post PowerOn Callouts' = Switch ($PosPowerOnCommand) {
-                                                                        "" {"-"; break}
-                                                                        $Null {"-"; break}
-                                                                        default {$PosPowerOnCommand | ForEach-Object {"Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s"}; break}
+                                                                        "" { "-"; break }
+                                                                        $Null { "-"; break }
+                                                                        default { $PosPowerOnCommand | ForEach-Object { "Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s" }; break }
                                                                     }
                                                                     'Dependent VMs' = ($DependentVMs | Sort-Object -Unique) -join ", "
                                                                 }
@@ -161,14 +156,12 @@ function Get-AbrSRMRecoveryPlanInfo {
                                                                 }
                                                                 $OutObj | Table @TableParams
                                                             }
-                                                        }
-                                                        catch {
-                                                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                        } catch {
+                                                            Write-PScriboMessage -IsWarning $_.Exception.Message
                                                         }
                                                     }
-                                                }
-                                                catch {
-                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                } catch {
+                                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                                 }
                                             }
 
@@ -184,22 +177,17 @@ function Get-AbrSRMRecoveryPlanInfo {
                                                 $OutObj | Table @TableParams
                                             }
                                         }
-                                    }
-                                    catch {
-                                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                                    } catch {
+                                        Write-PScriboMessage -IsWarning $_.Exception.Message
                                     }
                                 }
                             }
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) Virtual Machine Recovery Setting"
+                    } catch {
+                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) Virtual Machine Recovery Setting"
                     }
                 }
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning "$($_.Exception.Message) Recovery Plans Summary"
         }
     }
     end {}

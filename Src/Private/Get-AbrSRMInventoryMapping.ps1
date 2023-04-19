@@ -5,7 +5,7 @@ function Get-AbrSRMInventoryMapping {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         @rebelinux
@@ -19,246 +19,145 @@ function Get-AbrSRMInventoryMapping {
     )
 
     begin {
-        Write-PScriboMessage "Inventory Mapping InfoLevel set at $($InfoLevel.InventoryMapping)."
-        Write-PscriboMessage "Collecting SRM Inventory Mapping information."
+        Write-PScriboMessage "Collecting SRM Inventory Mapping information."
     }
 
     process {
-        try {
-            $Mapping = $LocalSRM.ExtensionData.InventoryMapping.GetFolderMappings()
-            Section -Style Heading3 'Folder Mappings' {
-                $OutObj = @()
-                if ($Mapping) {
-                    foreach ($ObjMap in $Mapping) {
-                        try {
-                            $HashObj = $Null
-                            Write-PscriboMessage "Discovered Folder Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                            $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
-                            $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
-                            $HashObj = @{
-                                $LocalObj = $RemoteObj
-                            }
-                            $inObj = [ordered] @{
-                                "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)" = $HashObj.Keys
-                                "$($LocalSRM.ExtensionData.GetPairedSite().Name)" = $HashObj.Values
-                            }
-                            $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
-                        }
-                    }
+        $FolderMappings = $LocalSRM.ExtensionData.InventoryMapping.GetFolderMappings()
+        $ResPoolMappings = $LocalSRM.ExtensionData.InventoryMapping.GetResourcePoolMappings()
+        $NetworkMappings = $LocalSRM.ExtensionData.InventoryMapping.GetNetworkMappings()
+        $TestNetworkMappings = $LocalSRM.ExtensionData.InventoryMapping.GetTestNetworkMappings()
+
+        if (($FolderMappings) -or ($NetworkMappings) -or ($ResPoolMappings)) {
+            Section -Style Heading2 'Inventory Mappings' {
+                if ($Options.ShowDefinitionInfo) {
+                    Paragraph "When you install Site Recovery Manager you have to fo Inventory Mapping from Protected Site to Recovery Site. Inventory mappings provide default objects in the inventory of the recovery site for the recovered virtual machines to use when you run Test/Recovery. Inventory Mappings includes Network Mappings, Folder Mappings, Resource Mappings and Storage Policy Mappings. All of the Mappings are required for proper management and configuration of virtual machine at DR Site."
+                    BlankLine
                 }
-                $TableParams = @{
-                    Name = "Folder Mappings - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
-                    List = $false
-                    ColumnWidths = 50, 50
-                }
-                if ($Report.ShowTableCaptions) {
-                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                }
-                $OutObj | Table @TableParams
-            }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
-        }
-        try {
-            $Mapping = $LocalSRM.ExtensionData.InventoryMapping.GetNetworkMappings()
-            Section -Style Heading3 'Network Mappings' {
-                $OutObj = @()
-                if ($Mapping) {
-                    $HashObj = $Null
-                    foreach ($ObjMap in $Mapping) {
-                        try {
-                            Write-PscriboMessage "Discovered Network Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                            $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
-                            $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
-                            $HashObj = @{
-                                $LocalObj = $RemoteObj
-                            }
-                            $inObj = [ordered] @{
-                                "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)" = $HashObj.Keys
-                                "$($LocalSRM.ExtensionData.GetPairedSite().Name)" = $HashObj.Values
-                            }
-                            $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
-                        }
-                    }
-                }
-                $TableParams = @{
-                    Name = "Network Mappings - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
-                    List = $false
-                    ColumnWidths = 50, 50
-                }
-                if ($Report.ShowTableCaptions) {
-                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                }
-                $OutObj | Table @TableParams
-            }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
-        }
-        try {
-            $Mapping = $LocalSRM.ExtensionData.InventoryMapping.GetResourcePoolMappings()
-            Section -Style Heading3 'Resources Mappings' {
-                $OutObj = @()
-                if ($Mapping) {
-                    $HashObj = $Null
-                    foreach ($ObjMap in $Mapping) {
-                        try {
-                            Write-PscriboMessage "Discovered Resources Mapping information for $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)."
-                            $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
-                            $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
-                            $HashObj = @{
-                                $LocalObj = $RemoteObj
-                            }
-                            $inObj = [ordered] @{
-                                "$($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)" = Switch ($HashObj.Keys) {
-                                    "Resources" {"Root Resource Pool"}
-                                    default {$HashObj.Keys}
-                                }
-                                "$($LocalSRM.ExtensionData.GetPairedSite().Name)" = Switch ($HashObj.Values) {
-                                    "Resources" {"Root Resource Pool"}
-                                    default {$HashObj.Values}
-                                }
-                            }
-                            $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
-                        }
-                    }
-                }
-                $TableParams = @{
-                    Name = "Resources Mappings - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
-                    List = $false
-                    ColumnWidths = 50, 50
-                }
-                if ($Report.ShowTableCaptions) {
-                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                }
-                $OutObj | Table @TableParams
-            }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
-        }
-        try {
-            if ($RemotevCenter) {
-                $LocalMapping = $LocalSRM.ExtensionData.PlaceholderDatastoreManager.GetPlaceholderDatastores()
-                $RemoteMapping = $RemoteSRM.ExtensionData.PlaceholderDatastoreManager.GetPlaceholderDatastores()
-                Section -Style Heading3 'Placeholder Datastore Mappings' {
-                    if ($Options.ShowDefinitionInfo) {
-                        Paragraph "For each protected virtual machine Site Recovery Manager creates a placeholder virtual machine at the recovery site. Placeholder virtual machines are contained in a datastore and registered with the vCenter Server at the recovery site. This datastore is called the placeholder datastore. Since placeholder virtual machines do not have virtual disks they consume a minimal amount of storage"
-                        BlankLine
-                    }
-                    $OutObj = @()
-                    if ($LocalMapping -or $RemoteMapping) {
-                        foreach ($ObjMap in $LocalMapping) {
+                Paragraph "The following section provides a summary of the inventory mappings for the protected site, $($ProtectedSiteName)."
+                BlankLine
+
+                #region Collect Folder Mapping information
+                if ($FolderMappings) {
+                    Write-PScriboMessage "Discovered Folder Mapping information for $($ProtectedSiteName)."
+                    Section -Style Heading3 'Folder Mappings' {
+                        $OutObj = @()
+                        foreach ($ObjMap in $FolderMappings) {
                             try {
-                                if ($ObjMap) {
-                                    Write-PscriboMessage "Discovered Placeholder Datastore Mapping information for $($ObjMap.Name)."
-                                    $inObj = [ordered] @{
-                                        "Name" = $ObjMap.Name
-                                        "Datastore Type" = $ObjMap.Type
-                                        "Capacity" = "$([math]::Round(($ObjMap.Capacity)/ 1GB, 2)) GB"
-                                        "Free Space" = "$([math]::Round(($ObjMap.FreeSpace)/ 1GB, 2)) GB"
-                                        "Reserved Space" = "$([math]::Round(($ObjMap.ReservedSpace)/ 1GB, 2)) GB"
-                                        "Location" = Switch (($ObjMap.VisibleTo.key).count) {
-                                            0 {"-"}
-                                            default {ConvertTo-VIobject $ObjMap.VisibleTo.key}
-                                        }
-                                        "Fault" = Switch ($ObjMap.Fault) {
-                                            "" {"-"; break}
-                                            $Null {"-"; break}
-                                            default {$ObjMap.Fault}
-                                        }
-                                        "Status" = Switch ($ObjMap.Status) {
-                                            "green" {"OK"}
-                                            "orange" {"Warning"}
-                                            "red" {"Critical"}
-                                            default {$ObjMap.Status}
-                                        }
-                                    }
-                                    $OutObj = [pscustomobject]$inobj
-
-                                    if ($Healthcheck.InventoryMapping.Status) {
-                                        $OutObj | Where-Object { $_.'Status' -ne 'OK'} | Set-Style -Style Warning -Property 'Status'
-                                    }
-
-                                    $TableParams = @{
-                                        Name = "Placeholder Datastore Mappings - $($LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName)"
-                                        List = $true
-                                        ColumnWidths = 50, 50
-                                    }
-                                    if ($Report.ShowTableCaptions) {
-                                        $TableParams['Caption'] = "- $($TableParams.Name)"
-                                    }
-                                    $OutObj | Table @TableParams
+                                $HashObj = $Null
+                                $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
+                                $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
+                                $HashObj = @{
+                                    $LocalObj = $RemoteObj
                                 }
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                                $inObj = [ordered] @{
+                                    "$($ProtectedSiteName)" = $HashObj.Keys
+                                    "$($RecoverySiteName)" = $HashObj.Values
+                                }
+                                $OutObj += [pscustomobject]$inobj
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
-                        foreach ($ObjMap in $RemoteMapping) {
-                            try {
-                                if ($ObjMap) {
-                                    Write-PscriboMessage "Discovered Placeholder Datastore Mapping information for $($ObjMap.Name)."
-                                    $inObj = [ordered] @{
-                                        "Name" = $ObjMap.Name
-                                        "Datastore Type" = $ObjMap.Type
-                                        "Capacity" = "$([math]::Round(($ObjMap.Capacity)/ 1GB, 2)) GB"
-                                        "Free Space" = "$([math]::Round(($ObjMap.FreeSpace)/ 1GB, 2)) GB"
-                                        "Reserved Space" = "$([math]::Round(($ObjMap.ReservedSpace)/ 1GB, 2)) GB"
-                                        "Location" = Switch (($ObjMap.VisibleTo.key).count) {
-                                            0 {"-"}
-                                            default {ConvertTo-VIobject $ObjMap.VisibleTo.key}
-                                        }
-                                        "Fault" = Switch ($ObjMap.Fault) {
-                                            "" {"-"; break}
-                                            $Null {"-"; break}
-                                            default {$ObjMap.Fault}
-                                        }
-                                        "Status" = Switch ($ObjMap.Status) {
-                                            "green" {"OK"}
-                                            "orange" {"Warning"}
-                                            "red" {"Critical"}
-                                            default {$ObjMap.Status}
-                                        }
-                                    }
-                                    $OutObj = [pscustomobject]$inobj
 
-                                    if ($Healthcheck.InventoryMapping.Status) {
-                                        $OutObj | Where-Object { $_.'Status' -ne 'OK'} | Set-Style -Style Warning -Property 'Status'
-                                    }
-
-                                    $TableParams = @{
-                                        Name = "Placeholder Datastore Mappings - $($LocalSRM.ExtensionData.GetPairedSite().Name)"
-                                        List = $true
-                                        ColumnWidths = 50, 50
-                                    }
-                                    if ($Report.ShowTableCaptions) {
-                                        $TableParams['Caption'] = "- $($TableParams.Name)"
-                                    }
-                                    $OutObj | Table @TableParams
-                                }
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
-                            }
+                        $TableParams = @{
+                            Name = "Folder Mappings - $($ProtectedSiteName)"
+                            List = $false
+                            ColumnWidths = 50, 50
                         }
+
+                        if ($Report.ShowTableCaptions) {
+                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                        }
+
+                        $OutObj | Table @TableParams
                     }
                 }
+                #endregion Collect Folder Mapping information
+
+                #region Collect Network Mapping information
+                if ($NetworkMappings) {
+                    Write-PScriboMessage "Discovered Network Mapping information for $($ProtectedSiteName)."
+                    Section -Style Heading3 'Network Mappings' {
+                        $OutObj = @()
+                        foreach ($ObjMap in $NetworkMappings) {
+                            $inObj = [Ordered]@{
+                                'Protected Network' = ConvertTo-VIobject $ObjMap.PrimaryObject
+                                'Recovery Network' = ConvertTo-VIobject $ObjMap.SecondaryObject
+                                'Test Network' = & {
+                                    if ($TestNetworkMappings | Where-Object {$_.Key -eq $ObjMap.SecondaryObject}) {
+                                        ConvertTo-VIobject (($TestNetworkMappings | Where-Object {$_.Key -eq $ObjMap.SecondaryObject}).TestNetwork)
+                                    } else {
+                                        'Isolated network (auto created)'
+                                    }
+                                }
+                            }
+                            $OutObj += [pscustomobject]$inobj
+                        }
+
+                        $TableParams = @{
+                            Name = "Network Mappings - $($ProtectedSiteName)"
+                            List = $false
+                            ColumnWidths = 33, 33, 34
+                        }
+
+                        if ($Report.ShowTableCaptions) {
+                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                        }
+
+                        $OutObj | Sort-Object 'Protected Network' | Table @TableParams
+                    }
+                }
+                #endregion Collect Network Mapping information
+
+                #region Collect Resource Pool Mapping information
+                if ($ResPoolMappings) {
+                    Write-PScriboMessage "Discovered Resources Mapping information for $($ProtectedSiteName)."
+                    Section -Style Heading3 'Resources Mappings' {
+                        $OutObj = @()
+                        $HashObj = $Null
+                        foreach ($ObjMap in $ResPoolMappings) {
+                            try {
+                                $LocalObj = ConvertTo-VIobject $ObjMap.PrimaryObject
+                                $RemoteObj = ConvertTo-VIobject $ObjMap.SecondaryObject
+                                $HashObj = @{
+                                    $LocalObj = $RemoteObj
+                                }
+                                $inObj = [ordered] @{
+                                    "$($ProtectedSiteName)" = Switch ($HashObj.Keys) {
+                                        "Resources" { "Root Resource Pool" }
+                                        default { $HashObj.Keys }
+                                    }
+                                    "$($RecoverySiteName)" = Switch ($HashObj.Values) {
+                                        "Resources" { "Root Resource Pool" }
+                                        default { $HashObj.Values }
+                                    }
+                                }
+                                $OutObj += [pscustomobject]$inobj
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
+                            }
+                        }
+
+                        $TableParams = @{
+                            Name = "Resources Mappings - $($ProtectedSiteName)"
+                            List = $false
+                            ColumnWidths = 50, 50
+                        }
+
+                        if ($Report.ShowTableCaptions) {
+                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                        }
+
+                        $OutObj | Table @TableParams
+                    }
+                }
+                #endregion Collect Resource Pool Mapping information
+
+                #region Placeholder Datastores
+                    Get-AbrSRMPlaceholderDatastore
+                #endregion Placeholder Datastores
             }
-            else {Write-PscriboMessage -IsWarning "No Recovery Site vCenter connection has been detected. Deactivating placeholder datastore mappings section"}
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
         }
     }
     end {}

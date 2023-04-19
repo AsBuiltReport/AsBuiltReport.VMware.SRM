@@ -12,7 +12,7 @@
 RootModule = 'AsBuiltReport.VMware.SRM.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.3.2'
+ModuleVersion = '0.4.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -24,7 +24,7 @@ GUID = '5a38c64d-2968-404e-b323-0ff35e227917'
 Author = 'Jonathan Colon'
 
 # Company or vendor of this module
-CompanyName = 'ZenPrSolutions'
+# CompanyName = 'ZenPrSolutions'
 
 # Copyright statement for this module
 Copyright = '(c) 2022 Jonathan Colon. All rights reserved.'
@@ -125,5 +125,3 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
-
-
