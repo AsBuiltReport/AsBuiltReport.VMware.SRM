@@ -33,7 +33,7 @@ function Get-AbrSRMPermission {
                 }
                 Paragraph "The following table provides information for the VMware SRM permissions which have been configured at each site."
                 BlankLine
-                
+
                 if ($LocalVIPermissions) {
                     Section -Style Heading3 -ExcludeFromTOC $($ProtectedSiteName) {
                         $OutObj = @()
@@ -57,7 +57,7 @@ function Get-AbrSRMPermission {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-        
+
                         $OutObj | Sort-Object -Property 'Role' | Table @TableParams
                     }
                 }

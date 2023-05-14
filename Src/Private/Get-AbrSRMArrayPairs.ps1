@@ -24,33 +24,37 @@ function Get-AbrSRMArrayPairs {
         $RemoteSRA = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
 
         if (($LocalArrayPair) -and ($RemoteArrayPair)) {
-            Section -Style Heading2 'Array Pairs' {
-                if ($Options.ShowDefinitionInfo) {
-                }
-                Paragraph "The following table provides information for the Storage Array Pairs which have been configured at each site."
-                BlankLine
-                $HashObj = @{}
-                $LocalObj = $LocalArrayPair | Select-Object -ExpandProperty Name
-                $RemoteObj = $RemoteArrayPair | Select-Object -ExpandProperty Name
-                $HashObj = @{
-                    $LocalObj = $RemoteObj
-                }
-                $inObj = [ordered] @{
-                    "$($ProtectedSiteName)" = "$($HashObj.Keys) <--> $($HashObj.Values)"
-                    "$($RecoverySiteName)" = "$($HashObj.Values) <--> $($HashObj.Keys)"
-                }
-                $OutObj += [pscustomobject]$inobj
+            try {
+                Section -Style Heading2 'Array Pairs' {
+                    if ($Options.ShowDefinitionInfo) {
+                    }
+                    Paragraph "The following table provides information for the Storage Array Pairs which have been configured at each site."
+                    BlankLine
+                    $HashObj = @{}
+                    $LocalObj = $LocalArrayPair.Key
+                    $RemoteObj = $RemoteArrayPair.Key
+                    $HashObj = @{
+                        $LocalObj = $RemoteObj
+                    }
+                    $inObj = [ordered] @{
+                        "$($ProtectedSiteName)" = "$($HashObj.Keys) <--> $($HashObj.Values)"
+                        "$($RecoverySiteName)" = "$($HashObj.Values) <--> $($HashObj.Keys)"
+                    }
+                    $OutObj += [pscustomobject]$inobj
 
 
-                $TableParams = @{
-                    Name = "Array Pairs"
-                    List = $false
-                    ColumnWidths = 50,50
+                    $TableParams = @{
+                        Name = "Array Pairs"
+                        List = $false
+                        ColumnWidths = 50,50
+                    }
+                    if ($Report.ShowTableCaptions) {
+                        $TableParams['Caption'] = "- $($TableParams.Name)"
+                    }
+                    $OutObj | Table @TableParams
                 }
-                if ($Report.ShowTableCaptions) {
-                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                }
-                $OutObj | Table @TableParams
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }
