@@ -1,5 +1,11 @@
 # :arrows_clockwise: VMware SRM As Built Report Changelog
 
+## [0.4.1] - 2023-05-15
+
+### Added
+
+- Automated tweet release workflow
+
 ## [0.4.0] - 2023-05-14
 
 ### Added
