@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
+        Version:        0.4.0
         Author:         Matt Allford (@mattallford)
         Editor:         Jonathan Colon
         Twitter:        @jcolonfzenpr
@@ -21,7 +21,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
         [PSCredential] $Credential
     )
     # Check if the required version of VMware PowerCLI is installed
-    Get-AbrSRMRequiredModule -Name 'VMware.PowerCLI' -Version '12.3'
+    Get-AbrSRMRequiredModule -Name 'VMware.PowerCLI' -Version '13.1'
 
     # Import Report Configuration
     $Report = $ReportConfig.Report
