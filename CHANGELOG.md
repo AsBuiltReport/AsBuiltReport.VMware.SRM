@@ -1,4 +1,17 @@
-# :arrows_counterclockwise: VMware SRM As Built Report Changelog
+# :arrows_clockwise: VMware SRM As Built Report Changelog
+
+## [0.4.0] - 2023-05-14
+
+### Added
+
+- Added Array Pairs information @tpcarman
+- Added Storage Replication Adapter information @tpcarman
+
+### Changed
+
+- Improved report content and structure @tpcarman
+- Improved bug and feature request templates
+- Changed Required Modules to AsBuiltReport.Core v1.3.0
 
 ## [0.3.1] - 2022-01-17
 

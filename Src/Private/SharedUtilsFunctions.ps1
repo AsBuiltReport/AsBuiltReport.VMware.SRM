@@ -16,26 +16,25 @@ function ConvertTo-TextYN {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [AllowEmptyString()]
-            [string]
-            $TEXT
-        )
+        [AllowEmptyString()]
+        [string]
+        $TEXT
+    )
 
-    switch ($TEXT)
-        {
-            "" {"-"}
-            $Null {"-"}
-            "True" {"Yes"; break}
-            "False" {"No"; break}
-            default {$TEXT}
-        }
-    } # end
+    switch ($TEXT) {
+        "" { "-" }
+        $Null { "-" }
+        "True" { "Yes"; break }
+        "False" { "No"; break }
+        default { $TEXT }
+    }
+} # end
 function Get-UnixDate ($UnixDate) {
-        <#
+    <#
     .SYNOPSIS
     Used by As Built Report to convert Date to a more nice format.
     .DESCRIPTION
@@ -54,7 +53,7 @@ function Get-UnixDate ($UnixDate) {
 function ConvertTo-EmptyToFiller {
     <#
     .SYNOPSIS
-    Used by As Built Report to convert empty culumns to "-".
+    Used by As Built Report to convert empty culumns to "--".
     .DESCRIPTION
 
     .NOTES
@@ -69,23 +68,23 @@ function ConvertTo-EmptyToFiller {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [AllowEmptyString()]
-            [string]
-            $TEXT
-        )
+        [AllowEmptyString()]
+        [string]
+        $TEXT
+    )
 
     switch ($TEXT) {
-            "" {"-"; break}
-            $Null {"-"; break}
-            "True" {"Yes"; break}
-            "False" {"No"; break}
-            default {$TEXT}
-        }
-    } # end
+        "" { "--"; break }
+        $Null { "--"; break }
+        "True" { "Yes"; break }
+        "False" { "No"; break }
+        default { $TEXT }
+    }
+} # end
 
 function ConvertTo-VIobject {
     <#
@@ -105,18 +104,17 @@ function ConvertTo-VIobject {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [AllowEmptyString()]
-            $OBJECT
-        )
+        [AllowEmptyString()]
+        $OBJECT
+    )
 
-    if (get-view $OBJECT -ErrorAction SilentlyContinue| Select-Object -ExpandProperty Name -Unique) {
-        return get-view $OBJECT -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name -Unique
-    }
-    else {
+    if (Get-View $OBJECT -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name -Unique) {
+        return Get-View $OBJECT -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name -Unique
+    } else {
         return $OBJECT
     }
 } # end

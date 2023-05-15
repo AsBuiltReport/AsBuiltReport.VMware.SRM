@@ -12,7 +12,7 @@
 RootModule = 'AsBuiltReport.VMware.SRM.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.3.1'
+ModuleVersion = '0.4.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -24,10 +24,10 @@ GUID = '5a38c64d-2968-404e-b323-0ff35e227917'
 Author = 'Jonathan Colon'
 
 # Company or vendor of this module
-CompanyName = 'ZenPrSolutions'
+# CompanyName = 'ZenPrSolutions'
 
 # Copyright statement for this module
-Copyright = '(c) 2022 Jonathan Colon. All rights reserved.'
+Copyright = '(c) 2023 Jonathan Colon. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'A PowerShell module to generate an as built report on the configuration of VMware SRM.'
@@ -54,7 +54,7 @@ PowerShellVersion = '5.1'
 RequiredModules = @(
     @{
         ModuleName = 'AsBuiltReport.Core';
-        ModuleVersion = '1.1.0'
+        ModuleVersion = '1.3.0'
     }
 )
 
@@ -125,5 +125,3 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
-
-

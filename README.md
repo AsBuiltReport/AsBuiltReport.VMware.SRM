@@ -37,7 +37,7 @@ Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for m
 
 ## Sample Report - Custom Style 1
 
-Sample VMware SRM As Built report HTML file: [Sample VMware SRM As-Built Report.html](https://technomyth.zenprsolutions.net/wp-content/uploads/2022/01/Sample-VMware-SRM-As-Built-Report.html)
+Sample VMware SRM As Built report HTML file: [Sample VMware SRM As-Built Report.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.VMware.SRM/dev/Samples/Sample%20VMware%20SRM%20As%20Built%20Report.html)
 
 # :beginner: Getting Started
 
@@ -67,15 +67,10 @@ This report is compatible with the following PowerShell versions;
 <!-- ********** Update system requirements ********** -->
 PowerShell 5.1 or PowerShell 7, and the following PowerShell modules are required for generating a VMware SRM As Built report.
 
+Each of these modules can be easily downloaded and installed via the PowerShell Gallery
+
+- [VMware PowerCLI Module](https://www.powershellgallery.com/packages/VMware.PowerCLI/)
 - [AsBuiltReport.VMware.SRM Module](https://www.powershellgallery.com/packages/AsBuiltReport.VMware.SRM/).
-
-### Linux & macOS
-
-- .NET Core is required for cover page image support on Linux and macOS operating systems.
-  - [Installing .NET Coe.re for macOS](https://docs.microsoft.com/en-us/dotnet/core/install/macos)
-  - [Installing .NET Core for Linux](https://docs.microsoft.com/en-us/dotnet/core/install/linux)
-
-❗ If you are unable to install .NET Core, you must set `ShowCoverPageImage` to `False` in the report JSON configuration file.
 
 ### :closed_lock_with_key: Required Privileges
 
@@ -86,6 +81,7 @@ Tested with vCenter Global Read-Only permissions.
 ### PowerShell
 
 ```powershell
+install-module VMware.PowerCLI -MinimumVersion 13.1 -AllowClobber
 install-module AsBuiltReport.VMware.SRM
 ```
 
@@ -163,13 +159,19 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 
 | Sub-Schema   | Default Setting | Maximum Setting |
 |--------------|:---------------:|:---------------:|
+| ArrayPairs      |        1        |        1        |
+| SRA      |        1        |        1        |
+| Sites      |        1        |        1        |
+| License      |        1        |        1        |
 | Summary      |        1        |        1        |
-| Protected    |        1        |        1        |
-| Recovery     |        1        |        1        |
+| FolderMapping      |        1        |        1        |
+| NetworkMapping      |        1        |        1        |
+| ResourceMapping      |        1        |        1        |
+| PlaceholderDatastores      |        1        |        1        |
+| Permission    |        1        |        1        |
 | ProtectionGroup |        1        |        3        |
 | RecoveryPlan |        1        |        3        |
-| InventoryMapping     |        1        |        1        |
-
+| Permission     |        1        |        1        |
 
 ### Healthcheck
 

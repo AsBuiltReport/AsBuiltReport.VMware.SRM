@@ -1,6 +1,6 @@
 {
     "Report": {
-        "Name": "VMware SRM As Built Report",
+        "Name": "VMware Site Recovery Manager As Built Report",
         "Version": "1.0",
         "Status": "Released",
         "ShowCoverPageImage": true,
@@ -13,14 +13,22 @@
     },
     "InfoLevel": {
         "_comment_": "0 = Disabled, 1 = Enabled, 2 = Adv Summary, 3 = Detailed",
-        "Summary": 1,
-        "Protected": 1,
-        "Recovery": 1,
+        "Sites": 1,
+        "vCenter": 1,
+        "License": 1,
+        "Permission": 1,
+        "ArrayPairs": 1,
+        "SRA": 1,
+        "NetworkMapping": 1,
+        "FolderMapping": 1,
+        "ResourceMapping": 1,
+        "PlaceholderDatastores": 1,
         "ProtectionGroup": 1,
         "RecoveryPlan": 1,
-        "InventoryMapping": 1
+        "Summary": 1
     },
     "HealthCheck": {
+        "Licensing": true,
         "InventoryMapping": {
             "Status": true
         },
@@ -30,6 +38,5 @@
         "Recovery": {
             "Status": true
         }
-
     }
 }
