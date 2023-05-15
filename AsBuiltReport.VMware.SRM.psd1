@@ -27,7 +27,7 @@ Author = 'Jonathan Colon'
 # CompanyName = 'ZenPrSolutions'
 
 # Copyright statement for this module
-Copyright = '(c) 2022 Jonathan Colon. All rights reserved.'
+Copyright = '(c) 2023 Jonathan Colon. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'A PowerShell module to generate an as built report on the configuration of VMware SRM.'
@@ -54,7 +54,7 @@ PowerShellVersion = '5.1'
 RequiredModules = @(
     @{
         ModuleName = 'AsBuiltReport.Core';
-        ModuleVersion = '1.2.0'
+        ModuleVersion = '1.3.0'
     }
 )
 

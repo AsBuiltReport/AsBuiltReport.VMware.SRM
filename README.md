@@ -72,14 +72,6 @@ Each of these modules can be easily downloaded and installed via the PowerShell 
 - [VMware PowerCLI Module](https://www.powershellgallery.com/packages/VMware.PowerCLI/)
 - [AsBuiltReport.VMware.SRM Module](https://www.powershellgallery.com/packages/AsBuiltReport.VMware.SRM/).
 
-### Linux & macOS
-
-- .NET Core is required for cover page image support on Linux and macOS operating systems.
-  - [Installing .NET Coe.re for macOS](https://docs.microsoft.com/en-us/dotnet/core/install/macos)
-  - [Installing .NET Core for Linux](https://docs.microsoft.com/en-us/dotnet/core/install/linux)
-
-❗ If you are unable to install .NET Core, you must set `ShowCoverPageImage` to `False` in the report JSON configuration file.
-
 ### :closed_lock_with_key: Required Privileges
 
 Tested with vCenter Global Read-Only permissions.
@@ -167,13 +159,19 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 
 | Sub-Schema   | Default Setting | Maximum Setting |
 |--------------|:---------------:|:---------------:|
+| ArrayPairs      |        1        |        1        |
+| SRA      |        1        |        1        |
+| Sites      |        1        |        1        |
+| License      |        1        |        1        |
 | Summary      |        1        |        1        |
-| Protected    |        1        |        1        |
-| Recovery     |        1        |        1        |
+| FolderMapping      |        1        |        1        |
+| NetworkMapping      |        1        |        1        |
+| ResourceMapping      |        1        |        1        |
+| PlaceholderDatastores      |        1        |        1        |
+| Permission    |        1        |        1        |
 | ProtectionGroup |        1        |        3        |
 | RecoveryPlan |        1        |        3        |
-| InventoryMapping     |        1        |        1        |
-
+| Permission     |        1        |        1        |
 
 ### Healthcheck
 
