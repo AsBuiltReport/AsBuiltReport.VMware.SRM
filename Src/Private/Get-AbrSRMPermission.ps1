@@ -31,7 +31,7 @@ function Get-AbrSRMPermission {
                     Paragraph "Site Recovery Manager includes a set of roles. Each role includes a set of privileges, which allow users with those roles to complete different actions. Roles can have overlapping sets of privileges and actions."
                     Blankline
                 }
-                Paragraph "The following table provides information for the VMware SRM permissions which have been configured at each site."
+                Paragraph "The following table provides information about the permissions which have been configured at each site pair."
                 BlankLine
 
                 if ($LocalVIPermissions) {

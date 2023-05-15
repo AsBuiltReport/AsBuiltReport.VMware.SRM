@@ -66,283 +66,286 @@ function Get-AbrSRMProtectionGroup {
                 }
 
                 $OutObj | Table @TableParams
-            }
-            #endregion Collect Protection Group information
+                try {
+                    if ($ProtectionGroups) {
+                        Section -Style Heading3 "Protection Group Configuration" {
+                            Paragraph "The following section provides detailed information on the protection groups configured for $($ProtectedSiteName) ."
+                            BlankLine
+                            if ($ProtectionGroups.GetInfo() | Where-Object { $_.Type -like "VR" }) {
+                                Section -Style Heading4 "VMRS Protection Groups" {
+                                    if ($InfoLevel.ProtectionGroup -eq 1) {
+                                        $OutObj = @()
+                                        foreach ($ProtectionGroup in $ProtectionGroups) {
+                                            try {
+                                                $ProtectionGroupInfo = $ProtectionGroup.GetInfo() | Where-Object { $_.Type -like "VR" }
+                                                if ($ProtectionGroupInfo) {
+                                                    Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
+                                                    if ($ProtectionGroup.ListProtectedVMs()) {
+                                                        $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
+                                                    }
 
-            try {
-                Section -Style Heading3 "Protection Groups" {
-                    Paragraph "The following section provides detailed information on the protection groups configured for $($ProtectedSiteName) ."
-                    BlankLine
-                    Section -Style Heading4 "VMRS Protection Groups" {
-                        if ($InfoLevel.ProtectionGroup -eq 1) {
-                            $OutObj = @()
-                            foreach ($ProtectionGroup in $ProtectionGroups) {
-                                try {
-                                    $ProtectionGroupInfo = $ProtectionGroup.GetInfo() | Where-Object { $_.Type -like "VR" }
-                                    if ($ProtectionGroupInfo) {
-                                        Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
-                                        if ($ProtectionGroup.ListProtectedVMs()) {
-                                            $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
+                                                    $inObj = [ordered] @{
+                                                        'Name' = $ProtectionGroupInfo.Name
+                                                        'Type' = $ProtectionGroupInfo.Type.ToUpper()
+                                                        'Protection State' = $ProtectionGroup.GetProtectionState()
+                                                        'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
+                                                    }
+                                                    $OutObj += [pscustomobject]$inobj
+                                                }
+                                            } catch {
+                                                Write-PScriboMessage -IsWarning $_.Exception.Message
+                                            }
                                         }
-
-                                        $inObj = [ordered] @{
-                                            'Name' = $ProtectionGroupInfo.Name
-                                            'Type' = $ProtectionGroupInfo.Type.ToUpper()
-                                            'Protection State' = $ProtectionGroup.GetProtectionState()
-                                            'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
-                                        }
-                                        $OutObj += [pscustomobject]$inobj
-                                    }
-                                } catch {
-                                    Write-PScriboMessage -IsWarning $_.Exception.Message
-                                }
-                            }
-                            $TableParams = @{
-                                Name = "VRMS Protection Group - $($ProtectionGroupInfo.Name)"
-                                List = $false
-                                ColumnWidths = 35, 15, 15, 35
-                            }
-
-                            if ($Report.ShowTableCaptions) {
-                                $TableParams['Caption'] = "- $($TableParams.Name)"
-                            }
-                            $OutObj | Table @TableParams
-                        }
-                        if ($InfoLevel.ProtectionGroup -ge 2) {
-                            foreach ($ProtectionGroup in $ProtectionGroups) {
-                                $OutObj = @()
-                                try {
-                                    $ProtectionGroupInfo = $ProtectionGroup.GetInfo() | Where-Object { $_.Type -like "VR" }
-                                    if ($ProtectionGroupInfo) {
-                                        Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
-                                        if ($ProtectionGroup.ListProtectedVMs()) {
-                                            $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
-                                        }
-                                        if ($ProtectionGroup.ListAssociatedVms()) {
-                                            $AssociatedVMs = ConvertTo-VIobject $ProtectionGroup.ListAssociatedVms().MoRef
-                                        }
-
-                                        $inObj = [ordered] @{
-                                            'Name' = $ProtectionGroupInfo.Name
-                                            'Description' = ConvertTo-EmptyToFiller $ProtectionGroupInfo.Description
-                                            'Type' = $ProtectionGroupInfo.Type.ToUpper()
-                                            'Protection State' = $ProtectionGroup.GetProtectionState()
-                                            'Associated VMs' = (($AssociatedVMs | Sort-Object -Unique) -join ', ')
-                                            'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
-                                        }
-                                        $OutObj = [pscustomobject]$inobj
-
                                         $TableParams = @{
                                             Name = "VRMS Protection Group - $($ProtectionGroupInfo.Name)"
-                                            List = $true
-                                            ColumnWidths = 30, 70
+                                            List = $false
+                                            ColumnWidths = 35, 15, 15, 35
                                         }
+
                                         if ($Report.ShowTableCaptions) {
                                             $TableParams['Caption'] = "- $($TableParams.Name)"
                                         }
                                         $OutObj | Table @TableParams
                                     }
-                                } catch {
-                                    Write-PScriboMessage -IsWarning $_.Exception.Message
-                                }
-                            }
-                        }
-                    }
-                }
-                try {
-                    if ($ProtectionGroups) {
-                        Section -Style Heading4 "SAN Protection Groups" {
-                            $OutObj = @()
-                            if ($InfoLevel.ProtectionGroup -eq 1) {
-                                foreach ($ProtectionGroup in $ProtectionGroups) {
-                                    try {
-                                        $ProtectionGroupInfo = $ProtectionGroup.GetInfo() | Where-Object { $_.Type -like "SAN" }
-                                        if ($ProtectionGroupInfo) {
-                                            Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
-                                            if ($ProtectionGroup.ListProtectedVMs()) {
-                                                $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
-                                            }
+                                    if ($InfoLevel.ProtectionGroup -ge 2) {
+                                        foreach ($ProtectionGroup in $ProtectionGroups) {
+                                            $OutObj = @()
+                                            try {
+                                                $ProtectionGroupInfo = $ProtectionGroup.GetInfo() | Where-Object { $_.Type -like "VR" }
+                                                if ($ProtectionGroupInfo) {
+                                                    Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
+                                                    if ($ProtectionGroup.ListProtectedVMs()) {
+                                                        $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
+                                                    }
+                                                    if ($ProtectionGroup.ListAssociatedVms()) {
+                                                        $AssociatedVMs = ConvertTo-VIobject $ProtectionGroup.ListAssociatedVms().MoRef
+                                                    }
 
-                                            if ($ProtectionGroup.ListProtectedDatastores()) {
-                                                $ProtectedDatastores = ConvertTo-VIobject $ProtectionGroup.ListProtectedDatastores().MoRef
+                                                    $inObj = [ordered] @{
+                                                        'Name' = $ProtectionGroupInfo.Name
+                                                        'Description' = ConvertTo-EmptyToFiller $ProtectionGroupInfo.Description
+                                                        'Type' = $ProtectionGroupInfo.Type.ToUpper()
+                                                        'Protection State' = $ProtectionGroup.GetProtectionState()
+                                                        'Associated VMs' = (($AssociatedVMs | Sort-Object -Unique) -join ', ')
+                                                        'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
+                                                    }
+                                                    $OutObj = [pscustomobject]$inobj
+
+                                                    $TableParams = @{
+                                                        Name = "VRMS Protection Group - $($ProtectionGroupInfo.Name)"
+                                                        List = $true
+                                                        ColumnWidths = 30, 70
+                                                    }
+                                                    if ($Report.ShowTableCaptions) {
+                                                        $TableParams['Caption'] = "- $($TableParams.Name)"
+                                                    }
+                                                    $OutObj | Table @TableParams
+                                                }
+                                            } catch {
+                                                Write-PScriboMessage -IsWarning $_.Exception.Message
                                             }
-                                            $inObj = [ordered] @{
-                                                'Name' = $ProtectionGroupInfo.Name
-                                                'Type' = $ProtectionGroupInfo.Type.ToUpper()
-                                                'Protection State' = $ProtectionGroup.GetProtectionState()
-                                                'Protected Datastores' = ConvertTo-EmptyToFiller (($ProtectedDatastores | Sort-Object) -join ', ')
-                                                'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
-                                            }
-                                            $OutObj += [pscustomobject]$inobj
                                         }
-                                    } catch {
-                                        Write-PScriboMessage -IsWarning $_.Exception.Message
                                     }
                                 }
-                                $TableParams = @{
-                                    Name = "SAN Protection Group - $($ProtectionGroupInfo.Name)"
-                                    List = $False
-                                    ColumnWidths = 26, 10, 11, 26, 27
-                                }
-                                if ($Report.ShowTableCaptions) {
-                                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                                }
-                                $OutObj | Table @TableParams
                             }
-                            if ($InfoLevel.ProtectionGroup -ge 2) {
-                                foreach ($ProtectionGroup in $ProtectionGroups) {
-                                    try {
-                                        $ProtectionGroupInfo = $ProtectionGroup.GetInfo() | Where-Object { $_.Type -like "SAN" }
-                                        if ($ProtectionGroupInfo) {
-                                            Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
-                                            if ($ProtectionGroup.ListProtectedVMs()) {
-                                                $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
-                                            }
+                            try {
+                                if ($ProtectionGroups.GetInfo() | Where-Object { $_.Type -like "SAN" }) {
+                                    Section -Style Heading4 "SAN Protection Groups" {
+                                        $OutObj = @()
+                                        if ($InfoLevel.ProtectionGroup -eq 1) {
+                                            foreach ($ProtectionGroup in $ProtectionGroups) {
+                                                try {
+                                                    $ProtectionGroupInfo = $ProtectionGroup.GetInfo() | Where-Object { $_.Type -like "SAN" }
+                                                    if ($ProtectionGroupInfo) {
+                                                        Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
+                                                        if ($ProtectionGroup.ListProtectedVMs()) {
+                                                            $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
+                                                        }
 
-                                            if ($ProtectionGroup.ListProtectedDatastores()) {
-                                                $ProtectedDatastores = ConvertTo-VIobject $ProtectionGroup.ListProtectedDatastores().MoRef
+                                                        if ($ProtectionGroup.ListProtectedDatastores()) {
+                                                            $ProtectedDatastores = ConvertTo-VIobject $ProtectionGroup.ListProtectedDatastores().MoRef
+                                                        }
+                                                        $inObj = [ordered] @{
+                                                            'Name' = $ProtectionGroupInfo.Name
+                                                            'Type' = $ProtectionGroupInfo.Type.ToUpper()
+                                                            'Protection State' = $ProtectionGroup.GetProtectionState()
+                                                            'Protected Datastores' = ConvertTo-EmptyToFiller (($ProtectedDatastores | Sort-Object) -join ', ')
+                                                            'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
+                                                        }
+                                                        $OutObj += [pscustomobject]$inobj
+                                                    }
+                                                } catch {
+                                                    Write-PScriboMessage -IsWarning "SAN Protection Groups Section: $($_.Exception.Message)"
+                                                }
                                             }
-                                            $inObj = [ordered] @{
-                                                'Name' = $ProtectionGroupInfo.Name
-                                                'Description' = ConvertTo-EmptyToFiller $ProtectionGroupInfo.Description
-                                                'Type' = $ProtectionGroupInfo.Type.ToUpper()
-                                                'Protection State' = $ProtectionGroup.GetProtectionState()
-                                                'Protected Datastores' = ConvertTo-EmptyToFiller (($ProtectedDatastores | Sort-Object -Unique) -join ', ')
-                                                'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
-                                            }
-                                            $OutObj = [pscustomobject]$inobj
-
                                             $TableParams = @{
                                                 Name = "SAN Protection Group - $($ProtectionGroupInfo.Name)"
-                                                List = $true
-                                                ColumnWidths = 30, 70
+                                                List = $False
+                                                ColumnWidths = 26, 10, 11, 26, 27
                                             }
                                             if ($Report.ShowTableCaptions) {
                                                 $TableParams['Caption'] = "- $($TableParams.Name)"
                                             }
                                             $OutObj | Table @TableParams
                                         }
-                                    } catch {
-                                        Write-PScriboMessage -IsWarning $_.Exception.Message
+                                        if ($InfoLevel.ProtectionGroup -ge 2) {
+                                            foreach ($ProtectionGroup in $ProtectionGroups) {
+                                                try {
+                                                    $ProtectionGroupInfo = $ProtectionGroup.GetInfo() | Where-Object { $_.Type -like "SAN" }
+                                                    if ($ProtectionGroupInfo) {
+                                                        Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
+                                                        if ($ProtectionGroup.ListProtectedVMs()) {
+                                                            $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
+                                                        }
+
+                                                        if ($ProtectionGroup.ListProtectedDatastores()) {
+                                                            $ProtectedDatastores = ConvertTo-VIobject $ProtectionGroup.ListProtectedDatastores().MoRef
+                                                        }
+                                                        $inObj = [ordered] @{
+                                                            'Name' = $ProtectionGroupInfo.Name
+                                                            'Description' = ConvertTo-EmptyToFiller $ProtectionGroupInfo.Description
+                                                            'Type' = $ProtectionGroupInfo.Type.ToUpper()
+                                                            'Protection State' = $ProtectionGroup.GetProtectionState()
+                                                            'Protected Datastores' = ConvertTo-EmptyToFiller (($ProtectedDatastores | Sort-Object -Unique) -join ', ')
+                                                            'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
+                                                        }
+                                                        $OutObj = [pscustomobject]$inobj
+
+                                                        $TableParams = @{
+                                                            Name = "SAN Protection Group - $($ProtectionGroupInfo.Name)"
+                                                            List = $true
+                                                            ColumnWidths = 30, 70
+                                                        }
+                                                        if ($Report.ShowTableCaptions) {
+                                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                                        }
+                                                        $OutObj | Table @TableParams
+                                                    }
+                                                } catch {
+                                                    Write-PScriboMessage -IsWarning $_.Exception.Message
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
+                            }
+                        }
+                    }
+                    if ($InfoLevel.ProtectionGroup -ge 2) {
+                        try {
+                            if ($RemotevCenter) {
+                                Section -Style Heading3 'Virtual Machine Protection Properties' {
+                                    Paragraph "The following section provides detailed VM Recovery PlaceHolder informattion for $($ProtectedSiteName) ."
+                                    BlankLine
+                                    $ProtectionGroups = $LocalSRM.ExtensionData.Protection.ListProtectionGroups()
+                                    foreach ($ProtectionGroup in $ProtectionGroups) {
+                                        try {
+                                            Section -Style Heading4 "$($ProtectionGroup.GetInfo().Name)" {
+                                                $OutObj = @()
+                                                if ($ProtectionGroups) {
+                                                    if ($ProtectionGroup.ListProtectedVMs()) {
+                                                        $ProtectedVMs = $ProtectionGroup.ListProtectedVMs()
+                                                    }
+                                                    if ($InfoLevel.ProtectionGroup -eq 2) {
+                                                        foreach ($ProtectedVM in $ProtectedVMs) {
+                                                            try {
+                                                                $PlaceholderVmInfo = $ProtectionGroup.GetPlaceholderVmInfo($ProtectedVM)
+                                                                $inObj = [ordered] @{
+                                                                    'VM Name' = Switch ($PlaceholderVmInfo.Vm) {
+                                                                        "" { '--' }
+                                                                        $null { '--' }
+                                                                        default { Get-VM -Id $PlaceholderVmInfo.Vm | Sort-Object -Unique }
+                                                                    }
+                                                                    'Resource Pool' = Switch ($PlaceholderVmInfo.ResourcePool) {
+                                                                        "Resources" { "Root Resource Pool" }
+                                                                        default { ConvertTo-VIobject $PlaceholderVmInfo.ResourcePool }
+                                                                    }
+                                                                    'Folder Name' = Switch ($PlaceholderVmInfo.Folder) {
+                                                                        "" { '--' }
+                                                                        $null { '--' }
+                                                                        default { (Get-Folder -Id $PlaceholderVmInfo.Folder | Sort-Object -Unique).Name }
+                                                                    }
+                                                                    'Is Repair Needed' = ConvertTo-TextYN $PlaceholderVmInfo.RepairNeeded
+                                                                    'Placeholder Creation Fault' = ConvertTo-EmptyToFiller $PlaceholderVmInfo.PlaceholderCreationFault
+                                                                }
+                                                                $OutObj += [pscustomobject]$inobj
+                                                            } catch {
+                                                                Write-PScriboMessage -IsWarning $_.Exception.Message
+                                                            }
+                                                        }
+                                                        $TableParams = @{
+                                                            Name = "VM Recovery PlaceHolder - $($ProtectionGroup.GetInfo().Name)"
+                                                            List = $False
+                                                            ColumnWidths = 20, 25, 25, 10, 20
+                                                        }
+
+                                                        if ($Report.ShowTableCaptions) {
+                                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                                        }
+                                                        $OutObj | Table @TableParams
+                                                    }
+                                                    if ($InfoLevel.ProtectionGroup -eq 3) {
+                                                        foreach ($ProtectedVM in $ProtectedVMs) {
+                                                            try {
+                                                                $PlaceholderVmInfo = $ProtectionGroup.GetPlaceholderVmInfo($ProtectedVM)
+                                                                $inObj = [ordered] @{
+                                                                    'VM Name' = Switch ($PlaceholderVmInfo.Vm) {
+                                                                        "" { '--' }
+                                                                        $null { '--' }
+                                                                        default { Get-VM -Id $PlaceholderVmInfo.Vm | Sort-Object -Unique }
+                                                                    }
+                                                                    'Data Center' = ConvertTo-VIobject $PlaceholderVmInfo.Datacenter
+
+                                                                    'Compute Resource' = ConvertTo-VIobject $PlaceholderVmInfo.ComputeResource
+                                                                    'Host Name' = ConvertTo-VIobject $PlaceholderVmInfo.Host
+                                                                    'Resource Pool' = Switch ($PlaceholderVmInfo.ResourcePool) {
+                                                                        "Resources" { "Root Resource Pool" }
+                                                                        default { ConvertTo-VIobject $PlaceholderVmInfo.ResourcePool }
+                                                                    }
+                                                                    'Folder Name' = Switch ($PlaceholderVmInfo.Folder) {
+                                                                        "" { '--' }
+                                                                        $null { '--' }
+                                                                        default { Get-Folder -Id $PlaceholderVmInfo.Folder | Sort-Object -Unique }
+                                                                    }
+                                                                    'Is Repair Needed' = ConvertTo-TextYN $PlaceholderVmInfo.RepairNeeded
+                                                                    'Placeholder Creation Fault' = ConvertTo-EmptyToFiller $PlaceholderVmInfo.PlaceholderCreationFault
+                                                                }
+                                                                $OutObj = [pscustomobject]$inobj
+
+                                                                $TableParams = @{
+                                                                    Name = "VM Recovery PlaceHolder - $($ProtectionGroup.GetInfo().Name)"
+                                                                    List = $true
+                                                                    ColumnWidths = 30, 70
+                                                                }
+
+                                                                if ($Report.ShowTableCaptions) {
+                                                                    $TableParams['Caption'] = "- $($TableParams.Name)"
+                                                                }
+                                                                $OutObj | Table @TableParams
+                                                            } catch {
+                                                                Write-PScriboMessage -IsWarning $_.Exception.Message
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } catch {
+                                            Write-PScriboMessage -IsWarning $_.Exception.Message
+                                        }
                                     }
                                 }
                             }
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
                 } catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
-                if ($InfoLevel.ProtectionGroup -ge 2) {
-                    try {
-                        if ($RemotevCenter) {
-                            Section -Style Heading3 'Virtual Machine Protection Properties' {
-                                Paragraph "The following section provides detailed VM Recovery PlaceHolder informattion for $($ProtectedSiteName) ."
-                                BlankLine
-                                $ProtectionGroups = $LocalSRM.ExtensionData.Protection.ListProtectionGroups()
-                                foreach ($ProtectionGroup in $ProtectionGroups) {
-                                    try {
-                                        Section -Style Heading4 "$($ProtectionGroup.GetInfo().Name)" {
-                                            $OutObj = @()
-                                            if ($ProtectionGroups) {
-                                                if ($ProtectionGroup.ListProtectedVMs()) {
-                                                    $ProtectedVMs = $ProtectionGroup.ListProtectedVMs()
-                                                }
-                                                if ($InfoLevel.ProtectionGroup -eq 2) {
-                                                    foreach ($ProtectedVM in $ProtectedVMs) {
-                                                        try {
-                                                            $PlaceholderVmInfo = $ProtectionGroup.GetPlaceholderVmInfo($ProtectedVM)
-                                                            $inObj = [ordered] @{
-                                                                'VM Name' = Switch ($PlaceholderVmInfo.Vm) {
-                                                                    "" { '--' }
-                                                                    $null { '--' }
-                                                                    default { Get-VM -Id $PlaceholderVmInfo.Vm | Sort-Object -Unique }
-                                                                }
-                                                                'Resource Pool' = Switch ($PlaceholderVmInfo.ResourcePool) {
-                                                                    "Resources" { "Root Resource Pool" }
-                                                                    default { ConvertTo-VIobject $PlaceholderVmInfo.ResourcePool }
-                                                                }
-                                                                'Folder Name' = Switch ($PlaceholderVmInfo.Folder) {
-                                                                    "" { '--' }
-                                                                    $null { '--' }
-                                                                    default { (Get-Folder -Id $PlaceholderVmInfo.Folder | Sort-Object -Unique).Name }
-                                                                }
-                                                                'Is Repair Needed' = ConvertTo-TextYN $PlaceholderVmInfo.RepairNeeded
-                                                                'Placeholder Creation Fault' = ConvertTo-EmptyToFiller $PlaceholderVmInfo.PlaceholderCreationFault
-                                                            }
-                                                            $OutObj += [pscustomobject]$inobj
-                                                        } catch {
-                                                            Write-PScriboMessage -IsWarning $_.Exception.Message
-                                                        }
-                                                    }
-                                                    $TableParams = @{
-                                                        Name = "VM Recovery PlaceHolder - $($ProtectionGroup.GetInfo().Name)"
-                                                        List = $False
-                                                        ColumnWidths = 20, 25, 25, 10, 20
-                                                    }
-
-                                                    if ($Report.ShowTableCaptions) {
-                                                        $TableParams['Caption'] = "- $($TableParams.Name)"
-                                                    }
-                                                    $OutObj | Table @TableParams
-                                                }
-                                                if ($InfoLevel.ProtectionGroup -eq 3) {
-                                                    foreach ($ProtectedVM in $ProtectedVMs) {
-                                                        try {
-                                                            $PlaceholderVmInfo = $ProtectionGroup.GetPlaceholderVmInfo($ProtectedVM)
-                                                            $inObj = [ordered] @{
-                                                                'VM Name' = Switch ($PlaceholderVmInfo.Vm) {
-                                                                    "" { '--' }
-                                                                    $null { '--' }
-                                                                    default { Get-VM -Id $PlaceholderVmInfo.Vm | Sort-Object -Unique }
-                                                                }
-                                                                'Data Center' = ConvertTo-VIobject $PlaceholderVmInfo.Datacenter
-
-                                                                'Compute Resource' = ConvertTo-VIobject $PlaceholderVmInfo.ComputeResource
-                                                                'Host Name' = ConvertTo-VIobject $PlaceholderVmInfo.Host
-                                                                'Resource Pool' = Switch ($PlaceholderVmInfo.ResourcePool) {
-                                                                    "Resources" { "Root Resource Pool" }
-                                                                    default { ConvertTo-VIobject $PlaceholderVmInfo.ResourcePool }
-                                                                }
-                                                                'Folder Name' = Switch ($PlaceholderVmInfo.Folder) {
-                                                                    "" { '--' }
-                                                                    $null { '--' }
-                                                                    default { Get-Folder -Id $PlaceholderVmInfo.Folder | Sort-Object -Unique }
-                                                                }
-                                                                'Is Repair Needed' = ConvertTo-TextYN $PlaceholderVmInfo.RepairNeeded
-                                                                'Placeholder Creation Fault' = ConvertTo-EmptyToFiller $PlaceholderVmInfo.PlaceholderCreationFault
-                                                            }
-                                                            $OutObj = [pscustomobject]$inobj
-
-                                                            $TableParams = @{
-                                                                Name = "VM Recovery PlaceHolder - $($ProtectionGroup.GetInfo().Name)"
-                                                                List = $true
-                                                                ColumnWidths = 30, 70
-                                                            }
-
-                                                            if ($Report.ShowTableCaptions) {
-                                                                $TableParams['Caption'] = "- $($TableParams.Name)"
-                                                            }
-                                                            $OutObj | Table @TableParams
-                                                        } catch {
-                                                            Write-PScriboMessage -IsWarning $_.Exception.Message
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    } catch {
-                                        Write-PScriboMessage -IsWarning $_.Exception.Message
-                                    }
-                                }
-                            }
-                        }
-                    } catch {
-                        Write-PScriboMessage -IsWarning $_.Exception.Message
-                    }
-                }
-            } catch {
-                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
+            #endregion Collect Protection Group information
         }
     }
     end {}

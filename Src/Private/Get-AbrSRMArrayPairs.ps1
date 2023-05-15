@@ -18,13 +18,13 @@ function Get-AbrSRMArrayPairs {
     }
 
     process {
-        $LocalArrayPair = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
-        $RemoteArrayPair = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
-        $LocalSRA = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
-        $RemoteSRA = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
+        try {
+            $LocalArrayPair = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
+            $RemoteArrayPair = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
+            $LocalSRA = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
+            $RemoteSRA = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
 
-        if (($LocalArrayPair) -and ($RemoteArrayPair)) {
-            try {
+            if (($LocalArrayPair) -and ($RemoteArrayPair)) {
                 Section -Style Heading2 'Array Pairs' {
                     if ($Options.ShowDefinitionInfo) {
                     }
@@ -53,9 +53,9 @@ function Get-AbrSRMArrayPairs {
                     }
                     $OutObj | Table @TableParams
                 }
-            } catch {
-                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 
