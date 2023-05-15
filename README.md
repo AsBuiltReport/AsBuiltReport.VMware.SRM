@@ -81,7 +81,7 @@ Tested with vCenter Global Read-Only permissions.
 ### PowerShell
 
 ```powershell
-install-module VMware.PowerCLI -MinimumVersion 12.3 -AllowClobber
+install-module VMware.PowerCLI -MinimumVersion 13.1 -AllowClobber
 install-module AsBuiltReport.VMware.SRM
 ```
 
