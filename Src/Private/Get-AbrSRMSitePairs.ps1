@@ -1,4 +1,18 @@
-function Get-AbrSRMSitePairs {
+function Get-AbrSRMSitePair {
+    <#
+    .SYNOPSIS
+        Used by As Built Report to retrieve VMware SRM Array Pairs information.
+    .DESCRIPTION
+        Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
+    .NOTES
+        Version:        0.4.2
+        Author:         Tim Carman
+        Twitter:        @tpcarman
+        Github:         @tpcarman
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
+    .LINK
+        https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM
+    #>
 
     begin {
         Write-PScriboMessage "Collecting Site Pairing information."
@@ -10,12 +24,13 @@ function Get-AbrSRMSitePairs {
 
         if (($LocalSiteInfo) -or ($RemoteSiteInfo)) {
             Section -Style Heading2 "Site Pairs" {
+                Paragraph "The following table summarize information about SRM Site Pairs."
+                BlankLine
                 $OutObj = @()
                 if ($LocalSiteInfo) {
                     Write-PScriboMessage "Collecting site information for $($ProtectedSiteName)."
                     $inObj = [ordered] @{
                         'Site' = $LocalSiteInfo.SiteName
-                        #'Site ID' = $LocalSiteInfo.SiteUuid
                         'SRM Server' = $LocalSRM.Name
                         'SRM Version' = $LocalSRM.Version
                         'SRM Build' = $LocalSRM.Build
@@ -33,7 +48,6 @@ function Get-AbrSRMSitePairs {
                     Write-PScriboMessage "Collecting site information for $($RecoverySiteName)."
                     $inObj = [ordered] @{
                         'Site' = $RemoteSiteInfo.Name
-                        #'Site ID' = $RemoteSiteInfo.Uuid
                         'SRM Server' = $RemoteSRM.Name
                         'SRM Version' = $RemoteSRM.Version
                         'SRM Build' = $RemoteSRM.Build
@@ -49,7 +63,6 @@ function Get-AbrSRMSitePairs {
 
                 $TableParams = @{
                     Name = "Site Pairs"
-                    #ColumnWidths = 50, 50
                     List = $true
                     Key = 'Site'
                 }

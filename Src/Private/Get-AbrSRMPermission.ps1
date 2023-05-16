@@ -5,7 +5,7 @@ function Get-AbrSRMPermission {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.2
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -31,11 +31,11 @@ function Get-AbrSRMPermission {
                     Paragraph "Site Recovery Manager includes a set of roles. Each role includes a set of privileges, which allow users with those roles to complete different actions. Roles can have overlapping sets of privileges and actions."
                     Blankline
                 }
-                Paragraph "The following table provides information for the VMware SRM permissions which have been configured at each site."
+                Paragraph "The following table provides information about the permissions which have been configured at each site."
                 BlankLine
 
                 if ($LocalVIPermissions) {
-                    Section -Style Heading3 -ExcludeFromTOC $($ProtectedSiteName) {
+                    Section -Style NOTOCHeading3 -ExcludeFromTOC $($ProtectedSiteName) {
                         $OutObj = @()
                         foreach ($LocalVIPermission in $LocalVIPermissions) {
                             Write-PScriboMessage "Discovered SRM Permissions $($LocalVIPermission.Name)."
@@ -63,7 +63,7 @@ function Get-AbrSRMPermission {
                 }
 
                 if ($RemoteVIPermissions) {
-                    Section -Style Heading3 -ExcludeFromTOC $($RecoverySiteName) {
+                    Section -Style NOTOCHeading3 -ExcludeFromTOC $($RecoverySiteName) {
                         $OutObj = @()
                         foreach ($RemoteVIPermission in $RemoteVIPermissions) {
                             Write-PScriboMessage "Discovered SRM Permissions $($RemoteVIPermission.Name)."
