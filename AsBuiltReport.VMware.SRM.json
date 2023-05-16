@@ -14,7 +14,6 @@
     "InfoLevel": {
         "_comment_": "0 = Disabled, 1 = Enabled, 2 = Adv Summary, 3 = Detailed",
         "Sites": 1,
-        "vCenter": 1,
         "License": 1,
         "Permission": 1,
         "ArrayPairs": 1,

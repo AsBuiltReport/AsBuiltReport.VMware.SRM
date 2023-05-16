@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.2
         Author:         Matt Allford (@mattallford)
         Editor:         Jonathan Colon
         Twitter:        @jcolonfzenpr
@@ -20,6 +20,27 @@ function Invoke-AsBuiltReport.VMware.SRM {
         [String[]] $Target,
         [PSCredential] $Credential
     )
+
+    Write-PScriboMessage -IsWarning "Please refer to the AsBuiltReport.VMware.SRM github website for more detailed information about this project."
+    Write-PScriboMessage -IsWarning "Do not forget to update your report configuration file after each new version release."
+    Write-PScriboMessage -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM"
+    Write-PScriboMessage -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/issues"
+
+    # Check the current AsBuiltReport.VMware.SRM module
+    Try {
+        $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.VMware.SRM -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
+
+        if ($InstalledVersion) {
+            Write-PScriboMessage -IsWarning "AsBuiltReport.VMware.SRM $($InstalledVersion.ToString()) is currently installed."
+            $LatestVersion = Find-Module -Name AsBuiltReport.VMware.SRM -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+            if ($LatestVersion -gt $InstalledVersion) {
+                Write-PScriboMessage -IsWarning "AsBuiltReport.VMware.SRM $($LatestVersion.ToString()) is available."
+                Write-PScriboMessage -IsWarning "Run 'Update-Module -Name AsBuiltReport.VMware.SRM -Force' to install the latest version."
+            }
+        }
+    } Catch {
+            Write-PscriboMessage -IsWarning $_.Exception.Message
+        }
     # Check if the required version of VMware PowerCLI is installed
     Get-AbrSRMRequiredModule -Name 'VMware.PowerCLI' -Version '13.1'
 
@@ -39,7 +60,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
         #region Protect Site vCenter connection
         try {
             Write-PScriboMessage "Connecting to SRM protected site vCenter: $($VIServer) with provided credentials."
-            $LocalvCenter = Connect-VIServer $VIServer -Credential $Credential -Port 443 -Protocol https -ErrorAction Stop
+            $script:LocalvCenter = Connect-VIServer $VIServer -Credential $Credential -Port 443 -Protocol https -ErrorAction Stop
             if ($LocalvCenter) {
                 Write-PScriboMessage "Successfully connected to SRM protected site vCenter: $($LocalvCenter.Name)."
             }
@@ -54,7 +75,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
         #region Protect Site SRM connection
         try {
             Write-PScriboMessage "Connecting to SRM server at protected site with provided credentials."
-            $LocalSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -Server $LocalvCenter
+            $script:LocalSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -Server $LocalvCenter
             if ($LocalSRM) {
                 Write-PScriboMessage "Successfully connected to SRM server at protected site: $($LocalSRM.Name) with provided credentials."
                 $global:ProtectedSiteName = $LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName
@@ -69,12 +90,12 @@ function Invoke-AsBuiltReport.VMware.SRM {
 
         #region Recovery Site vCenter connection
         try {
-            $RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost -Credential $Credential -Port 443 -Protocol https -ErrorAction SilentlyContinue
+            $script:RemotevCenter = Connect-VIServer $LocalSRM.ExtensionData.GetPairedSite().vcHost -Credential $Credential -Port 443 -Protocol https -ErrorAction SilentlyContinue
             if ($RemotevCenter) {
                 Write-PScriboMessage "Connected to $((Get-AdvancedSetting -Entity $RemotevCenter | Where-Object {$_.name -eq 'VirtualCenter.FQDN'}).Value)."
                 try {
                     Write-PScriboMessage "Connecting to SRM server at recovery site with provided credentials."
-                    $RemoteSRM = Connect-SrmServer -IgnoreCertificateErrors -Server $RemotevCenter -Credential $Credential -Port 443 -Protocol https -RemoteCredential $Credential
+                    $script:RemoteSRM = Connect-SrmServer -IgnoreCertificateErrors -Server $RemotevCenter -Credential $Credential -Port 443 -Protocol https -RemoteCredential $Credential
                     if ($RemoteSRM) {
                         Write-PScriboMessage "Successfully connected to SRM server at recovery site: $($RemoteSRM.Name) with provided credentials."
                     }
@@ -143,13 +164,9 @@ function Invoke-AsBuiltReport.VMware.SRM {
 
                 Write-PScriboMessage "Sites InfoLevel set at $($InfoLevel.Sites)."
                 if ($InfoLevel.Sites -ge 1) {
-                    Get-AbrSRMSitePairs
+                    Get-AbrSRMSitePair
                 }
 
-                Write-PScriboMessage "vCenter InfoLevel set at $($InfoLevel.vCenter)."
-                if ($InfoLevel.vCenter -ge 1) {
-                    Get-AbrSRMvCenterServer
-                }
 
                 Write-PScriboMessage "License InfoLevel set at $($InfoLevel.License)."
                 if ($InfoLevel.License -ge 1) {

@@ -5,7 +5,7 @@ function Get-AbrVRMSProtection {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
+        Version:        0.4.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         @rebelinux
@@ -35,7 +35,7 @@ function Get-AbrVRMSProtection {
                         Paragraph "VMware vSphere Replication is a virtual machine data protection and disaster recovery solution. It is fully integrated with VMware vCenter Server and VMware vSphere Web Client, providing host-based, asynchronous replication of virtual machines."
                         BlankLine
                     }
-                    Paragraph "The following section provides information on virtual machine replication status."
+                    Paragraph "The following section provides information about VMs replication status."
                     BlankLine
                     try {
                         Section -Style Heading3 'Replicated Virtual Machine' {

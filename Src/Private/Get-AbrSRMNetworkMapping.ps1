@@ -33,9 +33,9 @@ function Get-AbrSRMNetworkMapping {
                     Paragraph "Network mappings allow you to specify how Site Recovery Manager maps virtual machine networks on the protected site to virtual machine networks on the recovery site."
                     Blankline
                 }
-                
+
                 if ($LocalNetworkMappings) {
-                    Section -Style Heading3 -ExcludeFromTOC $($ProtectedSiteName) {
+                    Section -Style NOTOCHeading3 -ExcludeFromTOC $($ProtectedSiteName) {
                         $OutObj = @()
                         foreach ($ObjMap in $LocalNetworkMappings) {
                             $inObj = [Ordered]@{
@@ -67,7 +67,7 @@ function Get-AbrSRMNetworkMapping {
                 }
 
                 if ($RemoteNetworkMappings) {
-                    Section -Style Heading3 -ExcludeFromTOC $($RecoverySiteName) {
+                    Section -Style NOTOCHeading3 -ExcludeFromTOC $($RecoverySiteName) {
                         $OutObj = @()
                         foreach ($ObjMap in $RemoteNetworkMappings) {
                             $inObj = [Ordered]@{
@@ -75,7 +75,7 @@ function Get-AbrSRMNetworkMapping {
                                 'Recovery Network' = Get-View $ObjMap.SecondaryObject -Server $LocalvCenter | Select-Object -ExpandProperty Name -Unique
                                 'Test Network' = & {
                                     if ($RemoteTestNetworkMappings | Where-Object {$_.Key -eq $ObjMap.SecondaryObject}) {
-                                        Get-View (($RemoteTestNetworkMappings | Where-Object {$_.Key -eq $ObjMap.SecondaryObject}).TestNetwork) -Server $RemotevCenter 
+                                        Get-View (($RemoteTestNetworkMappings | Where-Object {$_.Key -eq $ObjMap.SecondaryObject}).TestNetwork) -Server $RemotevCenter
                                     } else {
                                         'Isolated network (auto created)'
                                     }

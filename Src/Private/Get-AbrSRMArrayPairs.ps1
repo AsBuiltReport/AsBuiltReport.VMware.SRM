@@ -5,7 +5,7 @@ function Get-AbrSRMArrayPairs {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.0
+        Version:        0.4.2
         Author:         Tim Carman
         Twitter:        @tpcarman
         Github:         @tpcarman
@@ -18,17 +18,17 @@ function Get-AbrSRMArrayPairs {
     }
 
     process {
-        $LocalArrayPair = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
-        $RemoteArrayPair = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
-        $LocalSRA = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
-        $RemoteSRA = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
+        try {
+            $LocalArrayPair = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
+            $RemoteArrayPair = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
+            $LocalSRA = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
+            $RemoteSRA = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
 
-        if (($LocalArrayPair) -and ($RemoteArrayPair)) {
-            try {
+            if (($LocalArrayPair) -and ($RemoteArrayPair)) {
                 Section -Style Heading2 'Array Pairs' {
                     if ($Options.ShowDefinitionInfo) {
                     }
-                    Paragraph "The following table provides information for the Storage Array Pairs which have been configured at each site."
+                    Paragraph "The following table provides information about the Storage Array Pairs which have been configured at each site."
                     BlankLine
                     $HashObj = @{}
                     $LocalObj = $LocalArrayPair.Key
@@ -53,9 +53,9 @@ function Get-AbrSRMArrayPairs {
                     }
                     $OutObj | Table @TableParams
                 }
-            } catch {
-                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 
