@@ -52,6 +52,8 @@ Tested On:
 - SRM 8.3
 - SRM 8.4
 - SRM 8.5
+- SRM 8.6
+- SRM 8.7
 
 ### PowerShell
 
