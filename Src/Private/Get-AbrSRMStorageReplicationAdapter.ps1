@@ -5,7 +5,7 @@ function Get-AbrSRMStorageReplicationAdapter {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.0
+        Version:        0.4.2
         Author:         Tim Carman
         Twitter:        @tpcarman
         Github:         @tpcarman

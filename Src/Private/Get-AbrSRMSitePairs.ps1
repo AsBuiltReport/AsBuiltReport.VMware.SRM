@@ -1,4 +1,18 @@
-function Get-AbrSRMSitePairs {
+function Get-AbrSRMSitePair {
+    <#
+    .SYNOPSIS
+        Used by As Built Report to retrieve VMware SRM Array Pairs information.
+    .DESCRIPTION
+        Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
+    .NOTES
+        Version:        0.4.2
+        Author:         Tim Carman
+        Twitter:        @tpcarman
+        Github:         @tpcarman
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
+    .LINK
+        https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM
+    #>
 
     begin {
         Write-PScriboMessage "Collecting Site Pairing information."

@@ -5,7 +5,7 @@ function Get-AbrSRMLicense {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.2
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -27,7 +27,7 @@ function Get-AbrSRMLicense {
         $RemoteLicenseInfo = $RemoteSRM.ExtensionData.GetLicenseInfo()
         if (($LocalLicenseInfo) -or ($RemoteLicenseInfo)) {
             Section -Style Heading2 'Licensing' {
-                Paragraph "The following table provides information for the VMware SRM licensing."
+                Paragraph "The following table provides information about configured licensing at each site."
                 BlankLine
                 $OutObj = @()
                 if ($LocalLicenseInfo) {

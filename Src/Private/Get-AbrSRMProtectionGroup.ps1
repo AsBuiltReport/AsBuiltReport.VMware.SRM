@@ -5,7 +5,7 @@ function Get-AbrSRMProtectionGroup {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.2
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -31,7 +31,7 @@ function Get-AbrSRMProtectionGroup {
                     Paragraph "A protection group is a collection of virtual machines that are protected together."
                     BlankLine
                 }
-                Paragraph "The following table provides a summary of the protection groups configured for $($LocalSRM.Name.split(".", 2).toUpper()[0])."
+                Paragraph "The following table provides a summary of the protection groups configured in $($LocalSRM.Name.split(".", 2).toUpper()[0])."
                 BlankLine
 
                 $OutObj = @()

@@ -5,7 +5,7 @@ function Get-AbrSRMArrayPairs {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.0
+        Version:        0.4.2
         Author:         Tim Carman
         Twitter:        @tpcarman
         Github:         @tpcarman
@@ -28,7 +28,7 @@ function Get-AbrSRMArrayPairs {
                 Section -Style Heading2 'Array Pairs' {
                     if ($Options.ShowDefinitionInfo) {
                     }
-                    Paragraph "The following table provides information for the Storage Array Pairs which have been configured at each site."
+                    Paragraph "The following table provides information about the Storage Array Pairs which have been configured at each site."
                     BlankLine
                     $HashObj = @{}
                     $LocalObj = $LocalArrayPair.Key

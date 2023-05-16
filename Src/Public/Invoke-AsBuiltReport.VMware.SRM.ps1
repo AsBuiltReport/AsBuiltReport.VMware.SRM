@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.2
         Author:         Matt Allford (@mattallford)
         Editor:         Jonathan Colon
         Twitter:        @jcolonfzenpr
@@ -164,7 +164,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
 
                 Write-PScriboMessage "Sites InfoLevel set at $($InfoLevel.Sites)."
                 if ($InfoLevel.Sites -ge 1) {
-                    Get-AbrSRMSitePairs
+                    Get-AbrSRMSitePair
                 }
 
 
