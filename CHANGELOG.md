@@ -1,5 +1,13 @@
 # :arrows_clockwise: VMware SRM As Built Report Changelog
 
+## [0.4.2] - 2023-05-16
+
+### Changed
+
+- Code cleanup
+- Removed unused files
+- Modified SRA and Array Manager section for better handling of errors
+
 ## [0.4.1] - 2023-05-15
 
 ### Added
