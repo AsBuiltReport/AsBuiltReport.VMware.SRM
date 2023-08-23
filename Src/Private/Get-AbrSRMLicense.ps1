@@ -5,7 +5,7 @@ function Get-AbrSRMLicense {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.2
+        Version:        0.4.3
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -31,7 +31,7 @@ function Get-AbrSRMLicense {
                 BlankLine
                 $OutObj = @()
                 if ($LocalLicenseInfo) {
-                    Write-PScriboMessage "Discovered License information for $($LicenseInfo.ProductName) at $($ProtectedSiteName)."
+                    Write-PScriboMessage "Discovered License information for $($LocalLicenseInfo.ProductName) at $($ProtectedSiteName)."
                     $inObj = [ordered] @{
                         'Site' = $($ProtectedSiteName)
                         'Product Name' = $LocalLicenseInfo.ProductName
@@ -55,7 +55,7 @@ function Get-AbrSRMLicense {
                 }
 
                 if ($RemoteLicenseInfo) {
-                    Write-PScriboMessage "Discovered License information for $($LicenseInfo.ProductName) at $($RecoverySiteName)."
+                    Write-PScriboMessage "Discovered License information for $($RemoteLicenseInfo.ProductName) at $($RecoverySiteName)."
                     $inObj = [ordered] @{
                         'Site' = $($RecoverySiteName)
                         'Product Name' = $RemoteLicenseInfo.ProductName
@@ -79,7 +79,7 @@ function Get-AbrSRMLicense {
                 }
 
                 if ($Healthcheck.Licensing) {
-                    ($OutObj).Where{ $_.'Product Edition' -like '*Evaluation*' } | Set-Style -Style Warning #-Property 'Product Edition'
+                    $OutObj | Where-Object { $_.'Product Edition' -like 'Enterprise Edition' } | Set-Style -Style Warning
                 }
 
                 $TableParams = @{
