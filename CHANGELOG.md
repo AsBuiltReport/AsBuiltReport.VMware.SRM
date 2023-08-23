@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- Fix in verbose massage using a non-existent variable in Get-AbrSRMLicense module. Fix [#19](https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/issues/19)
+- Fix in verbose message using a non-existent variable in Get-AbrSRMLicense module. Fix [#19](https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/issues/19)
 
 ## [0.4.2] - 2023-05-16
 
