@@ -1,5 +1,11 @@
 # :arrows_clockwise: VMware SRM As Built Report Changelog
 
+## [0.4.3] - 2023-08-23
+
+### Fixed
+
+- Fix in verbose massage using a non-existent variable in Get-AbrSRMLicense module. Fix [#19](https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/issues/19)
+
 ## [0.4.2] - 2023-05-16
 
 ### Changed

@@ -26,8 +26,8 @@ function ConvertTo-TextYN {
     )
 
     switch ($TEXT) {
-        "" { "-" }
-        $Null { "-" }
+        "" { "--" }
+        $Null { "--" }
         "True" { "Yes"; break }
         "False" { "No"; break }
         default { $TEXT }
