@@ -5,7 +5,7 @@ function Get-AbrSRMPlaceholderDatastore {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.3
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -40,9 +40,10 @@ function Get-AbrSRMPlaceholderDatastore {
                                 $inObj = [ordered] @{
                                     'Site' = $($ProtectedSiteName)
                                     "Name"           = $ObjMap.Name
-                                    "Host/Cluster"   = Switch (($ObjMap.VisibleTo.key).count) {
-                                        0 { '--' }
-                                        default { Get-View $ObjMap.VisibleTo.key -Server $LocalvCenter | Select-Object -ExpandProperty Name -Unique }
+                                    "Host/Cluster"   = Switch ([string]::IsNullOrEmpty($ObjMap.VisibleTo.key)) {
+                                        $true { '--' }
+                                        $false {Get-View $ObjMap.VisibleTo.key -Server $LocalvCenter | Select-Object -ExpandProperty Name -Unique}
+                                        default { "Unknown" }
                                     }
                                     "Datastore Type" = $ObjMap.Type
                                     "Capacity"       = "$([math]::Round(($ObjMap.Capacity)/ 1GB, 2)) GB"
@@ -76,9 +77,10 @@ function Get-AbrSRMPlaceholderDatastore {
                                 $inObj = [ordered] @{
                                     'Site' = $($RecoverySiteName)
                                     "Name"           = $ObjMap.Name
-                                    "Host/Cluster"   = Switch (($ObjMap.VisibleTo.key).count) {
-                                        0 { '--' }
-                                        default { Get-View $ObjMap.VisibleTo.key -Server $RemotevCenter | Select-Object -ExpandProperty Name -Unique }
+                                    "Host/Cluster"   = Switch ([string]::IsNullOrEmpty($ObjMap.VisibleTo.key)) {
+                                        $true { '--' }
+                                        $false {Get-View $ObjMap.VisibleTo.key -Server $RemotevCenter | Select-Object -ExpandProperty Name -Unique}
+                                        default { "Unknown" }
                                     }
                                     "Datastore Type" = $ObjMap.Type
                                     "Capacity"       = "$([math]::Round(($ObjMap.Capacity)/ 1GB, 2)) GB"

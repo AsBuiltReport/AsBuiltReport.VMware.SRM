@@ -12,7 +12,7 @@
 RootModule = 'AsBuiltReport.VMware.SRM.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.4.2'
+ModuleVersion = '0.4.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -109,7 +109,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport/master/AsBuiltReport.png'
+        IconUri = 'https://github.com/AsBuiltReport.png'
 
         # ReleaseNotes of this module
         ReleaseNotes = 'https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/blob/master/CHANGELOG.md'

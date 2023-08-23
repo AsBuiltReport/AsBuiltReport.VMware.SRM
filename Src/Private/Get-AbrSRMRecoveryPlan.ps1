@@ -5,7 +5,7 @@ function Get-AbrSRMRecoveryPlan {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.3
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -84,8 +84,8 @@ function Get-AbrSRMRecoveryPlan {
                                                         try {
                                                             $RecoverySettings = $PG.ListRecoveryPlans().GetRecoverySettings($VM.Vm.MoRef)
                                                             $DependentVMs = Switch ($RecoverySettings.DependentVmIds) {
-                                                                "" { "-"; break }
-                                                                $Null { "-"; break }
+                                                                "" { "--"; break }
+                                                                $Null { "--"; break }
                                                                 default { $RecoverySettings.DependentVmIds | ForEach-Object { Get-VM -Id $_ } }
                                                             }
                                                             $PrePowerOnCommand = @()
@@ -133,13 +133,13 @@ function Get-AbrSRMRecoveryPlan {
                                                                     'PowerOff Timeout' = "$($RecoverySettings.PowerOffTimeoutSeconds)/s"
                                                                     'Final Power State' = $TextInfo.ToTitleCase($RecoverySettings.FinalPowerState)
                                                                     'Pre PowerOn Callouts' = Switch ($PrePowerOnCommand) {
-                                                                        "" { "-"; break }
-                                                                        $Null { "-"; break }
+                                                                        "" { "--"; break }
+                                                                        $Null { "--"; break }
                                                                         default { $PrePowerOnCommand | ForEach-Object { "Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s" }; break }
                                                                     }
                                                                     'Post PowerOn Callouts' = Switch ($PosPowerOnCommand) {
-                                                                        "" { "-"; break }
-                                                                        $Null { "-"; break }
+                                                                        "" { "--"; break }
+                                                                        $Null { "--"; break }
                                                                         default { $PosPowerOnCommand | ForEach-Object { "Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s" }; break }
                                                                     }
                                                                     'Dependent VMs' = ($DependentVMs | Sort-Object -Unique) -join ", "
@@ -165,11 +165,11 @@ function Get-AbrSRMRecoveryPlan {
                                                 }
                                             }
 
-                                            if ($InfoLevel.RecoveryPlan -eq 2 -and ($OutObj).count -gt 0) {
+                                            if ($InfoLevel.RecoveryPlan -eq 2 -and (-Not [string]::IsNullOrEmpty($OutObj))) {
                                                 $TableParams = @{
                                                     Name = "VM Recovery Settings - $($VM.VmName)"
                                                     List = $False
-                                                    ColumnWidths = 16, 10, 12, 12, 12, 12, 12, 14
+                                                    ColumnWidths = 16, 10, 12, 12, 12, 12, 12, 14s
                                                 }
                                                 if ($Report.ShowTableCaptions) {
                                                     $TableParams['Caption'] = "- $($TableParams.Name)"

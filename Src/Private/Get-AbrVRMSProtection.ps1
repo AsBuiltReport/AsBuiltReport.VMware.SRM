@@ -5,7 +5,7 @@ function Get-AbrVRMSProtection {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.2
+        Version:        0.4.3
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         @rebelinux
@@ -26,7 +26,7 @@ function Get-AbrVRMSProtection {
         try {
             $extensionmanager = Get-View extensionmanager -Server $LocalvCenter
             $extension = $extensionmanager.extensionlist | Where-Object { $_.key -eq "com.vmware.vcHms" }
-            if ($extension.count -eq 1) {
+            if (($extension | Measure-Object).Count -eq 1) {
                 $LocalVR = $extension.server.url.split("/")[2].split(":")[0]
             }
             if ($LocalVR) {
@@ -59,9 +59,10 @@ function Get-AbrVRMSProtection {
                                         Write-PScriboMessage "Discovered vm configured for replication $($ReplicatedVM.Name)."
                                         $inObj = [ordered] @{
                                             'VM Name' = $ReplicatedVM.Name
-                                            'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
-                                                0 { "-" }
-                                                default { ($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1] }
+                                            'HW Version' = Switch ([string]::IsNullOrEmpty($ReplicatedVM.ExtensionData.Config.Version)) {
+                                                $true { "--" }
+                                                $false {($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1]}
+                                                default { "unknown" }
                                             }
                                             'Folder' = $Folder
                                             'Resource Pool' = $ResourcesPool
@@ -108,9 +109,10 @@ function Get-AbrVRMSProtection {
                                         Write-PScriboMessage "Discovered non-configured replication vm $($ReplicatedVM.Name)."
                                         $inObj = [ordered] @{
                                             'VM Name' = $ReplicatedVM.Name
-                                            'HW Version' = Switch (($ReplicatedVM.ExtensionData.Config.Version).count) {
-                                                0 { "-" }
-                                                default { ($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1] }
+                                            'HW Version' = Switch ([string]::IsNullOrEmpty($ReplicatedVM.ExtensionData.Config.Version)) {
+                                                $true { "--" }
+                                                $false { ($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1] }
+                                                default { "Unkwnown" }
                                             }
                                             'Folder' = $Folder
                                             'Resource Pool' = $ResourcesPool

@@ -5,7 +5,7 @@ function Get-AbrSRMArrayPairs {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.2
+        Version:        0.4.3
         Author:         Tim Carman
         Twitter:        @tpcarman
         Github:         @tpcarman
@@ -19,10 +19,12 @@ function Get-AbrSRMArrayPairs {
 
     process {
         try {
-            $LocalArrayPair = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
-            $RemoteArrayPair = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
-            $LocalSRA = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
-            $RemoteSRA = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().getadapter().fetchinfo()
+            try {
+                $LocalArrayPair = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
+            } catch { Write-PScriboMessage -IsWarning "Unable to get Protected Site array information"}
+            try {
+                $RemoteArrayPair = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
+            } catch { Write-PScriboMessage -IsWarning "Unable to get Recovery Site array information"}
 
             if (($LocalArrayPair) -and ($RemoteArrayPair)) {
                 Section -Style Heading2 'Array Pairs' {
