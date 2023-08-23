@@ -5,7 +5,7 @@ function Get-AbrSRMSitePair {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.2
+        Version:        0.4.3
         Author:         Tim Carman
         Twitter:        @tpcarman
         Github:         @tpcarman
@@ -37,8 +37,8 @@ function Get-AbrSRMSitePair {
                         'vCenter Server' = ($LocalSiteInfo.VcUrl).Split('/')[2].Split(':')[0]
                         'vCenter Version' = "$($LocalvCenter.Version)"
                         'vCenter Build' = "$($LocalvCenter.Build)"
-                        'Protection Groups' = ($LocalSRM.ExtensionData.Protection.ListProtectionGroups()).count
-                        'Recovery Plans' = ($LocalSRM.ExtensionData.Recovery.ListPlans()).count
+                        'Protection Groups' = ($LocalSRM.ExtensionData.Protection.ListProtectionGroups() | Measure-Object).count
+                        'Recovery Plans' = ($LocalSRM.ExtensionData.Recovery.ListPlans() | Measure-Object).count
                         'Connected' = ConvertTo-TextYN $LocalSRM.IsConnected
                     }
                     $OutObj += $inobj
@@ -54,8 +54,8 @@ function Get-AbrSRMSitePair {
                         'vCenter Server' = $RemoteSiteInfo.VcHost
                         'vCenter Version' = "$($RemotevCenter.Version)"
                         'vCenter Build' = "$($RemotevCenter.Build)"
-                        'Protection Groups' = ($RemoteSRM.ExtensionData.Protection.ListProtectionGroups()).count
-                        'Recovery Plans' = ($RemoteSRM.ExtensionData.Recovery.ListPlans()).count
+                        'Protection Groups' = ($RemoteSRM.ExtensionData.Protection.ListProtectionGroups() | Measure-Object).count
+                        'Recovery Plans' = ($RemoteSRM.ExtensionData.Recovery.ListPlans() | Measure-Object).count
                         'Connected' = ConvertTo-TextYN $RemoteSiteInfo.Connected
                     }
                     $OutObj += $inobj
