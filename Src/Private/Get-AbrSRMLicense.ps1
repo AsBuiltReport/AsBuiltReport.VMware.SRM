@@ -79,7 +79,7 @@ function Get-AbrSRMLicense {
                 }
 
                 if ($Healthcheck.Licensing) {
-                    $OutObj | Where-Object { $_.'Product Edition' -like 'Enterprise Edition' } | Set-Style -Style Warning
+                    $OutObj | Where-Object { $_.'Product Edition' -like 'Evaluation' } | Set-Style -Style Warning
                 }
 
                 $TableParams = @{
