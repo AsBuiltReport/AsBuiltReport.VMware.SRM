@@ -169,7 +169,7 @@ function Get-AbrSRMRecoveryPlan {
                                                 $TableParams = @{
                                                     Name = "VM Recovery Settings - $($VM.VmName)"
                                                     List = $False
-                                                    ColumnWidths = 16, 10, 12, 12, 12, 12, 12, 14s
+                                                    ColumnWidths = 16, 10, 12, 12, 12, 12, 12, 14
                                                 }
                                                 if ($Report.ShowTableCaptions) {
                                                     $TableParams['Caption'] = "- $($TableParams.Name)"
