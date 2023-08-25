@@ -41,7 +41,7 @@ function Get-AbrSRMRecoveryPlan {
                             $RecoveryPlanPG.GetInfo().Name
                         }
 
-                        Write-PScriboMessage "Discovered Protection Group $($RecoveryPlanInfo.Name)."
+                        Write-PScriboMessage "Discovered Recovery Plan $($RecoveryPlanInfo.Name)."
                         $inObj = [ordered] @{
                             'Name' = $RecoveryPlanInfo.Name
                             'Description' = ConvertTo-EmptyToFiller $RecoveryPlanInfo.Description
