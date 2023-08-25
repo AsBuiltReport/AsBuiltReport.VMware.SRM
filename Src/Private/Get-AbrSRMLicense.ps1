@@ -5,7 +5,7 @@ function Get-AbrSRMLicense {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.3
+        Version:        0.4.4
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -79,7 +79,7 @@ function Get-AbrSRMLicense {
                 }
 
                 if ($Healthcheck.Licensing) {
-                    $OutObj | Where-Object { $_.'Product Edition' -like 'Enterprise Edition' } | Set-Style -Style Warning
+                    $OutObj | Where-Object { $_.'Product Edition' -like 'Evaluation' } | Set-Style -Style Warning
                 }
 
                 $TableParams = @{

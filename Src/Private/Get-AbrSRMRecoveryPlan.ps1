@@ -5,7 +5,7 @@ function Get-AbrSRMRecoveryPlan {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.3
+        Version:        0.4.4
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -41,7 +41,7 @@ function Get-AbrSRMRecoveryPlan {
                             $RecoveryPlanPG.GetInfo().Name
                         }
 
-                        Write-PScriboMessage "Discovered Protection Group $($RecoveryPlanInfo.Name)."
+                        Write-PScriboMessage "Discovered Recovery Plan $($RecoveryPlanInfo.Name)."
                         $inObj = [ordered] @{
                             'Name' = $RecoveryPlanInfo.Name
                             'Description' = ConvertTo-EmptyToFiller $RecoveryPlanInfo.Description
@@ -165,7 +165,7 @@ function Get-AbrSRMRecoveryPlan {
                                                 }
                                             }
 
-                                            if ($InfoLevel.RecoveryPlan -eq 2 -and (-Not [string]::IsNullOrEmpty($OutObj))) {
+                                            if ($InfoLevel.RecoveryPlan -eq 2 -and (($OutObj | Measure-Object).Count -gt 0)) {
                                                 $TableParams = @{
                                                     Name = "VM Recovery Settings - $($VM.VmName)"
                                                     List = $False
