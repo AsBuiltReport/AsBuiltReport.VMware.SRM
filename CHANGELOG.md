@@ -1,5 +1,12 @@
 # :arrows_clockwise: VMware SRM As Built Report Changelog
 
+## [0.4.4] - 2023-08-25
+
+### Fixed
+
+- Fix [#23](https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/issues/23)
+- Fix product edition health check
+
 ## [0.4.3] - 2023-08-23
 
 ### Fixed
