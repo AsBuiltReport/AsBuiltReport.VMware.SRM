@@ -5,7 +5,7 @@ function Get-AbrSRMProtectionGroup {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.2
+        Version:        0.4.3
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -83,6 +83,9 @@ function Get-AbrSRMProtectionGroup {
                                                     if ($ProtectionGroup.ListProtectedVMs()) {
                                                         $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
                                                     }
+                                                    else {
+                                                        $ProtectedVMs = ""
+                                                    }
 
                                                     $inObj = [ordered] @{
                                                         'Name' = $ProtectionGroupInfo.Name
@@ -117,8 +120,14 @@ function Get-AbrSRMProtectionGroup {
                                                     if ($ProtectionGroup.ListProtectedVMs()) {
                                                         $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
                                                     }
+                                                    else {
+                                                        $ProtectedVMs = ""
+                                                    }
                                                     if ($ProtectionGroup.ListAssociatedVms()) {
                                                         $AssociatedVMs = ConvertTo-VIobject $ProtectionGroup.ListAssociatedVms().MoRef
+                                                    }
+                                                    else {
+                                                        $AssociatedVMs = ""
                                                     }
 
                                                     $inObj = [ordered] @{
@@ -161,6 +170,9 @@ function Get-AbrSRMProtectionGroup {
                                                         if ($ProtectionGroup.ListProtectedVMs()) {
                                                             $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
                                                         }
+                                                        else {
+                                                            $ProtectedVMs = ""
+                                                        }
 
                                                         if ($ProtectionGroup.ListProtectedDatastores()) {
                                                             $ProtectedDatastores = ConvertTo-VIobject $ProtectionGroup.ListProtectedDatastores().MoRef
@@ -196,6 +208,9 @@ function Get-AbrSRMProtectionGroup {
                                                         Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
                                                         if ($ProtectionGroup.ListProtectedVMs()) {
                                                             $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
+                                                        }
+                                                        else {
+                                                            $ProtectedVMs = ""
                                                         }
 
                                                         if ($ProtectionGroup.ListProtectedDatastores()) {
@@ -247,6 +262,9 @@ function Get-AbrSRMProtectionGroup {
                                                 if ($ProtectionGroups) {
                                                     if ($ProtectionGroup.ListProtectedVMs()) {
                                                         $ProtectedVMs = $ProtectionGroup.ListProtectedVMs()
+                                                    }
+                                                    else {
+                                                        $ProtectedVMs = ""
                                                     }
                                                     if ($InfoLevel.ProtectionGroup -eq 2) {
                                                         foreach ($ProtectedVM in $ProtectedVMs) {
