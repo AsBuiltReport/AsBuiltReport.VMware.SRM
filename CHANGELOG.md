@@ -1,5 +1,11 @@
 # :arrows_clockwise: VMware SRM As Built Report Changelog
 
+## [0.4.5] - 2023-11-09
+
+### Fixed
+
+- Fix issue where if a protection group was not protecting any VMs, it would list the VMs in the previous protection group in the output. @flynngw
+
 ## [0.4.4] - 2023-08-25
 
 ### Fixed
