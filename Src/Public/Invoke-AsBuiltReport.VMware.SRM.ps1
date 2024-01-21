@@ -78,8 +78,8 @@ function Invoke-AsBuiltReport.VMware.SRM {
             $script:LocalSRM = Connect-SrmServer -IgnoreCertificateErrors -ErrorAction Stop -Port 443 -Protocol https -Credential $Credential -Server $LocalvCenter
             if ($LocalSRM) {
                 Write-PScriboMessage "Successfully connected to SRM server at protected site: $($LocalSRM.Name) with provided credentials."
-                $global:ProtectedSiteName = $LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName
-                $global:RecoverySiteName = $LocalSRM.ExtensionData.GetPairedSite().Name
+                $script:ProtectedSiteName = $LocalSRM.ExtensionData.GetLocalSiteInfo().SiteName
+                $script:RecoverySiteName = $LocalSRM.ExtensionData.GetPairedSite().Name
             }
         } catch {
             Write-PScriboMessage -IsWarning  "Unable to connect to SRM server at protected site."
