@@ -185,7 +185,7 @@ function Invoke-AsBuiltReport.VMware.SRM {
 
                 Write-PScriboMessage "Array Pairs InfoLevel set at $($InfoLevel.ArrayPairs)."
                 if ($InfoLevel.ArrayPairs -ge 1) {
-                    Get-AbrSRMArrayPairs
+                    Get-AbrSRMArrayPair
                 }
 
                 Write-PScriboMessage "Network Mapping InfoLevel set at $($InfoLevel.NetworkMapping)."
