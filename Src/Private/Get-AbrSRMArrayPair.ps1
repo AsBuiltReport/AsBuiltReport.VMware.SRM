@@ -1,4 +1,4 @@
-function Get-AbrSRMArrayPairs {
+function Get-AbrSRMArrayPair {
     <#
     .SYNOPSIS
         Used by As Built Report to retrieve VMware SRM Array Pairs information.
