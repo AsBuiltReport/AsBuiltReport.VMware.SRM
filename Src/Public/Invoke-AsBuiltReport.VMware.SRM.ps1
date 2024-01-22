@@ -45,12 +45,12 @@ function Invoke-AsBuiltReport.VMware.SRM {
     Get-AbrSRMRequiredModule -Name 'VMware.PowerCLI' -Version '13.1'
 
     # Import Report Configuration
-    $Report = $ReportConfig.Report
-    $InfoLevel = $ReportConfig.InfoLevel
-    $Options = $ReportConfig.Options
+    $script:Report = $ReportConfig.Report
+    $script:InfoLevel = $ReportConfig.InfoLevel
+    $script:Options = $ReportConfig.Options
 
     # Used to set values to TitleCase where required
-    $TextInfo = (Get-Culture).TextInfo
+    $script:TextInfo = (Get-Culture).TextInfo
 
     #region foreach loop
     #---------------------------------------------------------------------------------------------#
