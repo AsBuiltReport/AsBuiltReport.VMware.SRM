@@ -5,7 +5,7 @@ function Get-AbrSRMNetworkMapping {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.6
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -31,7 +31,7 @@ function Get-AbrSRMNetworkMapping {
             Section -Style Heading2 'Network Mappings' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "Network mappings allow you to specify how Site Recovery Manager maps virtual machine networks on the protected site to virtual machine networks on the recovery site."
-                    Blankline
+                    BlankLine
                 }
 
                 if ($LocalNetworkMappings) {
@@ -42,14 +42,14 @@ function Get-AbrSRMNetworkMapping {
                                 'Protected Network' = Get-View $ObjMap.PrimaryObject -Server $LocalvCenter | Select-Object -ExpandProperty Name -Unique
                                 'Recovery Network' = Get-View $ObjMap.SecondaryObject -Server $RemotevCenter | Select-Object -ExpandProperty Name -Unique
                                 'Test Network' = & {
-                                    if ($LocalTestNetworkMappings | Where-Object {$_.Key -eq $ObjMap.SecondaryObject}) {
-                                        Get-View (($LocalTestNetworkMappings | Where-Object {$_.Key -eq $ObjMap.SecondaryObject}).TestNetwork) -Server $LocalvCenter
+                                    if ($LocalTestNetworkMappings | Where-Object { $_.Key -eq $ObjMap.SecondaryObject }) {
+                                        Get-View (($LocalTestNetworkMappings | Where-Object { $_.Key -eq $ObjMap.SecondaryObject }).TestNetwork) -Server $LocalvCenter
                                     } else {
                                         'Isolated network (auto created)'
                                     }
                                 }
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         }
 
                         $TableParams = @{
@@ -74,14 +74,14 @@ function Get-AbrSRMNetworkMapping {
                                 'Protected Network' = Get-View $ObjMap.PrimaryObject -Server $RemotevCenter | Select-Object -ExpandProperty Name -Unique
                                 'Recovery Network' = Get-View $ObjMap.SecondaryObject -Server $LocalvCenter | Select-Object -ExpandProperty Name -Unique
                                 'Test Network' = & {
-                                    if ($RemoteTestNetworkMappings | Where-Object {$_.Key -eq $ObjMap.SecondaryObject}) {
-                                        Get-View (($RemoteTestNetworkMappings | Where-Object {$_.Key -eq $ObjMap.SecondaryObject}).TestNetwork) -Server $RemotevCenter
+                                    if ($RemoteTestNetworkMappings | Where-Object { $_.Key -eq $ObjMap.SecondaryObject }) {
+                                        Get-View (($RemoteTestNetworkMappings | Where-Object { $_.Key -eq $ObjMap.SecondaryObject }).TestNetwork) -Server $RemotevCenter
                                     } else {
                                         'Isolated network (auto created)'
                                     }
                                 }
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         }
 
                         $TableParams = @{

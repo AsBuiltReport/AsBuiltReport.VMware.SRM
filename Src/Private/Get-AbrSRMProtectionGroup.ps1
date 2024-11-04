@@ -5,7 +5,7 @@ function Get-AbrSRMProtectionGroup {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.5
+        Version:        0.4.6
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -47,9 +47,9 @@ function Get-AbrSRMProtectionGroup {
                             'Name' = $ProtectionGroupInfo.Name
                             'Type' = $ProtectionGroupInfo.Type.ToUpper()
                             'Protection State' = $ProtectionGroup.GetProtectionState()
-                            'Recovery Plan' = ConvertTo-EmptyToFiller $RecoveryPlan
+                            'Recovery Plan' = $RecoveryPlan
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
@@ -82,8 +82,7 @@ function Get-AbrSRMProtectionGroup {
                                                     Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
                                                     if ($ProtectionGroup.ListProtectedVMs()) {
                                                         $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
-                                                    }
-                                                    else {
+                                                    } else {
                                                         $ProtectedVMs = ""
                                                     }
 
@@ -91,9 +90,9 @@ function Get-AbrSRMProtectionGroup {
                                                         'Name' = $ProtectionGroupInfo.Name
                                                         'Type' = $ProtectionGroupInfo.Type.ToUpper()
                                                         'Protection State' = $ProtectionGroup.GetProtectionState()
-                                                        'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
+                                                        'Protected VMs' = (($ProtectedVMs | Sort-Object -Unique) -join ', ')
                                                     }
-                                                    $OutObj += [pscustomobject]$inobj
+                                                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                                 }
                                             } catch {
                                                 Write-PScriboMessage -IsWarning $_.Exception.Message
@@ -119,26 +118,24 @@ function Get-AbrSRMProtectionGroup {
                                                     Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
                                                     if ($ProtectionGroup.ListProtectedVMs()) {
                                                         $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
-                                                    }
-                                                    else {
+                                                    } else {
                                                         $ProtectedVMs = ""
                                                     }
                                                     if ($ProtectionGroup.ListAssociatedVms()) {
                                                         $AssociatedVMs = ConvertTo-VIobject $ProtectionGroup.ListAssociatedVms().MoRef
-                                                    }
-                                                    else {
+                                                    } else {
                                                         $AssociatedVMs = ""
                                                     }
 
                                                     $inObj = [ordered] @{
                                                         'Name' = $ProtectionGroupInfo.Name
-                                                        'Description' = ConvertTo-EmptyToFiller $ProtectionGroupInfo.Description
+                                                        'Description' = $ProtectionGroupInfo.Description
                                                         'Type' = $ProtectionGroupInfo.Type.ToUpper()
                                                         'Protection State' = $ProtectionGroup.GetProtectionState()
                                                         'Associated VMs' = (($AssociatedVMs | Sort-Object -Unique) -join ', ')
-                                                        'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
+                                                        'Protected VMs' = (($ProtectedVMs | Sort-Object -Unique) -join ', ')
                                                     }
-                                                    $OutObj = [pscustomobject]$inobj
+                                                    $OutObj = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                                                     $TableParams = @{
                                                         Name = "VRMS Protection Group - $($ProtectionGroupInfo.Name)"
@@ -169,8 +166,7 @@ function Get-AbrSRMProtectionGroup {
                                                         Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
                                                         if ($ProtectionGroup.ListProtectedVMs()) {
                                                             $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
-                                                        }
-                                                        else {
+                                                        } else {
                                                             $ProtectedVMs = ""
                                                         }
 
@@ -181,10 +177,10 @@ function Get-AbrSRMProtectionGroup {
                                                             'Name' = $ProtectionGroupInfo.Name
                                                             'Type' = $ProtectionGroupInfo.Type.ToUpper()
                                                             'Protection State' = $ProtectionGroup.GetProtectionState()
-                                                            'Protected Datastores' = ConvertTo-EmptyToFiller (($ProtectedDatastores | Sort-Object) -join ', ')
-                                                            'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
+                                                            'Protected Datastores' = (($ProtectedDatastores | Sort-Object) -join ', ')
+                                                            'Protected VMs' = (($ProtectedVMs | Sort-Object -Unique) -join ', ')
                                                         }
-                                                        $OutObj += [pscustomobject]$inobj
+                                                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                                     }
                                                 } catch {
                                                     Write-PScriboMessage -IsWarning "SAN Protection Groups Section: $($_.Exception.Message)"
@@ -208,8 +204,7 @@ function Get-AbrSRMProtectionGroup {
                                                         Write-PScriboMessage "Discovered Protection Group $($ProtectionGroupInfo.Name)."
                                                         if ($ProtectionGroup.ListProtectedVMs()) {
                                                             $ProtectedVMs = ConvertTo-VIobject $ProtectionGroup.ListProtectedVMs().vm.MoRef
-                                                        }
-                                                        else {
+                                                        } else {
                                                             $ProtectedVMs = ""
                                                         }
 
@@ -218,13 +213,13 @@ function Get-AbrSRMProtectionGroup {
                                                         }
                                                         $inObj = [ordered] @{
                                                             'Name' = $ProtectionGroupInfo.Name
-                                                            'Description' = ConvertTo-EmptyToFiller $ProtectionGroupInfo.Description
+                                                            'Description' = $ProtectionGroupInfo.Description
                                                             'Type' = $ProtectionGroupInfo.Type.ToUpper()
                                                             'Protection State' = $ProtectionGroup.GetProtectionState()
-                                                            'Protected Datastores' = ConvertTo-EmptyToFiller (($ProtectedDatastores | Sort-Object -Unique) -join ', ')
-                                                            'Protected VMs' = ConvertTo-EmptyToFiller (($ProtectedVMs | Sort-Object -Unique) -join ', ')
+                                                            'Protected Datastores' = (($ProtectedDatastores | Sort-Object -Unique) -join ', ')
+                                                            'Protected VMs' = (($ProtectedVMs | Sort-Object -Unique) -join ', ')
                                                         }
-                                                        $OutObj = [pscustomobject]$inobj
+                                                        $OutObj = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                                                         $TableParams = @{
                                                             Name = "SAN Protection Group - $($ProtectionGroupInfo.Name)"
@@ -262,8 +257,7 @@ function Get-AbrSRMProtectionGroup {
                                                 if ($ProtectionGroups) {
                                                     if ($ProtectionGroup.ListProtectedVMs()) {
                                                         $ProtectedVMs = $ProtectionGroup.ListProtectedVMs()
-                                                    }
-                                                    else {
+                                                    } else {
                                                         $ProtectedVMs = ""
                                                     }
                                                     if ($InfoLevel.ProtectionGroup -eq 2) {
@@ -285,10 +279,10 @@ function Get-AbrSRMProtectionGroup {
                                                                         $null { '--' }
                                                                         default { (Get-Folder -Id $PlaceholderVmInfo.Folder | Sort-Object -Unique).Name }
                                                                     }
-                                                                    'Is Repair Needed' = ConvertTo-TextYN $PlaceholderVmInfo.RepairNeeded
-                                                                    'Placeholder Creation Fault' = ConvertTo-EmptyToFiller $PlaceholderVmInfo.PlaceholderCreationFault
+                                                                    'Is Repair Needed' = $PlaceholderVmInfo.RepairNeeded
+                                                                    'Placeholder Creation Fault' = $PlaceholderVmInfo.PlaceholderCreationFault
                                                                 }
-                                                                $OutObj += [pscustomobject]$inobj
+                                                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                                             } catch {
                                                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                                                             }
@@ -327,10 +321,10 @@ function Get-AbrSRMProtectionGroup {
                                                                         $null { '--' }
                                                                         default { Get-Folder -Id $PlaceholderVmInfo.Folder | Sort-Object -Unique }
                                                                     }
-                                                                    'Is Repair Needed' = ConvertTo-TextYN $PlaceholderVmInfo.RepairNeeded
-                                                                    'Placeholder Creation Fault' = ConvertTo-EmptyToFiller $PlaceholderVmInfo.PlaceholderCreationFault
+                                                                    'Is Repair Needed' = $PlaceholderVmInfo.RepairNeeded
+                                                                    'Placeholder Creation Fault' = $PlaceholderVmInfo.PlaceholderCreationFault
                                                                 }
-                                                                $OutObj = [pscustomobject]$inobj
+                                                                $OutObj = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                                                                 $TableParams = @{
                                                                     Name = "VM Recovery PlaceHolder - $($ProtectionGroup.GetInfo().Name)"

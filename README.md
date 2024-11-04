@@ -60,8 +60,8 @@ Tested On:
 This report is compatible with the following PowerShell versions;
 
 <!-- ********** Update supported PowerShell versions ********** -->
-| Windows PowerShell 5.1 |     PowerShell 7    |
-|:----------------------:|:--------------------:|
+| Windows PowerShell 5.1 |    PowerShell 7    |
+| :--------------------: | :----------------: |
 |   :white_check_mark:   | :white_check_mark: |
 
 ## :wrench: System Requirements
@@ -125,23 +125,23 @@ The following provides information of how to configure each schema within the re
 
 The **Report** schema provides configuration of the VMware SRM report information.
 
-| Sub-Schema          | Setting      | Default                        | Description                                                  |
-|---------------------|--------------|--------------------------------|--------------------------------------------------------------|
+| Sub-Schema          | Setting      | Default                    | Description                                                  |
+| ------------------- | ------------ | -------------------------- | ------------------------------------------------------------ |
 | Name                | User defined | VMware SRM As Built Report | The name of the As Built Report                              |
-| Version             | User defined | 1.0                            | The report version                                           |
-| Status              | User defined | Released                       | The report release status                                    |
-| ShowCoverPageImage  | true / false | true                           | Toggle to enable/disable the display of the cover page image |
-| ShowTableOfContents | true / false | true                           | Toggle to enable/disable table of contents                   |
-| ShowHeaderFooter    | true / false | true                           | Toggle to enable/disable document headers & footers          |
-| ShowTableCaptions   | true / false | true                           | Toggle to enable/disable table captions/numbering            |
+| Version             | User defined | 1.0                        | The report version                                           |
+| Status              | User defined | Released                   | The report release status                                    |
+| ShowCoverPageImage  | true / false | true                       | Toggle to enable/disable the display of the cover page image |
+| ShowTableOfContents | true / false | true                       | Toggle to enable/disable table of contents                   |
+| ShowHeaderFooter    | true / false | true                       | Toggle to enable/disable document headers & footers          |
+| ShowTableCaptions   | true / false | true                       | Toggle to enable/disable table captions/numbering            |
 
 ### Options
 
 The **Options** schema allows certain options within the report to be toggled on or off.
 
-| Sub-Schema      | Setting      | Default | Description                                                                                                                                                                                 |
-|-----------------|--------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ShowDefinitionInfo | true / false | false    | Toggle to enable/disable VMware SRM Section Documentation
+| Sub-Schema         | Setting      | Default | Description                                               |
+| ------------------ | ------------ | ------- | --------------------------------------------------------- |
+| ShowDefinitionInfo | true / false | false   | Toggle to enable/disable VMware SRM Section Documentation |
 
 <!-- ********** Add/Remove the number of InfoLevels as required ********** -->
 ### InfoLevel
@@ -150,30 +150,30 @@ The **InfoLevel** schema allows configuration of each section of the report at a
 
 There are 4 levels (0-3) of detail granularity for each section as follows;
 
-| Setting | InfoLevel         | Description                                                                                                                                |
-|:-------:|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-|    0    | Disabled          | Does not collect or display any information                                                                                                |
-|    1    | Enabled / Summary | Provides summarised information for a collection of objects                                                                                |
-|    2    | Adv Summary       | Provides condensed, detailed information for a collection of objects                                                                       |
-|    3    | Detailed          | Provides detailed information for individual objects                                                                                       |
+| Setting | InfoLevel         | Description                                                          |
+| :-----: | ----------------- | -------------------------------------------------------------------- |
+|    0    | Disabled          | Does not collect or display any information                          |
+|    1    | Enabled / Summary | Provides summarised information for a collection of objects          |
+|    2    | Adv Summary       | Provides condensed, detailed information for a collection of objects |
+|    3    | Detailed          | Provides detailed information for individual objects                 |
 
 The table below outlines the default and maximum **InfoLevel** settings for each section.
 
-| Sub-Schema   | Default Setting | Maximum Setting |
-|--------------|:---------------:|:---------------:|
-| ArrayPairs      |        1        |        1        |
-| SRA      |        1        |        1        |
-| Sites      |        1        |        1        |
-| License      |        1        |        1        |
-| Summary      |        1        |        1        |
-| FolderMapping      |        1        |        1        |
-| NetworkMapping      |        1        |        1        |
-| ResourceMapping      |        1        |        1        |
-| PlaceholderDatastores      |        1        |        1        |
-| Permission    |        1        |        1        |
-| ProtectionGroup |        1        |        3        |
-| RecoveryPlan |        1        |        3        |
-| Permission     |        1        |        1        |
+| Sub-Schema            | Default Setting | Maximum Setting |
+| --------------------- | :-------------: | :-------------: |
+| ArrayPairs            |        1        |        1        |
+| SRA                   |        1        |        1        |
+| Sites                 |        1        |        1        |
+| License               |        1        |        1        |
+| Summary               |        1        |        1        |
+| FolderMapping         |        1        |        1        |
+| NetworkMapping        |        1        |        1        |
+| ResourceMapping       |        1        |        1        |
+| PlaceholderDatastores |        1        |        1        |
+| Permission            |        1        |        1        |
+| ProtectionGroup       |        1        |        3        |
+| RecoveryPlan          |        1        |        3        |
+| Permission            |        1        |        1        |
 
 ### Healthcheck
 

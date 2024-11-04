@@ -5,7 +5,7 @@ function Get-AbrSRMArrayPair {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.3
+        Version:        0.4.6
         Author:         Tim Carman
         Twitter:        @tpcarman
         Github:         @tpcarman
@@ -21,10 +21,10 @@ function Get-AbrSRMArrayPair {
         try {
             try {
                 $LocalArrayPair = $LocalSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
-            } catch { Write-PScriboMessage -IsWarning "Unable to get Protected Site array information"}
+            } catch { Write-PScriboMessage -IsWarning "Unable to get Protected Site array information" }
             try {
                 $RemoteArrayPair = $RemoteSRM.ExtensionData.Storage.QueryArrayManagers().GetArrayInfo()
-            } catch { Write-PScriboMessage -IsWarning "Unable to get Recovery Site array information"}
+            } catch { Write-PScriboMessage -IsWarning "Unable to get Recovery Site array information" }
 
             if (($LocalArrayPair) -and ($RemoteArrayPair)) {
                 Section -Style Heading2 'Array Pairs' {
@@ -42,13 +42,13 @@ function Get-AbrSRMArrayPair {
                         "$($ProtectedSiteName)" = "$($HashObj.Keys) <--> $($HashObj.Values)"
                         "$($RecoverySiteName)" = "$($HashObj.Values) <--> $($HashObj.Keys)"
                     }
-                    $OutObj += [pscustomobject]$inobj
+                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 
 
                     $TableParams = @{
                         Name = "Array Pairs"
                         List = $false
-                        ColumnWidths = 50,50
+                        ColumnWidths = 50, 50
                     }
                     if ($Report.ShowTableCaptions) {
                         $TableParams['Caption'] = "- $($TableParams.Name)"

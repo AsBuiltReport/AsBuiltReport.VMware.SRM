@@ -39,7 +39,7 @@ function Get-AbrSRMSitePair {
                         'vCenter Build' = "$($LocalvCenter.Build)"
                         'Protection Groups' = ($LocalSRM.ExtensionData.Protection.ListProtectionGroups() | Measure-Object).count
                         'Recovery Plans' = ($LocalSRM.ExtensionData.Recovery.ListPlans() | Measure-Object).count
-                        'Connected' = ConvertTo-TextYN $LocalSRM.IsConnected
+                        'Connected' = $LocalSRM.IsConnected
                     }
                     $OutObj += $inobj
                 }
@@ -56,7 +56,7 @@ function Get-AbrSRMSitePair {
                         'vCenter Build' = "$($RemotevCenter.Build)"
                         'Protection Groups' = ($RemoteSRM.ExtensionData.Protection.ListProtectionGroups() | Measure-Object).count
                         'Recovery Plans' = ($RemoteSRM.ExtensionData.Recovery.ListPlans() | Measure-Object).count
-                        'Connected' = ConvertTo-TextYN $RemoteSiteInfo.Connected
+                        'Connected' = $RemoteSiteInfo.Connected
                     }
                     $OutObj += $inobj
                 }
