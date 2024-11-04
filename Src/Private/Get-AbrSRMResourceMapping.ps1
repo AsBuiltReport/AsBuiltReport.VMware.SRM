@@ -5,7 +5,7 @@ function Get-AbrSRMResourceMapping {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.6
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -28,7 +28,7 @@ function Get-AbrSRMResourceMapping {
             Section -Style Heading2 'Resource Mappings' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "Reource mappings allow you to specify how Site Recovery Manager maps resources on the protected site to resources on the recovery site."
-                    Blankline
+                    BlankLine
                 }
                 $OutObj = @()
                 $HashObj = $Null
@@ -49,7 +49,7 @@ function Get-AbrSRMResourceMapping {
                                 default { $HashObj.Values }
                             }
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }

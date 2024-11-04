@@ -5,7 +5,7 @@ function Get-AbrVRMSProtection {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.3
+        Version:        0.4.6
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         @rebelinux
@@ -61,13 +61,13 @@ function Get-AbrVRMSProtection {
                                             'VM Name' = $ReplicatedVM.Name
                                             'HW Version' = Switch ([string]::IsNullOrEmpty($ReplicatedVM.ExtensionData.Config.Version)) {
                                                 $true { "--" }
-                                                $false {($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1]}
+                                                $false { ($ReplicatedVM.ExtensionData.Config.Version).ToString().split("vmx-")[1] }
                                                 default { "unknown" }
                                             }
                                             'Folder' = $Folder
                                             'Resource Pool' = $ResourcesPool
                                         }
-                                        $OutObj += [pscustomobject]$inobj
+                                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                     } catch {
                                         Write-PScriboMessage -IsWarning $_.Exception.Message
                                     }
@@ -117,7 +117,7 @@ function Get-AbrVRMSProtection {
                                             'Folder' = $Folder
                                             'Resource Pool' = $ResourcesPool
                                         }
-                                        $OutObj += [pscustomobject]$inobj
+                                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                     } catch {
                                         Write-PScriboMessage -IsWarning $_.Exception.Message
                                     }

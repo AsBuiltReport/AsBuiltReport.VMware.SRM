@@ -5,7 +5,7 @@ function Get-AbrSRMPermission {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.2
+        Version:        0.4.6
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -29,7 +29,7 @@ function Get-AbrSRMPermission {
             Section -Style Heading2 'Permissions' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "Site Recovery Manager includes a set of roles. Each role includes a set of privileges, which allow users with those roles to complete different actions. Roles can have overlapping sets of privileges and actions."
-                    Blankline
+                    BlankLine
                 }
                 Paragraph "The following table provides information about the permissions which have been configured at each site."
                 BlankLine
@@ -41,12 +41,12 @@ function Get-AbrSRMPermission {
                             Write-PScriboMessage "Discovered SRM Permissions $($LocalVIPermission.Name)."
                             $inObj = [ordered] @{
                                 'User/Group' = $LocalVIPermission.Principal
-                                'Is Group?' = ConvertTo-TextYN $LocalVIPermission.IsGroup
+                                'Is Group?' = $LocalVIPermission.IsGroup
                                 'Role' = $LocalVIPermission.Name | Sort-Object -Unique
                                 'Defined In' = $LocalVIPermission.Entity
-                                'Propagate' = ConvertTo-TextYN $LocalVIPermission.Propagate
+                                'Propagate' = $LocalVIPermission.Propagate
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         }
 
                         $TableParams = @{
@@ -69,12 +69,12 @@ function Get-AbrSRMPermission {
                             Write-PScriboMessage "Discovered SRM Permissions $($RemoteVIPermission.Name)."
                             $inObj = [ordered] @{
                                 'User/Group' = $RemoteVIPermission.Principal
-                                'Is Group?' = ConvertTo-TextYN $RemoteVIPermission.IsGroup
+                                'Is Group?' = $RemoteVIPermission.IsGroup
                                 'Role' = $RemoteVIPermission.Name | Sort-Object -Unique
                                 'Defined In' = $RemoteVIPermission.Entity
-                                'Propagate' = ConvertTo-TextYN $RemoteVIPermission.Propagate
+                                'Propagate' = $RemoteVIPermission.Propagate
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         }
 
                         $TableParams = @{
