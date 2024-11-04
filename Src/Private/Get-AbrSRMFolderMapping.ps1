@@ -5,7 +5,7 @@ function Get-AbrSRMFolderMapping {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.4.6
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -28,7 +28,7 @@ function Get-AbrSRMFolderMapping {
             Section -Style Heading2 'Folder Mappings' {
                 if ($Options.ShowDefinitionInfo) {
                     Paragraph "Folder mappings allow you to specify how Site Recovery Manager maps virtual machine folders on the protected site to virtual machine folders on the recovery site."
-                    Blankline
+                    BlankLine
                 }
                 $OutObj = @()
                 foreach ($ObjMap in $FolderMappings) {
@@ -43,7 +43,7 @@ function Get-AbrSRMFolderMapping {
                             "$($ProtectedSiteName)" = $HashObj.Keys
                             "$($RecoverySiteName)" = $HashObj.Values
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }

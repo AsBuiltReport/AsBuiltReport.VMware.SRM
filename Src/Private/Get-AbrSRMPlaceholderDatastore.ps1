@@ -5,7 +5,7 @@ function Get-AbrSRMPlaceholderDatastore {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.3
+        Version:        0.4.6
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -39,22 +39,22 @@ function Get-AbrSRMPlaceholderDatastore {
                                 Write-PScriboMessage "Discovered Placeholder Datastore information for $($ObjMap.Name)."
                                 $inObj = [ordered] @{
                                     'Site' = $($ProtectedSiteName)
-                                    "Name"           = $ObjMap.Name
-                                    "Host/Cluster"   = Switch ([string]::IsNullOrEmpty($ObjMap.VisibleTo.key)) {
+                                    "Name" = $ObjMap.Name
+                                    "Host/Cluster" = Switch ([string]::IsNullOrEmpty($ObjMap.VisibleTo.key)) {
                                         $true { '--' }
-                                        $false {Get-View $ObjMap.VisibleTo.key -Server $LocalvCenter | Select-Object -ExpandProperty Name -Unique}
+                                        $false { Get-View $ObjMap.VisibleTo.key -Server $LocalvCenter | Select-Object -ExpandProperty Name -Unique }
                                         default { "Unknown" }
                                     }
                                     "Datastore Type" = $ObjMap.Type
-                                    "Capacity"       = "$([math]::Round(($ObjMap.Capacity)/ 1GB, 2)) GB"
-                                    "Free Space"     = "$([math]::Round(($ObjMap.FreeSpace)/ 1GB, 2)) GB"
+                                    "Capacity" = "$([math]::Round(($ObjMap.Capacity)/ 1GB, 2)) GB"
+                                    "Free Space" = "$([math]::Round(($ObjMap.FreeSpace)/ 1GB, 2)) GB"
                                     "Reserved Space" = "$([math]::Round(($ObjMap.ReservedSpace)/ 1GB, 2)) GB"
-                                    "Fault"          = Switch ($ObjMap.Fault) {
+                                    "Fault" = Switch ($ObjMap.Fault) {
                                         "" { 'None'; break }
                                         $Null { 'None'; break }
                                         default { $ObjMap.Fault }
                                     }
-                                    "Status"         = Switch ($ObjMap.Status) {
+                                    "Status" = Switch ($ObjMap.Status) {
                                         "green" { "OK" }
                                         "orange" { "Warning" }
                                         "red" { "Critical" }
@@ -63,8 +63,7 @@ function Get-AbrSRMPlaceholderDatastore {
                                 }
                                 $OutObj += $inobj
                             }
-                        }
-                        catch {
+                        } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
@@ -76,22 +75,22 @@ function Get-AbrSRMPlaceholderDatastore {
                                 Write-PScriboMessage "Discovered Placeholder Datastore information for $($ObjMap.Name)."
                                 $inObj = [ordered] @{
                                     'Site' = $($RecoverySiteName)
-                                    "Name"           = $ObjMap.Name
-                                    "Host/Cluster"   = Switch ([string]::IsNullOrEmpty($ObjMap.VisibleTo.key)) {
+                                    "Name" = $ObjMap.Name
+                                    "Host/Cluster" = Switch ([string]::IsNullOrEmpty($ObjMap.VisibleTo.key)) {
                                         $true { '--' }
-                                        $false {Get-View $ObjMap.VisibleTo.key -Server $RemotevCenter | Select-Object -ExpandProperty Name -Unique}
+                                        $false { Get-View $ObjMap.VisibleTo.key -Server $RemotevCenter | Select-Object -ExpandProperty Name -Unique }
                                         default { "Unknown" }
                                     }
                                     "Datastore Type" = $ObjMap.Type
-                                    "Capacity"       = "$([math]::Round(($ObjMap.Capacity)/ 1GB, 2)) GB"
-                                    "Free Space"     = "$([math]::Round(($ObjMap.FreeSpace)/ 1GB, 2)) GB"
+                                    "Capacity" = "$([math]::Round(($ObjMap.Capacity)/ 1GB, 2)) GB"
+                                    "Free Space" = "$([math]::Round(($ObjMap.FreeSpace)/ 1GB, 2)) GB"
                                     "Reserved Space" = "$([math]::Round(($ObjMap.ReservedSpace)/ 1GB, 2)) GB"
-                                    "Fault"          = Switch ($ObjMap.Fault) {
+                                    "Fault" = Switch ($ObjMap.Fault) {
                                         "" { 'None'; break }
                                         $Null { 'None'; break }
                                         default { $ObjMap.Fault }
                                     }
-                                    "Status"         = Switch ($ObjMap.Status) {
+                                    "Status" = Switch ($ObjMap.Status) {
                                         "green" { "OK" }
                                         "orange" { "Warning" }
                                         "red" { "Critical" }
@@ -100,8 +99,7 @@ function Get-AbrSRMPlaceholderDatastore {
                                 }
                                 $OutObj += $inobj
                             }
-                        }
-                        catch {
+                        } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }

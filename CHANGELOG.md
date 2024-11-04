@@ -1,5 +1,15 @@
 # :arrows_clockwise: VMware SRM As Built Report Changelog
 
+## [0.4.6] - 2024-11-04
+
+### Changed
+
+- Changed Required Modules to AsBuiltReport.Core v1.4.0
+
+### Fixed
+
+- Fix [#28](https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/issues/28)
+
 ## [0.4.5] - 2023-11-09
 
 ### Fixed

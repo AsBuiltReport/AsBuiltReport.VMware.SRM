@@ -5,7 +5,7 @@ function Get-AbrSRMRecoveryPlan {
     .DESCRIPTION
         Documents the configuration of VMware SRM in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.4
+        Version:        0.4.6
         Author:         Jonathan Colon & Tim Carman
         Twitter:        @jcolonfzenpr / @tpcarman
         Github:         @rebelinux / @tpcarman
@@ -44,11 +44,11 @@ function Get-AbrSRMRecoveryPlan {
                         Write-PScriboMessage "Discovered Recovery Plan $($RecoveryPlanInfo.Name)."
                         $inObj = [ordered] @{
                             'Name' = $RecoveryPlanInfo.Name
-                            'Description' = ConvertTo-EmptyToFiller $RecoveryPlanInfo.Description
+                            'Description' = $RecoveryPlanInfo.Description
                             'State' = $RecoveryPlanInfo.State
-                            'Protection Groups' = ConvertTo-EmptyToFiller (($RecoveryPlanPGs | Sort-Object) -join ', ')
+                            'Protection Groups' = (($RecoveryPlanPGs | Sort-Object) -join ', ')
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                     } catch {
                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) Virtual Machine Recovery Setting"
                     }
@@ -114,20 +114,20 @@ function Get-AbrSRMRecoveryPlan {
                                                                     'Name' = $VM.VmName
                                                                     'Status' = $RecoverySettings.Status.ToUpper()
                                                                     'Recovery Priority' = $TextInfo.ToTitleCase($RecoverySettings.RecoveryPriority)
-                                                                    'Skip Guest ShutDown' = ConvertTo-TextYN $RecoverySettings.SkipGuestShutDown
+                                                                    'Skip Guest ShutDown' = $RecoverySettings.SkipGuestShutDown
                                                                     'PowerOn Timeout' = "$($RecoverySettings.PowerOnTimeoutSeconds)/s"
                                                                     'PowerOn Delay' = "$($RecoverySettings.PowerOnDelaySeconds)/s"
                                                                     'PowerOff Timeout' = "$($RecoverySettings.PowerOffTimeoutSeconds)/s"
                                                                     'Final Power State' = $TextInfo.ToTitleCase($RecoverySettings.FinalPowerState)
                                                                 }
-                                                                $OutObj += [pscustomobject]$inobj
+                                                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                                             }
                                                             if ($InfoLevel.RecoveryPlan -eq 3) {
                                                                 $inObj = [ordered] @{
                                                                     'Name' = $VM.VmName
                                                                     'Status' = $RecoverySettings.Status.ToUpper()
                                                                     'Recovery Priority' = $TextInfo.ToTitleCase($RecoverySettings.RecoveryPriority)
-                                                                    'Skip Guest ShutDown' = ConvertTo-TextYN $RecoverySettings.SkipGuestShutDown
+                                                                    'Skip Guest ShutDown' = $RecoverySettings.SkipGuestShutDown
                                                                     'PowerOn Timeout' = "$($RecoverySettings.PowerOnTimeoutSeconds)/s"
                                                                     'PowerOn Delay' = "$($RecoverySettings.PowerOnDelaySeconds)/s"
                                                                     'PowerOff Timeout' = "$($RecoverySettings.PowerOffTimeoutSeconds)/s"
@@ -135,16 +135,16 @@ function Get-AbrSRMRecoveryPlan {
                                                                     'Pre PowerOn Callouts' = Switch ($PrePowerOnCommand) {
                                                                         "" { "--"; break }
                                                                         $Null { "--"; break }
-                                                                        default { $PrePowerOnCommand | ForEach-Object { "Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s" }; break }
+                                                                        default { $PrePowerOnCommand | ForEach-Object { "Name: $($_.Name), Run In VM: $($_.'Run In Vm'), TimeOut: $($_.Timeout)/s" }; break }
                                                                     }
                                                                     'Post PowerOn Callouts' = Switch ($PosPowerOnCommand) {
                                                                         "" { "--"; break }
                                                                         $Null { "--"; break }
-                                                                        default { $PosPowerOnCommand | ForEach-Object { "Name: $($_.Name), Run In VM: $(ConvertTo-TextYN $_.'Run In Vm'), TimeOut: $($_.Timeout)/s" }; break }
+                                                                        default { $PosPowerOnCommand | ForEach-Object { "Name: $($_.Name), Run In VM: $($_.'Run In Vm'), TimeOut: $($_.Timeout)/s" }; break }
                                                                     }
                                                                     'Dependent VMs' = ($DependentVMs | Sort-Object -Unique) -join ", "
                                                                 }
-                                                                $OutObj = [pscustomobject]$inobj
+                                                                $OutObj = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                                                                 $TableParams = @{
                                                                     Name = "VM Recovery Settings - $($VM.VmName)"
