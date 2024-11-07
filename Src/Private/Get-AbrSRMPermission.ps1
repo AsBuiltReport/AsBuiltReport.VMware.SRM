@@ -35,7 +35,7 @@ function Get-AbrSRMPermission {
                 BlankLine
 
                 if ($LocalVIPermissions) {
-                    Section -Style NOTOCHeading3 -ExcludeFromTOC $($ProtectedSiteName) {
+                    Section -Style Heading3 -ExcludeFromTOC $($ProtectedSiteName) {
                         $OutObj = @()
                         foreach ($LocalVIPermission in $LocalVIPermissions) {
                             Write-PScriboMessage "Discovered SRM Permissions $($LocalVIPermission.Name)."
@@ -63,7 +63,7 @@ function Get-AbrSRMPermission {
                 }
 
                 if ($RemoteVIPermissions) {
-                    Section -Style NOTOCHeading3 -ExcludeFromTOC $($RecoverySiteName) {
+                    Section -Style Heading3 -ExcludeFromTOC $($RecoverySiteName) {
                         $OutObj = @()
                         foreach ($RemoteVIPermission in $RemoteVIPermissions) {
                             Write-PScriboMessage "Discovered SRM Permissions $($RemoteVIPermission.Name)."

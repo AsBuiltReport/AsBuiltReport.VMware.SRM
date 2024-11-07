@@ -35,7 +35,7 @@ function Get-AbrSRMNetworkMapping {
                 }
 
                 if ($LocalNetworkMappings) {
-                    Section -Style NOTOCHeading3 -ExcludeFromTOC $($ProtectedSiteName) {
+                    Section -Style Heading3 -ExcludeFromTOC $($ProtectedSiteName) {
                         $OutObj = @()
                         foreach ($ObjMap in $LocalNetworkMappings) {
                             $inObj = [Ordered]@{
@@ -67,7 +67,7 @@ function Get-AbrSRMNetworkMapping {
                 }
 
                 if ($RemoteNetworkMappings) {
-                    Section -Style NOTOCHeading3 -ExcludeFromTOC $($RecoverySiteName) {
+                    Section -Style Heading3 -ExcludeFromTOC $($RecoverySiteName) {
                         $OutObj = @()
                         foreach ($ObjMap in $RemoteNetworkMappings) {
                             $inObj = [Ordered]@{
