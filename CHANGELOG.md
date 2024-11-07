@@ -1,5 +1,11 @@
 # :arrows_clockwise: VMware SRM As Built Report Changelog
 
+## [0.4.7] - 2024-11-07
+
+### Fixed
+
+- Fix empty value bug
+
 ## [0.4.6] - 2024-11-04
 
 ### Changed
