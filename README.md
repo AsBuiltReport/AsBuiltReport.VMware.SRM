@@ -1,15 +1,15 @@
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 <p align="center">
-    <a href="https://www.asbuiltreport.com/" alt="AsBuiltReport"></a>
-            <img src='https://avatars.githubusercontent.com/u/42958564' width="8%" height="8%" /></a>
+    <a href="https://www.asbuiltreport.com/">
+        <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/repo-banners/AsBuiltReport.VMware.SRM.png" alt="AsBuiltReport.VMware.SRM" width="880"></a>
 </p>
 <p align="center">
     <a href="https://www.powershellgallery.com/packages/AsBuiltReport.VMware.SRM/" alt="PowerShell Gallery Version">
-        <img src="https://img.shields.io/powershellgallery/v/AsBuiltReport.VMware.SRM.svg" /></a>
+        <img src="https://img.shields.io/powershellgallery/v/AsBuiltReport.VMware.SRM.svg?color=1F5FD0" /></a>
     <a href="https://www.powershellgallery.com/packages/AsBuiltReport.VMware.SRM/" alt="PS Gallery Downloads">
-        <img src="https://img.shields.io/powershellgallery/dt/AsBuiltReport.VMware.SRM.svg" /></a>
+        <img src="https://img.shields.io/powershellgallery/dt/AsBuiltReport.VMware.SRM.svg?color=012456" /></a>
     <a href="https://www.powershellgallery.com/packages/AsBuiltReport.VMware.SRM/" alt="PS Platform">
-        <img src="https://img.shields.io/powershellgallery/p/AsBuiltReport.VMware.SRM.svg" /></a>
+        <img src="https://img.shields.io/powershellgallery/p/AsBuiltReport.VMware.SRM.svg?color=FFD02B" /></a>
 </p>
 <p align="center">
     <a href="https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/graphs/commit-activity" alt="GitHub Last Commit">
@@ -17,15 +17,9 @@
     <a href="https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.VMware.SRM/master/LICENSE" alt="GitHub License">
         <img src="https://img.shields.io/github/license/AsBuiltReport/AsBuiltReport.VMware.SRM.svg" /></a>
     <a href="https://github.com/AsBuiltReport/AsBuiltReport.VMware.SRM/graphs/contributors" alt="GitHub Contributors">
-        <img src="https://img.shields.io/github/contributors/AsBuiltReport/AsBuiltReport.VMware.SRM.svg"/></a>
-</p>
-<p align="center">
-    <a href="https://twitter.com/AsBuiltReport" alt="Twitter">
-            <img src="https://img.shields.io/twitter/follow/AsBuiltReport.svg?style=social"/></a>
+        <img src="https://img.shields.io/github/contributors/AsBuiltReport/AsBuiltReport.VMware.SRM.svg?color=012456"/></a>
 </p>
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
-
-# VMware SRM As Built Report
 
 VMware SRM As Built Report is a PowerShell module which works in conjunction with [AsBuiltReport.Core](https://github.com/AsBuiltReport/AsBuiltReport.Core).
 
@@ -33,17 +27,17 @@ VMware SRM As Built Report is a PowerShell module which works in conjunction wit
 
 Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for more detailed information about this project.
 
-# :books: Sample Reports
+# <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/sample-reports.svg" alt="" width="28" height="28" align="top"> Sample Reports
 
 ## Sample Report - Custom Style 1
 
 Sample VMware SRM As Built report HTML file: [Sample VMware SRM As-Built Report.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.VMware.SRM/dev/Samples/Sample%20VMware%20SRM%20As%20Built%20Report.html)
 
-# :beginner: Getting Started
+# <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/getting-started.svg" alt="" width="28" height="28" align="top"> Getting Started
 
 Below are the instructions on how to install, configure and generate a VMware SRM As Built report.
 
-## :floppy_disk: Supported Versions
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/supported-versions.svg" alt="" width="24" height="24" align="top"> Supported Versions
 <!-- ********** Update supported SRM versions ********** -->
 The VMware SRM As Built Report supports the following SRM versions;
 
@@ -64,7 +58,7 @@ This report is compatible with the following PowerShell versions;
 | :--------------------: | :----------------: |
 |   :white_check_mark:   | :white_check_mark: |
 
-## :wrench: System Requirements
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/system-requirements.svg" alt="" width="24" height="24" align="top"> System Requirements
 
 <!-- ********** Update system requirements ********** -->
 PowerShell 5.1 or PowerShell 7, and the following PowerShell modules are required for generating a VMware SRM As Built report.
@@ -74,11 +68,11 @@ Each of these modules can be easily downloaded and installed via the PowerShell 
 - [VMware PowerCLI Module](https://www.powershellgallery.com/packages/VMware.PowerCLI/)
 - [AsBuiltReport.VMware.SRM Module](https://www.powershellgallery.com/packages/AsBuiltReport.VMware.SRM/).
 
-### :closed_lock_with_key: Required Privileges
+### <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/required-privileges.svg" alt="" width="20" height="20" align="top"> Required Privileges
 
 Tested with vCenter Global Read-Only permissions.
 
-## :package: Module Installation
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/module-installation.svg" alt="" width="24" height="24" align="top"> Module Installation
 
 ### PowerShell
 
@@ -104,7 +98,7 @@ If you are unable to use the PowerShell Gallery, you can still install the modul
 
 _Note: You are not limited to installing the module to those example paths, you can add a new entry to the environment variable PSModulePath if you want to use another path._
 
-## :pencil2: Configuration
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/configuration.svg" alt="" width="24" height="24" align="top"> Configuration
 
 The VMware SRM As Built Report utilises a JSON file to allow configuration of report information, options, detail and healthchecks.
 
@@ -179,7 +173,7 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 
 The **Healthcheck** schema is used to toggle health checks on or off.
 
-## :computer: Examples
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/examples.svg" alt="" width="24" height="24" align="top"> Examples
 
 There are a few examples listed below on running the AsBuiltReport script against a VMware vCenter Server target. Refer to the `README.md` file in the main AsBuiltReport project repository for more examples.
 
@@ -198,7 +192,7 @@ PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Credential $C
 PS C:\> New-AsBuiltReport -Report VMware.SRM -Target 192.168.5.16 -Username 'administrator@vsphere.local' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -SendEmail
 ```
 
-## :x: Known Issues
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/known-issues.svg" alt="" width="24" height="24" align="top"> Known Issues
 
 - If the protected and recovery sites are not configured with "Enhanced Linked Mode" and the credentials used are not the same in both sites, it will be required to provide valid remote vCenter credentials.
 - In certain occasions there is a noticeable delay while connecting to the remote vCenter.
